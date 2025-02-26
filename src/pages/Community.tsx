@@ -31,6 +31,7 @@ import {
   UserPlus,
   MoveRight,
   BookOpen,
+  Zap,
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

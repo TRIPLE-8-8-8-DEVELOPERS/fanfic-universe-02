@@ -28,7 +28,7 @@ import {
   ArrowRight,
   Plus,
   HelpCircle,
-  Lightning,
+  Zap,
   Sparkles,
 } from "lucide-react";
 import Header from "@/components/Header";
@@ -150,7 +150,7 @@ const Write = () => {
               >
                 <Card className="h-full">
                   <CardHeader className="pb-2">
-                    <Lightning className="h-8 w-8 mb-2 text-yellow-500" />
+                    <Zap className="h-8 w-8 mb-2 text-yellow-500" />
                     <CardTitle>AI Writing Assistant</CardTitle>
                     <CardDescription>
                       Boost your creativity
