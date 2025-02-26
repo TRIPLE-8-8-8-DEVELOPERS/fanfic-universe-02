@@ -200,7 +200,7 @@ const Authors = () => {
                 Rising Stars
               </TabsTrigger>
               <TabsTrigger value="award" className="rounded-full">
-                <Trophy className="h-4 w-4 mr-2" />
+                <Award className="h-4 w-4 mr-2" />
                 Award Winners
               </TabsTrigger>
             </TabsList>
