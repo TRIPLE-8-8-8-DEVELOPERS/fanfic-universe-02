@@ -23,6 +23,8 @@ import AboutUs from "./pages/AboutUs";
 import Blog from "./pages/Blog";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import ReadingClubs from "./pages/ReadingClubs";
+import Support from "./pages/Support";
 
 const queryClient = new QueryClient();
 
@@ -54,8 +56,10 @@ const App = () => (
           <Route path="/community" element={<Community />} />
           <Route path="/forums" element={<Forums />} />
           <Route path="/contests" element={<Contests />} />
+          <Route path="/reading-clubs" element={<ReadingClubs />} />
           
-          {/* Company Pages */}
+          {/* Support & Information */}
+          <Route path="/support" element={<Support />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
