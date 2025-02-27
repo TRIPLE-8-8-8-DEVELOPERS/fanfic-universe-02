@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -24,11 +25,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
 
 // Import missing components
-import { Award, Check, Star, Globe2, Award as LucideAward } from "lucide-react";
+import { Award, Check, Star, Globe2 } from "lucide-react";
 
-// Add type for the selectedChallenge
 interface Challenge {
   title: string;
   description: string;
@@ -45,6 +46,7 @@ const Write = () => {
   const [wordCount, setWordCount] = useState(0);
   const [isPublished, setIsPublished] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
+  const { toast } = useToast();
 
   const challenges = [
     {
@@ -91,8 +93,65 @@ const Write = () => {
   };
 
   const handlePublish = () => {
+    if (!title.trim()) {
+      toast({
+        title: "Error",
+        description: "Please provide a title for your story.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!story.trim()) {
+      toast({
+        title: "Error",
+        description: "Please write some content for your story.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsPublished(true);
-    alert("Your story has been published!");
+    toast({
+      title: "Success!",
+      description: "Your story has been published successfully!",
+    });
+  };
+
+  const handleStartNewStory = () => {
+    setTitle("");
+    setStory("");
+    setGenre("Fantasy");
+    setWordCount(0);
+    setIsPublished(false);
+    toast({
+      title: "New Story",
+      description: "Start writing your new masterpiece!",
+    });
+  };
+
+  const handleJoinChallenge = (challenge: Challenge) => {
+    setSelectedChallenge(challenge);
+    toast({
+      title: "Challenge Joined",
+      description: `You've joined the "${challenge.title}" challenge. Good luck!`,
+    });
+  };
+
+  const handleSaveDraft = () => {
+    if (!title.trim() && !story.trim()) {
+      toast({
+        title: "Error",
+        description: "Please add some content before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Draft Saved",
+      description: "Your story has been saved as a draft.",
+    });
   };
 
   return (
@@ -131,6 +190,7 @@ const Write = () => {
                   id="title"
                   value={title}
                   onChange={handleTitleChange}
+                  placeholder="Enter your story title"
                 />
               </div>
               <div className="grid gap-2">
@@ -154,17 +214,24 @@ const Write = () => {
                   id="story"
                   value={story}
                   onChange={handleStoryChange}
-                  className="min-h-[200px]"
+                  placeholder="Start writing your story here..."
+                  className="min-h-[300px]"
                 />
               </div>
-              <div className="text-right">
+              <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">
                   Word Count: {wordCount}
                 </span>
+                <Button variant="outline" size="sm" onClick={handleSaveDraft}>
+                  Save Draft
+                </Button>
               </div>
             </CardContent>
-            <CardFooter>
-              <Button className="ml-auto rounded-full" onClick={handlePublish}>
+            <CardFooter className="flex justify-end gap-2">
+              <Button variant="outline" onClick={handleStartNewStory}>
+                Start New Story
+              </Button>
+              <Button onClick={handlePublish}>
                 {isPublished ? "Update Story" : "Publish Story"}
               </Button>
             </CardFooter>
@@ -185,35 +252,45 @@ const Write = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableCaption>
-                  A list of available writing challenges to inspire your
-                  creativity.
-                </TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Challenge</TableHead>
-                    <TableHead>Deadline</TableHead>
-                    <TableHead>Prize</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
+              <ScrollArea className="h-[400px] pr-4">
+                <div className="space-y-4">
                   {challenges.map((challenge, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
+                    <Card key={index}>
+                      <CardHeader>
+                        <div className="flex justify-between items-start">
+                          <CardTitle className="text-lg">{challenge.title}</CardTitle>
+                          <Badge variant="secondary">
+                            {challenge.participants} Writers
+                          </Badge>
+                        </div>
+                        <CardDescription>{challenge.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="grid gap-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Deadline:</span>
+                          <span>{challenge.deadline}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Word Limit:</span>
+                          <span>{challenge.wordLimit} words</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Prize:</span>
+                          <span className="text-primary">{challenge.prize}</span>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
                         <Button
-                          variant="link"
-                          onClick={() => setSelectedChallenge(challenge)}
+                          className="w-full"
+                          onClick={() => handleJoinChallenge(challenge)}
                         >
-                          {challenge.title}
+                          Join Challenge
                         </Button>
-                      </TableCell>
-                      <TableCell>{challenge.deadline}</TableCell>
-                      <TableCell>{challenge.prize}</TableCell>
-                    </TableRow>
+                      </CardFooter>
+                    </Card>
                   ))}
-                </TableBody>
-              </Table>
+                </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </motion.div>
