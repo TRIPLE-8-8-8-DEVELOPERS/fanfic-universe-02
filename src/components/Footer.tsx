@@ -22,17 +22,17 @@ const Footer = () => {
       links: [
         { label: "Forums", href: "/forums" },
         { label: "Writing Contests", href: "/contests" },
-        { label: "Reading Clubs", href: "/clubs" },
+        { label: "Reading Clubs", href: "/reading-clubs" },
         { label: "Support", href: "/support" },
       ],
     },
     {
       title: "Company",
       links: [
-        { label: "About Us", href: "/about" },
+        { label: "About Us", href: "/about-us" },
         { label: "Blog", href: "/blog" },
-        { label: "Terms of Service", href: "/terms" },
-        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms of Service", href: "/terms-of-service" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
       ],
     },
   ];
