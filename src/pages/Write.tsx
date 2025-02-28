@@ -45,7 +45,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 
-// Import missing components
+// Import Header and Footer components
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+
+// Import icons
 import { Award, Check, Star, Globe2, Sparkles, Wand2, Brain, Lightbulb, Zap, MessageSquare, RefreshCw, Edit2, Settings, Copy, Cloud, BookOpen, PenTool, FileText, Plus } from "lucide-react";
 
 interface Challenge {
@@ -337,556 +341,562 @@ const Write = () => {
   };
 
   return (
-    <div className="container py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-8"
-      >
-        <h1 className="text-4xl font-bold font-serif bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">Write Your Story</h1>
-        <p className="text-muted-foreground">
-          Unleash your creativity and share your stories with the world.
-        </p>
-      </motion.div>
-
-      {/* Quick action buttons */}
-      <div className="flex flex-wrap justify-center gap-4 mb-8">
-        <Button 
-          onClick={() => setShowStyleOptions(!showStyleOptions)}
-          variant="outline"
-          className="rounded-full text-blue-600 border-blue-600 hover:bg-blue-50"
-        >
-          <Settings className="mr-2 h-4 w-4" />
-          Writing Environment
-        </Button>
-        <Button 
-          onClick={() => setShowAiDialog(true)}
-          className="rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white"
-        >
-          <Brain className="mr-2 h-4 w-4" />
-          AI Writing Assistant
-        </Button>
-        <Button 
-          variant="outline"
-          className="rounded-full"
-          onClick={handleSaveDraft}
-        >
-          <Cloud className="mr-2 h-4 w-4" />
-          Save Draft
-        </Button>
-      </div>
-
-      {/* Style options */}
-      {showStyleOptions && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Card className="mb-8 border-blue-200 shadow-md">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-blue-600">Customize Your Writing Environment</CardTitle>
-              <CardDescription>
-                Personalize your writing space for optimal creativity
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label className="text-blue-700 mb-2 block">Font Style</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {fontStyles.map((style) => (
-                      <Button
-                        key={style.id}
-                        variant={fontStyle === style.id ? "default" : "outline"}
-                        className={`justify-start ${fontStyle === style.id ? "bg-blue-600" : ""} ${style.class}`}
-                        onClick={() => setFontStyle(style.id)}
-                      >
-                        {style.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-blue-700 mb-2 block">Background Color</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {backgroundColors.map((bg) => (
-                      <Button
-                        key={bg.id}
-                        variant={backgroundColor === bg.id ? "default" : "outline"}
-                        className={`justify-start ${backgroundColor === bg.id ? "bg-blue-600" : ""}`}
-                        onClick={() => setBackgroundColor(bg.id)}
-                      >
-                        <div className={`w-4 h-4 rounded mr-2 ${bg.class} border`}></div>
-                        {bg.name}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Writing Form */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Card className={getCardClasses()}>
-            <CardHeader className="pb-2 border-b border-blue-100">
-              <CardTitle className="text-blue-600">Story Details</CardTitle>
-              <CardDescription>
-                Enter your story details below to get started.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 pt-6">
-              <div className="grid gap-2">
-                <Label htmlFor="title" className="text-blue-700">Title</Label>
-                <Input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={handleTitleChange}
-                  placeholder="Enter your story title"
-                  className="border-blue-200 focus-visible:ring-blue-400"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="genre" className="text-blue-700">Genre</Label>
-                <select
-                  id="genre"
-                  className="flex h-10 w-full rounded-md border border-blue-200 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
-                  value={genre}
-                  onChange={handleGenreChange}
-                >
-                  <option value="Fantasy">Fantasy</option>
-                  <option value="Sci-Fi">Science Fiction</option>
-                  <option value="Romance">Romance</option>
-                  <option value="Mystery">Mystery</option>
-                  <option value="Horror">Horror</option>
-                  <option value="Adventure">Adventure</option>
-                  <option value="Historical">Historical Fiction</option>
-                  <option value="Thriller">Thriller</option>
-                </select>
-              </div>
-              <div className="grid gap-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="story" className="text-blue-700">Story</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-7 gap-1 text-muted-foreground hover:text-blue-600">
-                        <Wand2 className="h-3.5 w-3.5" />
-                        <span className="text-xs">AI Help</span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80">
-                      <div className="space-y-2">
-                        <h3 className="font-medium text-sm">AI Writing Assistance</h3>
-                        <p className="text-xs text-muted-foreground">
-                          Choose a prompt to get AI help with your story:
-                        </p>
-                        <div className="grid gap-1.5 pt-1">
-                          {aiPrompts.slice(0, 4).map((prompt, i) => (
-                            <Button 
-                              key={i} 
-                              variant="ghost" 
-                              size="sm" 
-                              className="justify-start h-auto py-1.5 text-left"
-                              onClick={() => {
-                                handleUseAiPrompt(prompt);
-                                setShowAiDialog(true);
-                              }}
-                            >
-                              <Sparkles className="h-3.5 w-3.5 mr-2 text-blue-500" />
-                              <span className="text-sm">{prompt.title}</span>
-                            </Button>
-                          ))}
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-1 justify-center"
-                            onClick={() => setShowAiDialog(true)}
-                          >
-                            <Brain className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
-                            Open AI Assistant
-                          </Button>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <Textarea
-                  id="story"
-                  value={story}
-                  onChange={handleStoryChange}
-                  placeholder="Start writing your story here..."
-                  className={getTextareaClasses()}
-                />
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground flex items-center">
-                  <FileText className="h-4 w-4 mr-1.5 text-blue-500" />
-                  Word Count: {wordCount}
-                </span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleSaveDraft}
-                  className="border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-                >
-                  Save Draft
-                </Button>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end gap-2 border-t border-blue-100 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={handleStartNewStory}
-                className="border-blue-300 hover:bg-blue-50 hover:text-blue-700"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Start New Story
-              </Button>
-              <Button 
-                onClick={handlePublish}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {isPublished ? "Update Story" : "Publish Story"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
-
-        {/* Writing Challenges */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Card className="border-blue-200 shadow-lg">
-            <CardHeader className="pb-2 border-b border-blue-100">
-              <CardTitle className="text-blue-600">Writing Challenges</CardTitle>
-              <CardDescription>
-                Participate in writing challenges to inspire your creativity.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-[450px] pr-4">
-                <div className="space-y-4 pt-4">
-                  {challenges.map((challenge, index) => (
-                    <Card key={index} className="overflow-hidden border-blue-100 hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-transparent">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-lg text-blue-700">{challenge.title}</CardTitle>
-                          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                            {challenge.participants} Writers
-                          </Badge>
-                        </div>
-                        <CardDescription>{challenge.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="grid gap-2 text-sm pt-4">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground flex items-center">
-                            <Award className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
-                            Prize:
-                          </span>
-                          <span className="font-medium text-blue-600">{challenge.prize}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Deadline:</span>
-                          <span>{challenge.deadline}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Word Limit:</span>
-                          <span>{challenge.wordLimit} words</span>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-0">
-                        <Button
-                          className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
-                          onClick={() => handleJoinChallenge(challenge)}
-                        >
-                          <Star className="mr-2 h-4 w-4" fill="white" />
-                          Join Challenge
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      {/* Selected Challenge Details */}
-      {selectedChallenge && (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <div className="container py-24 flex-grow">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mt-8"
+          className="text-center mb-8"
         >
-          <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-transparent">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-blue-700 flex items-center">
-                <Award className="h-5 w-5 mr-2 text-blue-500" />
-                Selected Challenge
-              </CardTitle>
-              <CardDescription>
-                Details for the "{selectedChallenge.title}" challenge.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 pt-4">
-              <div className="grid gap-2">
-                <Label className="text-blue-700">Description</Label>
-                <p className="text-muted-foreground">
-                  {selectedChallenge.description}
-                </p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h1 className="text-4xl font-bold font-serif bg-gradient-to-r from-blue-600 to-blue-400 text-transparent bg-clip-text">Write Your Story</h1>
+          <p className="text-muted-foreground">
+            Unleash your creativity and share your stories with the world.
+          </p>
+        </motion.div>
+
+        {/* Quick action buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <Button 
+            onClick={() => setShowStyleOptions(!showStyleOptions)}
+            variant="outline"
+            className="rounded-full text-blue-600 border-blue-600 hover:bg-blue-50"
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            Writing Environment
+          </Button>
+          <Button 
+            onClick={() => setShowAiDialog(true)}
+            className="rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white"
+          >
+            <Brain className="mr-2 h-4 w-4" />
+            AI Writing Assistant
+          </Button>
+          <Button 
+            variant="outline"
+            className="rounded-full"
+            onClick={handleSaveDraft}
+          >
+            <Cloud className="mr-2 h-4 w-4" />
+            Save Draft
+          </Button>
+        </div>
+
+        {/* Style options */}
+        {showStyleOptions && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="mb-8 border-blue-200 shadow-md">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-blue-600">Customize Your Writing Environment</CardTitle>
+                <CardDescription>
+                  Personalize your writing space for optimal creativity
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="text-blue-700 mb-2 block">Font Style</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {fontStyles.map((style) => (
+                        <Button
+                          key={style.id}
+                          variant={fontStyle === style.id ? "default" : "outline"}
+                          className={`justify-start ${fontStyle === style.id ? "bg-blue-600" : ""} ${style.class}`}
+                          onClick={() => setFontStyle(style.id)}
+                        >
+                          {style.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-blue-700 mb-2 block">Background Color</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {backgroundColors.map((bg) => (
+                        <Button
+                          key={bg.id}
+                          variant={backgroundColor === bg.id ? "default" : "outline"}
+                          className={`justify-start ${backgroundColor === bg.id ? "bg-blue-600" : ""}`}
+                          onClick={() => setBackgroundColor(bg.id)}
+                        >
+                          <div className={`w-4 h-4 rounded mr-2 ${bg.class} border`}></div>
+                          {bg.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Writing Form */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className={getCardClasses()}>
+              <CardHeader className="pb-2 border-b border-blue-100">
+                <CardTitle className="text-blue-600">Story Details</CardTitle>
+                <CardDescription>
+                  Enter your story details below to get started.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 pt-6">
                 <div className="grid gap-2">
-                  <Label className="text-blue-700">Deadline</Label>
-                  <p className="text-muted-foreground">
-                    {selectedChallenge.deadline}
-                  </p>
+                  <Label htmlFor="title" className="text-blue-700">Title</Label>
+                  <Input
+                    type="text"
+                    id="title"
+                    value={title}
+                    onChange={handleTitleChange}
+                    placeholder="Enter your story title"
+                    className="border-blue-200 focus-visible:ring-blue-400"
+                  />
                 </div>
                 <div className="grid gap-2">
-                  <Label className="text-blue-700">Word Limit</Label>
-                  <p className="text-muted-foreground">
-                    {selectedChallenge.wordLimit}
-                  </p>
+                  <Label htmlFor="genre" className="text-blue-700">Genre</Label>
+                  <select
+                    id="genre"
+                    className="flex h-10 w-full rounded-md border border-blue-200 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                    value={genre}
+                    onChange={handleGenreChange}
+                  >
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Sci-Fi">Science Fiction</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Mystery">Mystery</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Historical">Historical Fiction</option>
+                    <option value="Thriller">Thriller</option>
+                  </select>
                 </div>
                 <div className="grid gap-2">
-                  <Label className="text-blue-700">Participants</Label>
-                  <p className="text-muted-foreground">
-                    {selectedChallenge.participants}
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <Label htmlFor="story" className="text-blue-700">Story</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 gap-1 text-muted-foreground hover:text-blue-600">
+                          <Wand2 className="h-3.5 w-3.5" />
+                          <span className="text-xs">AI Help</span>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80">
+                        <div className="space-y-2">
+                          <h3 className="font-medium text-sm">AI Writing Assistance</h3>
+                          <p className="text-xs text-muted-foreground">
+                            Choose a prompt to get AI help with your story:
+                          </p>
+                          <div className="grid gap-1.5 pt-1">
+                            {aiPrompts.slice(0, 4).map((prompt, i) => (
+                              <Button 
+                                key={i} 
+                                variant="ghost" 
+                                size="sm" 
+                                className="justify-start h-auto py-1.5 text-left"
+                                onClick={() => {
+                                  handleUseAiPrompt(prompt);
+                                  setShowAiDialog(true);
+                                }}
+                              >
+                                <Sparkles className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                                <span className="text-sm">{prompt.title}</span>
+                              </Button>
+                            ))}
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="mt-1 justify-center"
+                              onClick={() => setShowAiDialog(true)}
+                            >
+                              <Brain className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
+                              Open AI Assistant
+                            </Button>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <Textarea
+                    id="story"
+                    value={story}
+                    onChange={handleStoryChange}
+                    placeholder="Start writing your story here..."
+                    className={getTextareaClasses()}
+                  />
                 </div>
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-blue-700">Prize</Label>
-                <p className="text-blue-600 font-medium flex items-center">
-                  <Star className="h-4 w-4 mr-1.5 text-yellow-500" fill="gold" />
-                  {selectedChallenge.prize}
-                </p>
-              </div>
-              <div className="flex justify-end pt-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-muted-foreground flex items-center">
+                    <FileText className="h-4 w-4 mr-1.5 text-blue-500" />
+                    Word Count: {wordCount}
+                  </span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleSaveDraft}
+                    className="border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                  >
+                    Save Draft
+                  </Button>
+                </div>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2 border-t border-blue-100 pt-4">
                 <Button 
                   variant="outline" 
-                  className="mr-2 text-blue-600 border-blue-300"
-                  onClick={() => setSelectedChallenge(null)}
+                  onClick={handleStartNewStory}
+                  className="border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                 >
-                  Cancel
+                  <Plus className="mr-2 h-4 w-4" />
+                  Start New Story
                 </Button>
                 <Button 
+                  onClick={handlePublish}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  Begin Writing Challenge
+                  {isPublished ? "Update Story" : "Publish Story"}
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      )}
+              </CardFooter>
+            </Card>
+          </motion.div>
 
-      {/* AI Writing Assistant Dialog */}
-      <Dialog open={showAiDialog} onOpenChange={setShowAiDialog}>
-        <DialogContent className="sm:max-w-[800px]">
-          <DialogHeader>
-            <DialogTitle className="text-blue-600 flex items-center">
-              <Brain className="h-5 w-5 mr-2 text-blue-500" />
-              AI Writing Assistant
-            </DialogTitle>
-            <DialogDescription>
-              Get AI-powered help with your writing. Generate ideas, improve your prose, and overcome writer's block.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Tabs defaultValue={activeAiTab} onValueChange={setActiveAiTab} className="mt-2">
-            <TabsList className="grid grid-cols-4 mb-4">
-              <TabsTrigger value="inspire" className="flex items-center gap-1">
-                <Lightbulb className="h-4 w-4" /> 
-                <span>Ideas</span>
-              </TabsTrigger>
-              <TabsTrigger value="improve" className="flex items-center gap-1">
-                <Edit2 className="h-4 w-4" />
-                <span>Improve</span>
-              </TabsTrigger>
-              <TabsTrigger value="continue" className="flex items-center gap-1">
-                <PenTool className="h-4 w-4" />
-                <span>Continue</span>
-              </TabsTrigger>
-              <TabsTrigger value="help" className="flex items-center gap-1">
-                <MessageSquare className="h-4 w-4" />
-                <span>General Help</span>
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-3 md:col-span-1">
-                  <Label className="text-blue-700 mb-2 block">AI Model</Label>
-                  <select
-                    id="ai-model"
-                    className="flex h-10 w-full rounded-md border border-blue-200 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
-                    value={aiModel}
-                    onChange={(e) => setAiModel(e.target.value)}
-                  >
-                    {aiModels.map(model => (
-                      <option key={model.id} value={model.id}>{model.name}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {aiModels.find(m => m.id === aiModel)?.description}
-                  </p>
-
-                  <div className="mt-4">
-                    <div className="flex justify-between mb-1">
-                      <Label className="text-blue-700">Creativity Level</Label>
-                      <span className="text-xs text-muted-foreground">{Math.round(creativityLevel[0] * 100)}%</span>
-                    </div>
-                    <Slider
-                      min={0}
-                      max={1}
-                      step={0.1}
-                      value={creativityLevel}
-                      onValueChange={setCreativityLevel}
-                      className="py-2"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Focused</span>
-                      <span>Balanced</span>
-                      <span>Creative</span>
-                    </div>
-                  </div>
-
-                  <Separator className="my-4" />
-
-                  <div>
-                    <p className="text-sm font-medium text-blue-700 mb-1.5">Popular Prompts</p>
-                    <ScrollArea className="h-[120px]">
-                      <div className="space-y-1.5">
-                        {aiPrompts.map((prompt, i) => (
-                          <Button 
-                            key={i} 
-                            variant="ghost" 
-                            size="sm" 
-                            className="justify-start w-full h-auto py-1.5 text-left"
-                            onClick={() => handleUseAiPrompt(prompt)}
+          {/* Writing Challenges */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="border-blue-200 shadow-lg">
+              <CardHeader className="pb-2 border-b border-blue-100">
+                <CardTitle className="text-blue-600">Writing Challenges</CardTitle>
+                <CardDescription>
+                  Participate in writing challenges to inspire your creativity.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[450px] pr-4">
+                  <div className="space-y-4 pt-4">
+                    {challenges.map((challenge, index) => (
+                      <Card key={index} className="overflow-hidden border-blue-100 hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-transparent">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-lg text-blue-700">{challenge.title}</CardTitle>
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                              {challenge.participants} Writers
+                            </Badge>
+                          </div>
+                          <CardDescription>{challenge.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="grid gap-2 text-sm pt-4">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground flex items-center">
+                              <Award className="h-3.5 w-3.5 mr-1.5 text-blue-500" />
+                              Prize:
+                            </span>
+                            <span className="font-medium text-blue-600">{challenge.prize}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Deadline:</span>
+                            <span>{challenge.deadline}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Word Limit:</span>
+                            <span>{challenge.wordLimit} words</span>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="pt-0">
+                          <Button
+                            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600"
+                            onClick={() => handleJoinChallenge(challenge)}
                           >
-                            <Sparkles className="h-3.5 w-3.5 mr-2 text-blue-500" />
-                            <span className="text-sm truncate">{prompt.title}</span>
+                            <Star className="mr-2 h-4 w-4" fill="white" />
+                            Join Challenge
                           </Button>
-                        ))}
-                      </div>
-                    </ScrollArea>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Selected Challenge Details */}
+        {selectedChallenge && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mt-8"
+          >
+            <Card className="border-blue-200 bg-gradient-to-r from-blue-50 to-transparent">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-blue-700 flex items-center">
+                  <Award className="h-5 w-5 mr-2 text-blue-500" />
+                  Selected Challenge
+                </CardTitle>
+                <CardDescription>
+                  Details for the "{selectedChallenge.title}" challenge.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 pt-4">
+                <div className="grid gap-2">
+                  <Label className="text-blue-700">Description</Label>
+                  <p className="text-muted-foreground">
+                    {selectedChallenge.description}
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid gap-2">
+                    <Label className="text-blue-700">Deadline</Label>
+                    <p className="text-muted-foreground">
+                      {selectedChallenge.deadline}
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label className="text-blue-700">Word Limit</Label>
+                    <p className="text-muted-foreground">
+                      {selectedChallenge.wordLimit}
+                    </p>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label className="text-blue-700">Participants</Label>
+                    <p className="text-muted-foreground">
+                      {selectedChallenge.participants}
+                    </p>
                   </div>
                 </div>
-                
-                <div className="col-span-3 md:col-span-2 space-y-4">
-                  <div>
-                    <Label className="text-blue-700 mb-2 block">
-                      {activeAiTab === "inspire" && "What kind of ideas are you looking for?"}
-                      {activeAiTab === "improve" && "What would you like to improve?"}
-                      {activeAiTab === "continue" && "How should the AI continue your story?"}
-                      {activeAiTab === "help" && "What do you need help with?"}
-                    </Label>
-                    <Textarea
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder={
-                        activeAiTab === "inspire" 
-                          ? "e.g., A fantasy story about a magical library with sentient books" 
-                          : activeAiTab === "improve"
-                          ? "e.g., Help me improve the dialogue in my story to sound more natural" 
-                          : activeAiTab === "continue"
-                          ? "e.g., Continue the story with a surprising twist" 
-                          : "e.g., Help me overcome writer's block for my mystery novel"
-                      }
-                      className="min-h-[100px] border-blue-200"
-                    />
-                  </div>
+                <div className="grid gap-2">
+                  <Label className="text-blue-700">Prize</Label>
+                  <p className="text-blue-600 font-medium flex items-center">
+                    <Star className="h-4 w-4 mr-1.5 text-yellow-500" fill="gold" />
+                    {selectedChallenge.prize}
+                  </p>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button 
+                    variant="outline" 
+                    className="mr-2 text-blue-600 border-blue-300"
+                    onClick={() => setSelectedChallenge(null)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    Begin Writing Challenge
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-                  {aiResponse && (
-                    <div className="p-4 rounded-md border border-blue-200 bg-blue-50 space-y-3">
-                      <div className="flex justify-between items-center">
-                        <h3 className="font-medium text-blue-700 flex items-center">
-                          <Brain className="h-4 w-4 mr-1.5 text-blue-600" />
-                          AI Response
-                        </h3>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 text-blue-600 hover:bg-blue-100"
-                          onClick={() => {
-                            navigator.clipboard.writeText(aiResponse);
-                            toast({
-                              title: "Copied",
-                              description: "AI response copied to clipboard"
-                            });
-                          }}
-                        >
-                          <Copy className="h-3.5 w-3.5 mr-1.5" />
-                          Copy
-                        </Button>
+        {/* AI Writing Assistant Dialog */}
+        <Dialog open={showAiDialog} onOpenChange={setShowAiDialog}>
+          <DialogContent className="sm:max-w-[800px]">
+            <DialogHeader>
+              <DialogTitle className="text-blue-600 flex items-center">
+                <Brain className="h-5 w-5 mr-2 text-blue-500" />
+                AI Writing Assistant
+              </DialogTitle>
+              <DialogDescription>
+                Get AI-powered help with your writing. Generate ideas, improve your prose, and overcome writer's block.
+              </DialogDescription>
+            </DialogHeader>
+
+            <Tabs defaultValue={activeAiTab} onValueChange={setActiveAiTab} className="mt-2">
+              <TabsList className="grid grid-cols-4 mb-4">
+                <TabsTrigger value="inspire" className="flex items-center gap-1">
+                  <Lightbulb className="h-4 w-4" /> 
+                  <span>Ideas</span>
+                </TabsTrigger>
+                <TabsTrigger value="improve" className="flex items-center gap-1">
+                  <Edit2 className="h-4 w-4" />
+                  <span>Improve</span>
+                </TabsTrigger>
+                <TabsTrigger value="continue" className="flex items-center gap-1">
+                  <PenTool className="h-4 w-4" />
+                  <span>Continue</span>
+                </TabsTrigger>
+                <TabsTrigger value="help" className="flex items-center gap-1">
+                  <MessageSquare className="h-4 w-4" />
+                  <span>General Help</span>
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-3 md:col-span-1">
+                    <Label className="text-blue-700 mb-2 block">AI Model</Label>
+                    <select
+                      id="ai-model"
+                      className="flex h-10 w-full rounded-md border border-blue-200 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                      value={aiModel}
+                      onChange={(e) => setAiModel(e.target.value)}
+                    >
+                      {aiModels.map(model => (
+                        <option key={model.id} value={model.id}>{model.name}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {aiModels.find(m => m.id === aiModel)?.description}
+                    </p>
+
+                    <div className="mt-4">
+                      <div className="flex justify-between mb-1">
+                        <Label className="text-blue-700">Creativity Level</Label>
+                        <span className="text-xs text-muted-foreground">{Math.round(creativityLevel[0] * 100)}%</span>
                       </div>
-                      <ScrollArea className="h-[200px]">
-                        <div className="whitespace-pre-line text-sm">
-                          {aiResponse}
+                      <Slider
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        value={creativityLevel}
+                        onValueChange={setCreativityLevel}
+                        className="py-2"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Focused</span>
+                        <span>Balanced</span>
+                        <span>Creative</span>
+                      </div>
+                    </div>
+
+                    <Separator className="my-4" />
+
+                    <div>
+                      <p className="text-sm font-medium text-blue-700 mb-1.5">Popular Prompts</p>
+                      <ScrollArea className="h-[120px]">
+                        <div className="space-y-1.5">
+                          {aiPrompts.map((prompt, i) => (
+                            <Button 
+                              key={i} 
+                              variant="ghost" 
+                              size="sm" 
+                              className="justify-start w-full h-auto py-1.5 text-left"
+                              onClick={() => handleUseAiPrompt(prompt)}
+                            >
+                              <Sparkles className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                              <span className="text-sm truncate">{prompt.title}</span>
+                            </Button>
+                          ))}
                         </div>
                       </ScrollArea>
                     </div>
-                  )}
+                  </div>
+                  
+                  <div className="col-span-3 md:col-span-2 space-y-4">
+                    <div>
+                      <Label className="text-blue-700 mb-2 block">
+                        {activeAiTab === "inspire" && "What kind of ideas are you looking for?"}
+                        {activeAiTab === "improve" && "What would you like to improve?"}
+                        {activeAiTab === "continue" && "How should the AI continue your story?"}
+                        {activeAiTab === "help" && "What do you need help with?"}
+                      </Label>
+                      <Textarea
+                        value={aiPrompt}
+                        onChange={(e) => setAiPrompt(e.target.value)}
+                        placeholder={
+                          activeAiTab === "inspire" 
+                            ? "e.g., A fantasy story about a magical library with sentient books" 
+                            : activeAiTab === "improve"
+                            ? "e.g., Help me improve the dialogue in my story to sound more natural" 
+                            : activeAiTab === "continue"
+                            ? "e.g., Continue the story with a surprising twist" 
+                            : "e.g., Help me overcome writer's block for my mystery novel"
+                        }
+                        className="min-h-[100px] border-blue-200"
+                      />
+                    </div>
 
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      className="border-blue-300"
-                      onClick={() => setShowAiDialog(false)}
-                    >
-                      Cancel
-                    </Button>
-                    {aiResponse ? (
-                      <Button
-                        onClick={handleUseAiContent}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <Check className="mr-2 h-4 w-4" />
-                        Use This Content
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={handleGenerateAiContent}
-                        disabled={!aiPrompt.trim() || isGenerating}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {isGenerating ? (
-                          <>
-                            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                            Generating...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="mr-2 h-4 w-4" />
-                            Generate Content
-                          </>
-                        )}
-                      </Button>
+                    {aiResponse && (
+                      <div className="p-4 rounded-md border border-blue-200 bg-blue-50 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-medium text-blue-700 flex items-center">
+                            <Brain className="h-4 w-4 mr-1.5 text-blue-600" />
+                            AI Response
+                          </h3>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 text-blue-600 hover:bg-blue-100"
+                            onClick={() => {
+                              navigator.clipboard.writeText(aiResponse);
+                              toast({
+                                title: "Copied",
+                                description: "AI response copied to clipboard"
+                              });
+                            }}
+                          >
+                            <Copy className="h-3.5 w-3.5 mr-1.5" />
+                            Copy
+                          </Button>
+                        </div>
+                        <ScrollArea className="h-[200px]">
+                          <div className="whitespace-pre-line text-sm">
+                            {aiResponse}
+                          </div>
+                        </ScrollArea>
+                      </div>
                     )}
+
+                    <div className="flex justify-end gap-2 pt-2">
+                      <Button
+                        variant="outline"
+                        className="border-blue-300"
+                        onClick={() => setShowAiDialog(false)}
+                      >
+                        Cancel
+                      </Button>
+                      {aiResponse ? (
+                        <Button
+                          onClick={handleUseAiContent}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <Check className="mr-2 h-4 w-4" />
+                          Use This Content
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleGenerateAiContent}
+                          disabled={!aiPrompt.trim() || isGenerating}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          {isGenerating ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="mr-2 h-4 w-4" />
+                              Generate Content
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
+            </Tabs>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <Footer />
     </div>
   );
 };
