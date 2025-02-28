@@ -79,6 +79,15 @@ const Header = () => {
     { title: 'Writing contest ending soon', time: '5 hours ago', type: 'alert' }
   ];
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to search results page with query parameter
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+      setSearchOpen(false);
+    }
+  };
+
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -158,12 +167,13 @@ const Header = () => {
         {/* Search Bar - Expandable */}
         <AnimatePresence>
           {searchOpen && (
-            <motion.div 
+            <motion.form 
               className="absolute inset-x-0 top-0 bg-white dark:bg-black shadow-md py-3 px-4 flex items-center"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
+              onSubmit={handleSearch}
             >
               <Search size={18} className="text-muted-foreground mr-2" />
               <input 
@@ -174,10 +184,13 @@ const Header = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 autoFocus
               />
-              <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setSearchOpen(false)}>
+              <Button type="button" variant="ghost" size="icon" className="rounded-full" onClick={() => setSearchOpen(false)}>
                 <X size={18} />
               </Button>
-            </motion.div>
+              <Button type="submit" variant="ghost" size="sm" className="ml-2">
+                Search
+              </Button>
+            </motion.form>
           )}
         </AnimatePresence>
 
@@ -364,7 +377,7 @@ const Header = () => {
               </div>
               
               <div className="py-3 border-b">
-                <div className="flex items-center bg-muted/40 rounded-lg p-2 mb-3">
+                <form onSubmit={handleSearch} className="flex items-center bg-muted/40 rounded-lg p-2 mb-3">
                   <Search size={16} className="text-muted-foreground ml-1 mr-2" />
                   <input 
                     type="text" 
@@ -373,7 +386,10 @@ const Header = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
-                </div>
+                  <Button type="submit" variant="ghost" size="sm" className="text-xs">
+                    Search
+                  </Button>
+                </form>
                 <nav className="flex flex-col space-y-1">
                   {primaryNavLinks.map((link) => (
                     <Link
