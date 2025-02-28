@@ -9,7 +9,7 @@ import {
   ChevronDown, 
   Clock, 
   Filter, 
-  Fire, 
+  Flame, // Replaced Fire with Flame which is available in lucide-react
   Heart, 
   LineChart, 
   PieChart, 
@@ -262,11 +262,11 @@ const Trending = () => {
   ];
   
   const trendingCategories: TrendingCategory[] = [
-    { id: "cat1", name: "Fantasy", icon: Fire, count: 1245, percentChange: 15, color: "#0088FE" },
+    { id: "cat1", name: "Fantasy", icon: Flame, count: 1245, percentChange: 15, color: "#0088FE" }, // Changed from Fire to Flame
     { id: "cat2", name: "Science Fiction", icon: Star, count: 982, percentChange: 8, color: "#00C49F" },
     { id: "cat3", name: "Mystery", icon: Heart, count: 876, percentChange: 5, color: "#FFBB28" },
     { id: "cat4", name: "Romance", icon: Heart, count: 754, percentChange: 12, color: "#FF8042" },
-    { id: "cat5", name: "Horror", icon: Fire, count: 543, percentChange: 20, color: "#8884d8" },
+    { id: "cat5", name: "Horror", icon: Flame, count: 543, percentChange: 20, color: "#8884d8" }, // Changed from Fire to Flame
     { id: "cat6", name: "Young Adult", icon: Users, count: 432, percentChange: 7, color: "#82ca9d" }
   ];
   
