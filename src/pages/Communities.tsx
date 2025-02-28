@@ -6,6 +6,7 @@ import {
   Bell, 
   BookOpen, 
   Calendar, 
+  Clock, // Added this import
   Edit, 
   Heart, 
   MessageCircle, 
@@ -18,7 +19,7 @@ import {
   Star, 
   Trash2, 
   Users,
-  Flame // Added Flame instead of Fire
+  Flame
 } from "lucide-react";
 import {
   Tabs,

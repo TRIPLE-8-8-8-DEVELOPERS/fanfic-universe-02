@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, Bell, User, BookOpen, PenTool, BookMarked, Sparkles, Star, Clock, Compass, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ const Header = () => {
   const [notifications, setNotifications] = useState(3);
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,10 +83,17 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page with query parameter
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+      // Navigate to search results page with query parameter using react-router navigate
+      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setSearchOpen(false);
     }
+  };
+
+  const handleNavLinkClick = (path: string) => {
+    // Close any open menus
+    setMobileMenuOpen(false);
+    // Navigate to the selected path
+    navigate(path);
   };
 
   return (
@@ -146,10 +154,10 @@ const Header = () => {
                 </svg>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 p-2">
+            <DropdownMenuContent align="end" className="w-48 p-2 z-50 bg-white">
               {moreNavLinks.map((link) => (
                 <DropdownMenuItem key={link.name} asChild>
-                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer">
+                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer w-full">
                     <link.icon size={16} />
                     <span>{link.name}</span>
                     {link.badge && (
@@ -226,7 +234,7 @@ const Header = () => {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuContent align="end" className="w-80 z-50 bg-white">
               <DropdownMenuLabel className="flex justify-between items-center">
                 <span>Notifications</span>
                 <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-blue-600 hover:text-blue-700">
@@ -268,7 +276,7 @@ const Header = () => {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuContent align="end" className="w-64 z-50 bg-white">
               <div className="p-2">
                 <div className="flex items-center gap-3 p-2">
                   <Avatar>
@@ -356,7 +364,7 @@ const Header = () => {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
-              className="absolute top-full left-0 right-0 bg-white dark:bg-black shadow-lg p-4 md:hidden"
+              className="absolute top-full left-0 right-0 bg-white dark:bg-black shadow-lg p-4 md:hidden z-40"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
