@@ -1,4 +1,4 @@
-<lov-code>
+
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -600,4 +600,80 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="text-blue-200 text-lg"
               >
-                Immerse yourself in captivating stories, connect with fellow fans, and
+                Immerse yourself in captivating stories, connect with fellow fans, and express your creativity
+              </motion.p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-4">Trending Stories</h3>
+                <StoryGrid stories={trendingStories} />
+                <div className="mt-6 text-center">
+                  <Link to="/trending">
+                    <Button variant="outline" className="rounded-full border-blue-500/50 text-blue-200 hover:bg-blue-800/30">
+                      View All Trending <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-semibold text-white mb-4">Popular Now</h3>
+                <StoryGrid stories={popularStories} />
+                <div className="mt-6 text-center">
+                  <Link to="/popular">
+                    <Button variant="outline" className="rounded-full border-blue-500/50 text-blue-200 hover:bg-blue-800/30">
+                      View More Popular <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-blue-800/20 backdrop-blur-md border border-blue-700/30 rounded-xl p-8 md:p-12">
+              <div className="max-w-2xl mx-auto text-center">
+                <h3 className="text-2xl md:text-3xl font-semibold text-white mb-6">Join Our Newsletter</h3>
+                <p className="text-blue-200 mb-8">
+                  Stay updated with the latest stories, writing contests, and exclusive events
+                </p>
+                
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSubscribe)} className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex gap-2">
+                            <FormControl>
+                              <Input 
+                                placeholder="Enter your email address" 
+                                className="rounded-full pl-5 bg-blue-900/50 border-blue-700/50 text-white placeholder:text-blue-300/50"
+                                {...field}
+                              />
+                            </FormControl>
+                            <Button 
+                              type="submit" 
+                              className="rounded-full bg-blue-600 hover:bg-blue-700 px-6"
+                            >
+                              <Mail className="mr-2 h-4 w-4" /> Subscribe
+                            </Button>
+                          </div>
+                          <FormMessage className="text-red-400 text-sm" />
+                        </FormItem>
+                      )}
+                    />
+                  </form>
+                </Form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default Index;
