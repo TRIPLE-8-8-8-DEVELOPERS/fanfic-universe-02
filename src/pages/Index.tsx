@@ -1,15 +1,19 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen, PenTool, Users } from "lucide-react";
+import { Search, BookOpen, PenTool, Users, Mail, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FeaturedStory from "@/components/FeaturedStory";
 import StoryGrid from "@/components/StoryGrid";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 
-// Mock data
 const featuredStory = {
   id: "1",
   title: "The Dragon's Prophecy",
@@ -126,26 +130,80 @@ const popularStories = [
   },
 ];
 
+const newsletterSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+type NewsletterForm = z.infer<typeof newsletterSchema>;
+
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const form = useForm<NewsletterForm>({
+    resolver: zodResolver(newsletterSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  const handleSubscribe = (data: NewsletterForm) => {
+    console.log("Subscribing email:", data.email);
+    toast.success("Thanks for subscribing to our newsletter!");
+    form.reset();
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      toast.info(`Searching for: ${searchQuery}`);
+      console.log("Search query:", searchQuery);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="pt-24 pb-16 md:pt-32 md:pb-24">
+        <section className="py-8 bg-primary/5">
+          <div className="container max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search for stories, authors, or genres..."
+                  className="flex-grow rounded-full pl-5 pr-12 py-6 border-primary/20 focus-visible:ring-primary"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button 
+                  type="submit" 
+                  size="icon"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+              </form>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="pt-16 pb-16 md:pt-24 md:pb-24">
           <div className="container mb-16">
             <FeaturedStory {...featuredStory} />
           </div>
         </section>
 
-        {/* Features Section */}
         <section className="py-16 bg-secondary">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center mb-12">
@@ -217,21 +275,67 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Trending Stories */}
         <StoryGrid
           title="Trending This Week"
           description="The stories everyone's talking about right now"
           stories={trendingStories}
         />
 
-        {/* Popular Stories */}
         <StoryGrid
           title="Reader Favorites"
           description="The most beloved stories in our community"
           stories={popularStories}
         />
 
-        {/* CTA Section */}
+        <section className="py-16 bg-secondary/30">
+          <div className="container">
+            <div className="max-w-3xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-background rounded-xl p-8 shadow-sm border border-primary/10"
+              >
+                <div className="flex flex-col md:flex-row items-center gap-8">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 md:mb-0">
+                    <Mail className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-2xl font-bold mb-2 font-serif">Get Weekly Story Recommendations</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Subscribe to our newsletter and never miss the best new fan fiction across your favorite fandoms.
+                    </p>
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(handleSubscribe)} className="flex flex-col sm:flex-row gap-3">
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem className="flex-grow">
+                              <FormControl>
+                                <Input 
+                                  placeholder="Your email address" 
+                                  className="rounded-full" 
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="submit" className="rounded-full">
+                          Subscribe <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </form>
+                    </Form>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         <section className="py-20 bg-primary text-primary-foreground">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
