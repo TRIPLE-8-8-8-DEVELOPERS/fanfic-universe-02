@@ -42,7 +42,7 @@
   color: #9b87f5;
 }
 
-/* Added improved contrast styles */
+/* Improved dropdown menu styles for better contrast */
 .dropdown-menu {
   background-color: white;
   color: #1A1F2C;
@@ -69,4 +69,42 @@
 
 .bg-improved-contrast {
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Fix for sticky header to not collide with content */
+header.sticky {
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+main {
+  padding-top: 80px; /* Adjust based on your header height */
+}
+
+/* Global text contrast improvements */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  color: hsl(var(--foreground));
+}
+
+.card-content p, .card-content span {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .card-content p, .dark .card-content span {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.story-text, .story-content {
+  color: hsl(var(--foreground));
+  line-height: 1.7;
+}
+
+.dark .story-text, .dark .story-content {
+  color: hsl(var(--foreground));
+}
+
+/* Ensure dropdown menus always have good contrast */
+.dropdown-menu-item {
+  color: hsl(var(--foreground)) !important;
+  background: hsl(var(--background));
 }
