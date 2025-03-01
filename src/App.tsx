@@ -25,6 +25,8 @@ import Community from "./pages/Community";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
+import Notifications from "./pages/Notifications";
+import Settings from "./pages/Settings";
 
 import "./App.css";
 
@@ -50,6 +52,8 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/story/:id" element={<Story />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/reading-lists" element={<ReadingLists />} />
         <Route path="/trending" element={<Trending />} />
         <Route path="/contests" element={<Contests />} />
