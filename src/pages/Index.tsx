@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -54,7 +53,7 @@ const trendingStories = [
     title: "Starlight Academy",
     author: "Micah Chen",
     authorId: "micah",
-    cover: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1727&q=80",
+    cover: "https://images.unsplash.com/photo-1462331940025-4e9042af9f23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1727&q=80",
     genre: "Sci-Fi",
     excerpt: "At Starlight Academy, the elite school for psychically gifted teenagers, Eli discovers abilities beyond imagination - and a conspiracy that threatens the universe.",
     rating: 4.6,
@@ -284,15 +283,15 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero section with video background and parallax effect */}
+        {/* Hero section with improved background image and colors */}
         <div 
           ref={heroRef}
           className="relative h-[80vh] bg-cover bg-center bg-fixed flex items-center justify-center overflow-hidden"
           style={{ 
-            backgroundImage: 'url(https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1684&q=80)', 
+            backgroundImage: 'url(https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1684&q=80)', 
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-black/50"></div>
+          <div className="absolute inset-0 hero-gradient"></div>
           
           <div className="container relative z-10 text-white max-w-4xl">
             <motion.div
@@ -301,11 +300,11 @@ const Index = () => {
               transition={{ duration: 0.7 }}
               className="text-center mb-8"
             >
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 font-serif leading-tight">
-                <span className="text-blue-300">Immerse Yourself</span> in <br />
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 font-serif leading-tight purple-glow">
+                <span className="text-purple-300">Immerse Yourself</span> in <br />
                 Stories That Move You
               </h1>
-              <p className="text-xl md:text-2xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-xl md:text-2xl text-purple-100 mb-8 max-w-2xl mx-auto">
                 Read, Write, Watch, and Connect with Fan Fiction Like Never Before
               </p>
             </motion.div>
@@ -320,14 +319,14 @@ const Index = () => {
                 <Input
                   type="text"
                   placeholder="Discover stories, authors, or live streams..."
-                  className="flex-grow rounded-full pl-5 pr-12 py-7 border-blue-300/30 bg-white/10 backdrop-blur-md text-white placeholder:text-blue-100/70 focus-visible:ring-blue-400"
+                  className="flex-grow rounded-full pl-5 pr-12 py-7 border-purple-300/30 bg-white/10 backdrop-blur-md text-white placeholder:text-purple-100/70 focus-visible:ring-purple-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <Button 
                   type="submit" 
                   size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-blue-500 hover:bg-blue-600"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-purple-500 hover:bg-purple-600 purple-button-glow"
                 >
                   <Search className="h-5 w-5" />
                 </Button>
@@ -344,7 +343,7 @@ const Index = () => {
                 <Button
                   variant="default"
                   size="lg"
-                  className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="rounded-full px-8 bg-purple-600 hover:bg-purple-700 text-white purple-button-glow"
                 >
                   <BookOpen className="mr-2 h-5 w-5" /> Browse Stories
                 </Button>
@@ -353,7 +352,7 @@ const Index = () => {
                 <Button
                   variant="secondary"
                   size="lg"
-                  className="rounded-full px-8 bg-blue-500/20 hover:bg-blue-500/30 text-white border border-blue-400/30"
+                  className="rounded-full px-8 bg-purple-500/20 hover:bg-purple-500/30 text-white border border-purple-400/30"
                 >
                   <Tv className="mr-2 h-5 w-5" /> Watch Streams
                 </Button>
@@ -362,7 +361,7 @@ const Index = () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-full px-8 border-blue-400/50 hover:bg-blue-400/10 text-white"
+                  className="rounded-full px-8 border-purple-400/50 hover:bg-purple-400/10 text-white"
                 >
                   <PenTool className="mr-2 h-5 w-5" /> Start Writing
                 </Button>
@@ -371,8 +370,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Featured streaming section */}
-        <section className="py-16 bg-gradient-to-b from-blue-900 to-blue-950">
+        {/* Featured streaming section with improved colors */}
+        <section className="py-16 bg-gradient-to-b from-purple-900 to-slate-900">
           <div className="container">
             <div className="mb-10 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 font-serif text-white">

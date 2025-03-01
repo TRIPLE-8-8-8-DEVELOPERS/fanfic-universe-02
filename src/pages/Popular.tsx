@@ -165,7 +165,7 @@ const Popular = () => {
                     <BookOpen className="mr-2 h-4 w-4" />
                     Explore More Stories
                   </Button>
-                  <Button className="rounded-full">
+                  <Button className="rounded-full bg-purple-600 hover:bg-purple-700">
                     <TrendingUp className="mr-2 h-4 w-4" />
                     View Trending
                   </Button>
