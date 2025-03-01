@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -17,7 +16,8 @@ import {
   Video,
   Sparkles,
   Users,
-  Film
+  Film,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -61,9 +61,7 @@ const Story = () => {
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
 
-  // Mock story data
   useEffect(() => {
-    // Simulate API fetch
     setTimeout(() => {
       const storyData = {
         id: id,
@@ -100,7 +98,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
       setStory(storyData);
       setEditedContent(storyData.content);
       
-      // Mock comments
       const mockComments = [
         {
           id: "c1",
@@ -164,12 +161,10 @@ What she didn't know was that her newfound powers had attracted attention. The C
       description: "Your audience can now join your stream.",
     });
     
-    // Simulate viewers joining
     const interval = setInterval(() => {
       setLiveViewers(prev => prev + Math.floor(Math.random() * 3));
     }, 5000);
     
-    // Clean up interval
     setTimeout(() => clearInterval(interval), 30000);
   };
   
@@ -242,7 +237,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
       
       <main className="flex-grow pt-24">
         <div className="container py-8">
-          {/* Story Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -364,7 +358,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                {/* Author Editor Tools */}
                 <div className="mb-6 flex flex-wrap gap-2">
                   {!isEditing ? (
                     <Button 
@@ -431,7 +424,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
                   )}
                 </div>
                 
-                {/* Live Streaming Indicator */}
                 {isLiveStreaming && (
                   <div className="mb-6 p-4 border border-red-200 rounded-lg bg-red-50">
                     <div className="flex items-center gap-3">
@@ -449,7 +441,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
                   </div>
                 )}
                 
-                {/* Video Preview */}
                 {videoUrl && (
                   <div className="mb-6 border rounded-lg overflow-hidden">
                     <video 
@@ -467,7 +458,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
                   </div>
                 )}
                 
-                {/* Story Content */}
                 <div className="prose max-w-none">
                   {isEditing ? (
                     <Textarea
@@ -483,7 +473,6 @@ What she didn't know was that her newfound powers had attracted attention. The C
                 </div>
               </div>
               
-              {/* Comments Section */}
               <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">Discussion</h2>
                 
@@ -563,7 +552,7 @@ What she didn't know was that her newfound powers had attracted attention. The C
                 
                 <Separator className="my-4" />
                 
-                <h3 className="font-medium mb-2">More by this Author</h3>
+                <h3 className="font-medium mb-3">More by this Author</h3>
                 
                 <div className="space-y-3">
                   {[
