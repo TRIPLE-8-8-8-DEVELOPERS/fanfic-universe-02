@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -82,11 +83,11 @@ import {
   Smile, 
   Heart, 
   Medal,
-  Clock,
-  Twitter,
-  Facebook,
-  Instagram,
-  Users,
+  Clock as ClockIcon,
+  Twitter as TwitterIcon,
+  Facebook as FacebookIcon,
+  Instagram as InstagramIcon,
+  Users as UsersIcon,
   LogOut
 } from "lucide-react";
 
@@ -718,3 +719,852 @@ const Write = () => {
                         Save Draft
                       </Button>
                     </div>
+                  </CardContent>
+                  <CardFooter className="flex gap-4 pt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs flex-1 border-violet-200 hover:bg-violet-50"
+                      onClick={() => setShowVideoUploader(true)}
+                    >
+                      <Video className="h-3.5 w-3.5 mr-1.5 text-violet-500" />
+                      Add Video
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs flex-1 border-violet-200 hover:bg-violet-50"
+                    >
+                      <ImagePlus className="h-3.5 w-3.5 mr-1.5 text-violet-500" />
+                      Add Image
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-xs flex-1 border-violet-200 hover:bg-violet-50"
+                    >
+                      <Music className="h-3.5 w-3.5 mr-1.5 text-violet-500" />
+                      Add Audio
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+
+              {/* Sidebar - Writing aids */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                {/* Writing Statistics Card */}
+                <Card className="mb-6 border-indigo-200 shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-indigo-700">Writing Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          <FileText className="h-4 w-4 mr-1.5 text-indigo-500" />
+                          Word Count
+                        </span>
+                        <span className="font-medium">{wordCount}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          <ClockIcon className="h-4 w-4 mr-1.5 text-indigo-500" />
+                          Estimated Reading Time
+                        </span>
+                        <span className="font-medium">{Math.ceil(wordCount / 250)} min</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground flex items-center">
+                          <BookOpen className="h-4 w-4 mr-1.5 text-indigo-500" />
+                          Pages
+                        </span>
+                        <span className="font-medium">{Math.ceil(wordCount / 500)}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 pt-4 border-t border-indigo-100">
+                      <h4 className="text-sm font-medium mb-3 text-indigo-700">Writing Style</h4>
+                      <div className="space-y-2">
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span>Descriptive</span>
+                            <span>65%</span>
+                          </div>
+                          <div className="h-1.5 bg-indigo-100 rounded-full">
+                            <div className="h-full w-[65%] bg-indigo-500 rounded-full"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span>Dialogue</span>
+                            <span>40%</span>
+                          </div>
+                          <div className="h-1.5 bg-indigo-100 rounded-full">
+                            <div className="h-full w-[40%] bg-indigo-500 rounded-full"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span>Action</span>
+                            <span>35%</span>
+                          </div>
+                          <div className="h-1.5 bg-indigo-100 rounded-full">
+                            <div className="h-full w-[35%] bg-indigo-500 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Current Challenge Card */}
+                {selectedChallenge ? (
+                  <Card className="mb-6 border-amber-200 shadow-sm bg-gradient-to-r from-amber-50 to-orange-50">
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between items-start">
+                        <CardTitle className="text-lg text-amber-700">Active Challenge</CardTitle>
+                        <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">
+                          <Medal className="h-3.5 w-3.5 mr-1 text-amber-500" />
+                          <span>In Progress</span>
+                        </Badge>
+                      </div>
+                      <CardDescription className="text-amber-800">
+                        Push yourself to complete this challenge
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <h3 className="font-bold text-amber-800">{selectedChallenge.title}</h3>
+                      <p className="text-sm mt-1 text-amber-700">{selectedChallenge.description}</p>
+                      
+                      <div className="mt-4 grid gap-3">
+                        <div className="flex items-center text-sm">
+                          <ClockIcon className="h-4 w-4 mr-2 text-amber-500" />
+                          <span className="text-amber-700">Deadline: {selectedChallenge.deadline}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <FileText className="h-4 w-4 mr-2 text-amber-500" />
+                          <span className="text-amber-700">Word Limit: {selectedChallenge.wordLimit}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <Award className="h-4 w-4 mr-2 text-amber-500" />
+                          <span className="text-amber-700">Prize: {selectedChallenge.prize}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <UsersIcon className="h-4 w-4 mr-2 text-amber-500" />
+                          <span className="text-amber-700">{selectedChallenge.participants} participants</span>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 flex justify-between">
+                        <Button variant="outline" size="sm" className="text-xs border-amber-300 hover:bg-amber-100 text-amber-700">
+                          View Details
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => setSelectedChallenge(null)}
+                          className="text-xs border-amber-300 hover:bg-amber-100 text-amber-700"
+                        >
+                          <LogOut className="h-3.5 w-3.5 mr-1" />
+                          Leave Challenge
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card className="mb-6 border-violet-200 shadow-sm">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg text-violet-700">Writing Challenges</CardTitle>
+                      <CardDescription>
+                        Join challenges to boost your creativity
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-0">
+                      <ScrollArea className="h-[280px]">
+                        <div className="px-6">
+                          {challenges.map((challenge, i) => (
+                            <div key={i} className="mb-4 pb-4 border-b border-violet-100 last:border-0 last:mb-0 last:pb-0">
+                              <div className="flex justify-between">
+                                <h3 className="font-medium text-violet-800">{challenge.title}</h3>
+                                <Badge variant="outline" className="bg-violet-50 border-violet-200 text-violet-700">
+                                  {challenge.participants} writers
+                                </Badge>
+                              </div>
+                              <p className="text-sm mt-1 text-muted-foreground">{challenge.description}</p>
+                              <div className="mt-3 flex justify-between items-center">
+                                <div className="flex items-center text-xs text-muted-foreground">
+                                  <ClockIcon className="h-3.5 w-3.5 mr-1 text-violet-400" />
+                                  <span>Ends: {challenge.deadline}</span>
+                                </div>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="h-7 text-xs border-violet-200 hover:bg-violet-50 hover:text-violet-700"
+                                  onClick={() => handleJoinChallenge(challenge)}
+                                >
+                                  Join
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Share Story Card */}
+                <Card className="border-indigo-200 shadow-sm bg-gradient-to-r from-indigo-50 to-purple-50">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-indigo-700">Share Your Progress</CardTitle>
+                    <CardDescription>
+                      Get feedback from other writers
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex space-x-3 mb-4">
+                      <Button variant="outline" size="sm" className="flex-1 bg-white border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                        <TwitterIcon className="h-4 w-4 mr-1.5 text-blue-400" />
+                        Twitter
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1 bg-white border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                        <FacebookIcon className="h-4 w-4 mr-1.5 text-blue-600" />
+                        Facebook
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1 bg-white border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700">
+                        <InstagramIcon className="h-4 w-4 mr-1.5 text-pink-500" />
+                        Instagram
+                      </Button>
+                    </div>
+                  
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <Switch id="public-profile" />
+                        <Label htmlFor="public-profile" className="text-sm">Make story public for feedback</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Switch id="notify-followers" />
+                        <Label htmlFor="notify-followers" className="text-sm">Notify followers when published</Label>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="media" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <Card className="border-teal-200 shadow-lg">
+                  <CardHeader className="pb-3 bg-gradient-to-r from-teal-500 to-emerald-500 text-white">
+                    <CardTitle>Media Integration</CardTitle>
+                    <CardDescription className="text-white/80">
+                      Enhance your story with rich media content
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    {videoUrl ? (
+                      <div className="space-y-4">
+                        <div className="aspect-video bg-black rounded-md overflow-hidden">
+                          <video 
+                            src={videoUrl} 
+                            controls 
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <h3 className="font-medium">Your Story Video</h3>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-xs border-teal-200 hover:bg-teal-50"
+                              onClick={() => setShowVideoUploader(true)}
+                            >
+                              <RefreshCw className="h-3.5 w-3.5 mr-1.5 text-teal-500" />
+                              Replace
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="text-xs border-teal-200 hover:bg-teal-50 text-red-500 hover:text-red-600"
+                              onClick={() => setVideoUrl("")}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-teal-200 rounded-md">
+                        <Video className="h-12 w-12 text-teal-300 mb-4" />
+                        <h3 className="text-lg font-medium text-teal-700 mb-2">Add Video to Your Story</h3>
+                        <p className="text-center text-muted-foreground mb-6 max-w-md">
+                          Enhance your narrative with video content. Upload a video trailer, reading, or companion clip for your story.
+                        </p>
+                        <Button 
+                          onClick={() => setShowVideoUploader(true)}
+                          className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600"
+                        >
+                          <Video className="h-4 w-4 mr-2" />
+                          Upload Video
+                        </Button>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                      <div className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-teal-200 rounded-md bg-teal-50/50">
+                        <ImagePlus className="h-8 w-8 text-teal-400 mb-3" />
+                        <h3 className="text-base font-medium text-teal-700 mb-2">Add Images</h3>
+                        <p className="text-center text-sm text-muted-foreground mb-4">
+                          Include character portraits, setting images, or inspirational visuals
+                        </p>
+                        <Button 
+                          variant="outline"
+                          className="text-xs border-teal-200 hover:bg-teal-100 text-teal-700"
+                        >
+                          Upload Images
+                        </Button>
+                      </div>
+                      
+                      <div className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-teal-200 rounded-md bg-teal-50/50">
+                        <Music className="h-8 w-8 text-teal-400 mb-3" />
+                        <h3 className="text-base font-medium text-teal-700 mb-2">Add Audio</h3>
+                        <p className="text-center text-sm text-muted-foreground mb-4">
+                          Include background music, sound effects, or audio narration
+                        </p>
+                        <Button 
+                          variant="outline"
+                          className="text-xs border-teal-200 hover:bg-teal-100 text-teal-700"
+                        >
+                          Upload Audio
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div>
+                <Card className="border-teal-200 shadow-sm mb-6">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-teal-700">Media Guidelines</CardTitle>
+                    <CardDescription>Best practices for engaging content</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 text-teal-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">Keep videos under 2 minutes for better engagement</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 text-teal-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">Use high-quality images (at least 1200x800px)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 text-teal-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">Ensure you have rights to all media you upload</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 text-teal-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">Audio clips should be clear and properly equalized</span>
+                      </li>
+                      <li className="flex items-start">
+                        <Check className="h-5 w-5 mr-2 text-teal-500 shrink-0 mt-0.5" />
+                        <span className="text-sm">Consider using media that enhances mood and setting</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-teal-200 shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-teal-700">Media Stats</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-muted-foreground">Storage Used</span>
+                          <span className="text-sm font-medium">23 MB / 1 GB</span>
+                        </div>
+                        <div className="h-2 bg-teal-100 rounded-full">
+                          <div className="h-full w-[2.3%] bg-teal-500 rounded-full"></div>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-2 space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground flex items-center">
+                            <Video className="h-4 w-4 mr-1.5 text-teal-500" />
+                            Videos
+                          </span>
+                          <span className="font-medium">{videoUrl ? "1" : "0"}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground flex items-center">
+                            <ImagePlus className="h-4 w-4 mr-1.5 text-teal-500" />
+                            Images
+                          </span>
+                          <span className="font-medium">0</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-muted-foreground flex items-center">
+                            <Music className="h-4 w-4 mr-1.5 text-teal-500" />
+                            Audio Files
+                          </span>
+                          <span className="font-medium">0</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="publish" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <Card className="border-violet-200 shadow-lg">
+                  <CardHeader className="pb-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+                    <CardTitle>Publish Your Story</CardTitle>
+                    <CardDescription className="text-white/80">
+                      Share your work with readers around the world
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-6">
+                    <div className="grid gap-6">
+                      <div className="space-y-2">
+                        <h3 className="font-medium text-lg text-violet-800">Story Preview</h3>
+                        <Card className="border-violet-100 overflow-hidden">
+                          <div className="bg-violet-50 p-4 border-b border-violet-100">
+                            <h4 className="text-lg font-bold text-violet-800">{title || "Untitled Story"}</h4>
+                            <div className="flex items-center mt-1">
+                              <Badge variant="outline" className="mr-2 border-violet-200 text-violet-600">
+                                {genre}
+                              </Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {wordCount} words • {Math.ceil(wordCount / 250)} min read
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <div className="prose max-w-none text-muted-foreground">
+                              {story ? (
+                                <p className="line-clamp-3">{story}</p>
+                              ) : (
+                                <p className="italic text-muted-foreground">No content yet. Start writing your story!</p>
+                              )}
+                            </div>
+                          </div>
+                          {videoUrl && (
+                            <div className="px-4 pb-4">
+                              <div className="aspect-video bg-black rounded-md overflow-hidden">
+                                <video 
+                                  src={videoUrl} 
+                                  controls 
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </Card>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-medium text-lg text-violet-800">Publishing Options</h3>
+                        <Card className="border-violet-100">
+                          <CardContent className="pt-6">
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <Switch id="public-story" />
+                                  <Label htmlFor="public-story">Make story public</Label>
+                                </div>
+                                <Badge variant="outline" className="bg-violet-50 border-violet-200 text-violet-600">
+                                  Recommended
+                                </Badge>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch id="comments" defaultChecked />
+                                <Label htmlFor="comments">Allow comments</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch id="discoverable" defaultChecked />
+                                <Label htmlFor="discoverable">Discoverable in search</Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Switch id="mature-content" />
+                                <Label htmlFor="mature-content">Mature content (18+)</Label>
+                              </div>
+                              
+                              <Separator className="my-2" />
+                              
+                              <div className="space-y-2">
+                                <Label htmlFor="tags" className="text-sm">Tags (up to 5)</Label>
+                                <Input 
+                                  id="tags" 
+                                  placeholder="Add tags separated by commas" 
+                                  className="border-violet-200"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                  Popular tags: fantasy, romance, sci-fi, thriller, mystery
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                      
+                      <div className="flex gap-4 pt-2">
+                        {isPublished ? (
+                          <>
+                            <Button 
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                              disabled
+                            >
+                              <Check className="mr-2 h-4 w-4" />
+                              Published
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              className="border-violet-200 hover:bg-violet-50"
+                              onClick={handleStartNewStory}
+                            >
+                              <Plus className="mr-2 h-4 w-4" />
+                              Start New Story
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button 
+                              className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+                              onClick={handlePublish}
+                              disabled={!title.trim() || !story.trim()}
+                            >
+                              <BookMarked className="mr-2 h-4 w-4" />
+                              Publish Story
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              className="flex-1 border-violet-200 hover:bg-violet-50"
+                              onClick={handleSaveDraft}
+                            >
+                              <Cloud className="mr-2 h-4 w-4" />
+                              Save as Draft
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div>
+                <Card className="border-violet-200 shadow-sm mb-6">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-violet-700">Publishing Checklist</CardTitle>
+                    <CardDescription>Ensure your story is ready</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      <li className="flex items-start">
+                        <div className={`h-5 w-5 rounded-full flex items-center justify-center mr-2 shrink-0 mt-0.5 ${title.trim() ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                          {title.trim() ? <Check className="h-3.5 w-3.5" /> : '1'}
+                        </div>
+                        <span className={`text-sm ${title.trim() ? 'text-green-600' : 'text-muted-foreground'}`}>Add a compelling title</span>
+                      </li>
+                      <li className="flex items-start">
+                        <div className={`h-5 w-5 rounded-full flex items-center justify-center mr-2 shrink-0 mt-0.5 ${story.trim() ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                          {story.trim() ? <Check className="h-3.5 w-3.5" /> : '2'}
+                        </div>
+                        <span className={`text-sm ${story.trim() ? 'text-green-600' : 'text-muted-foreground'}`}>Write your story content</span>
+                      </li>
+                      <li className="flex items-start">
+                        <div className={`h-5 w-5 rounded-full flex items-center justify-center mr-2 shrink-0 mt-0.5 ${videoUrl ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                          {videoUrl ? <Check className="h-3.5 w-3.5" /> : '3'}
+                        </div>
+                        <span className={`text-sm ${videoUrl ? 'text-green-600' : 'text-muted-foreground'}`}>Add media (optional)</span>
+                      </li>
+                      <li className="flex items-start">
+                        <div className="h-5 w-5 rounded-full flex items-center justify-center mr-2 bg-gray-100 text-gray-400 shrink-0 mt-0.5">
+                          4
+                        </div>
+                        <span className="text-sm text-muted-foreground">Set publishing options</span>
+                      </li>
+                      <li className="flex items-start">
+                        <div className={`h-5 w-5 rounded-full flex items-center justify-center mr-2 shrink-0 mt-0.5 ${isPublished ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                          {isPublished ? <Check className="h-3.5 w-3.5" /> : '5'}
+                        </div>
+                        <span className={`text-sm ${isPublished ? 'text-green-600' : 'text-muted-foreground'}`}>Publish your story</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-violet-200 shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg text-violet-700">Publishing Tips</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-start">
+                        <Lightbulb className="h-5 w-5 mr-2 text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-sm">Use a captivating title that hints at your story's theme or main conflict.</p>
+                      </div>
+                      <div className="flex items-start">
+                        <Lightbulb className="h-5 w-5 mr-2 text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-sm">Add relevant tags to help readers discover your story based on interests.</p>
+                      </div>
+                      <div className="flex items-start">
+                        <Lightbulb className="h-5 w-5 mr-2 text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-sm">Consider including a brief introduction or hook at the beginning of your story.</p>
+                      </div>
+                      <div className="flex items-start">
+                        <Lightbulb className="h-5 w-5 mr-2 text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-sm">Share your published story on social media to reach more readers.</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <Footer />
+      
+      {/* AI Dialog */}
+      <Dialog open={showAiDialog} onOpenChange={setShowAiDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>AI Writing Assistant</DialogTitle>
+            <DialogDescription>
+              Get help with your story using our AI assistant
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Tabs defaultValue={activeAiTab} value={activeAiTab} onValueChange={setActiveAiTab}>
+            <TabsList className="grid grid-cols-4 mb-4">
+              <TabsTrigger value="inspire">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Inspire Me
+              </TabsTrigger>
+              <TabsTrigger value="improve">
+                <Edit2 className="mr-2 h-4 w-4" />
+                Improve Writing
+              </TabsTrigger>
+              <TabsTrigger value="continue">
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Continue Story
+              </TabsTrigger>
+              <TabsTrigger value="custom">
+                <Settings className="mr-2 h-4 w-4" />
+                Custom
+              </TabsTrigger>
+            </TabsList>
+            
+            <div className="space-y-4 mb-4">
+              <div>
+                <Label htmlFor="aiPrompt" className="text-sm">
+                  {activeAiTab === "inspire" ? "What kind of idea would you like?" :
+                   activeAiTab === "improve" ? "What aspect of your writing would you like to improve?" :
+                   activeAiTab === "continue" ? "How should the story continue?" :
+                   "What would you like help with?"}
+                </Label>
+                <Textarea
+                  id="aiPrompt"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  placeholder={
+                    activeAiTab === "inspire" ? "A fantasy story about a librarian who can enter books..." :
+                    activeAiTab === "improve" ? "Help me make my dialogue more natural and engaging..." :
+                    activeAiTab === "continue" ? "Continue my story with an unexpected plot twist..." :
+                    "Help me with..."
+                  }
+                  className="mt-1"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm mb-2 block">AI Model</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {aiModels.slice(0, 2).map((model) => (
+                      <Button
+                        key={model.id}
+                        variant={aiModel === model.id ? "default" : "outline"}
+                        className={`justify-start h-auto py-2 ${aiModel === model.id ? "bg-violet-600" : ""}`}
+                        onClick={() => setAiModel(model.id)}
+                      >
+                        <Brain className="h-4 w-4 mr-2" />
+                        <div className="text-left">
+                          <div className="text-sm font-medium">{model.name}</div>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {aiModels.slice(2).map((model) => (
+                      <Button
+                        key={model.id}
+                        variant={aiModel === model.id ? "default" : "outline"}
+                        className={`justify-start h-auto py-2 ${aiModel === model.id ? "bg-violet-600" : ""}`}
+                        onClick={() => setAiModel(model.id)}
+                      >
+                        <Brain className="h-4 w-4 mr-2" />
+                        <div className="text-left">
+                          <div className="text-sm font-medium">{model.name}</div>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-sm">Creativity Level</Label>
+                    <span className="text-sm text-muted-foreground">
+                      {creativityLevel[0] < 0.3 ? "Conservative" : 
+                       creativityLevel[0] < 0.7 ? "Balanced" : "Experimental"}
+                    </span>
+                  </div>
+                  <Slider
+                    value={creativityLevel}
+                    onValueChange={setCreativityLevel}
+                    max={1}
+                    step={0.1}
+                    className="mt-2"
+                  />
+                  <div className="flex justify-between mt-1">
+                    <span className="text-xs text-muted-foreground">Factual</span>
+                    <span className="text-xs text-muted-foreground">Creative</span>
+                  </div>
+                  
+                  <div className="mt-4">
+                    <Label className="text-sm mb-2 block">Quick Prompts</Label>
+                    <ScrollArea className="h-[100px]">
+                      <div className="space-y-1">
+                        {aiPrompts.map((prompt, i) => (
+                          <Button 
+                            key={i} 
+                            variant="ghost" 
+                            size="sm" 
+                            className="w-full justify-start h-auto py-1.5 text-left"
+                            onClick={() => handleUseAiPrompt(prompt)}
+                          >
+                            <Sparkles className="h-3.5 w-3.5 mr-2 text-violet-500" />
+                            <span className="text-sm">{prompt.title}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-slate-50 rounded-md mb-4">
+              <div className="flex justify-between mb-2">
+                <h3 className="font-medium">AI Response</h3>
+                {aiResponse && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-7 gap-1 text-muted-foreground hover:text-violet-600"
+                    onClick={() => {
+                      navigator.clipboard.writeText(aiResponse);
+                      toast({
+                        title: "Copied to clipboard",
+                        duration: 2000,
+                      });
+                    }}
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    <span className="text-xs">Copy</span>
+                  </Button>
+                )}
+              </div>
+              {isGenerating ? (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <RefreshCw className="h-8 w-8 text-violet-500 animate-spin mb-4" />
+                  <p className="text-muted-foreground">
+                    Generating creative content...
+                  </p>
+                </div>
+              ) : aiResponse ? (
+                <ScrollArea className="h-[200px]">
+                  <div className="whitespace-pre-line text-sm">
+                    {aiResponse}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 px-4 border border-dashed border-slate-200 rounded-md text-center">
+                  <Brain className="h-8 w-8 text-slate-300 mb-2" />
+                  <p className="text-muted-foreground text-sm mb-1">
+                    AI responses will appear here
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Enter a prompt and click "Generate" to get started
+                  </p>
+                </div>
+              )}
+            </div>
+          </Tabs>
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowAiDialog(false)}
+            >
+              Cancel
+            </Button>
+            {aiResponse ? (
+              <Button 
+                onClick={handleUseAiContent}
+                className="bg-violet-600 hover:bg-violet-700"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add to Story
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleGenerateAiContent}
+                disabled={isGenerating || !aiPrompt.trim()}
+                className="bg-violet-600 hover:bg-violet-700"
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                Generate
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Video Uploader Dialog */}
+      {showVideoUploader && (
+        <Dialog open={showVideoUploader} onOpenChange={setShowVideoUploader}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Upload Video</DialogTitle>
+              <DialogDescription>
+                Add a video to enhance your story
+              </DialogDescription>
+            </DialogHeader>
+            <VideoUploader onVideoUploaded={handleVideoUploaded} />
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+export default Write;
