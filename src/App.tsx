@@ -9,6 +9,7 @@ import Story from "./pages/Story";
 import Profile from "./pages/Profile";
 import ReadingLists from "./pages/ReadingLists";
 import Trending from "./pages/Trending";
+import Popular from "./pages/Popular";
 import Contests from "./pages/Contests";
 import Communities from "./pages/Communities";
 import Authors from "./pages/Authors";
@@ -56,6 +57,7 @@ function App() {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/reading-lists" element={<ReadingLists />} />
         <Route path="/trending" element={<Trending />} />
+        <Route path="/popular" element={<Popular />} />
         <Route path="/contests" element={<Contests />} />
         <Route path="/communities" element={<Communities />} />
         <Route path="/community/:id" element={<Community />} />
