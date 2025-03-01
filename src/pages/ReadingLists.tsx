@@ -270,7 +270,7 @@ const ReadingLists = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Header />
       
       <main className="flex-grow pt-24 pb-12">
@@ -290,7 +290,7 @@ const ReadingLists = () => {
           </motion.div>
           
           <div className="flex justify-between items-center mb-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full max-w-md">
+            <Tabs defaultValue="my-lists" value={activeTab} onValueChange={setActiveTab} className="w-full max-w-md">
               <TabsList className="grid grid-cols-3">
                 <TabsTrigger value="my-lists" className="text-sm">My Lists</TabsTrigger>
                 <TabsTrigger value="shared" className="text-sm">Shared With Me</TabsTrigger>
@@ -305,7 +305,7 @@ const ReadingLists = () => {
                   New List
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] bg-background text-foreground">
                 <DialogHeader>
                   <DialogTitle>Create a new reading list</DialogTitle>
                   <DialogDescription>
@@ -350,50 +350,176 @@ const ReadingLists = () => {
             </Dialog>
           </div>
           
-          <TabsContent value="my-lists" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {myLists.map((list) => (
+          <div className="mt-6">
+            {activeTab === "my-lists" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {myLists.map((list) => (
+                  <motion.div
+                    key={list.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Link to={`/reading-list/${list.id}`} className="block h-full">
+                      <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100 bg-card text-card-foreground">
+                        <div className="relative h-40">
+                          <img 
+                            src={list.coverImage} 
+                            alt={list.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                            <div className="p-4 text-white">
+                              <h3 className="font-bold text-lg">{list.title}</h3>
+                              <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
+                            </div>
+                          </div>
+                          {!list.isPublic && (
+                            <div className="absolute top-2 right-2">
+                              <Badge variant="outline" className="bg-black/50 text-white border-transparent backdrop-blur-sm">
+                                Private
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <span className="flex items-center">
+                              <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
+                              {list.stories} stories
+                            </span>
+                            <span className="flex items-center">
+                              <Clock className="h-4 w-4 mr-1 text-blue-500" />
+                              Updated {list.lastUpdated}
+                            </span>
+                          </div>
+                          
+                          {list.collaborators && (
+                            <div className="mt-3">
+                              <p className="text-xs text-muted-foreground mb-1">Collaborators:</p>
+                              <div className="flex -space-x-2">
+                                {list.collaborators.map((collaborator) => (
+                                  <Avatar key={collaborator.id} className="h-6 w-6 border-2 border-white">
+                                    <AvatarImage src={collaborator.avatar} />
+                                    <AvatarFallback>{collaborator.name.substring(0, 2)}</AvatarFallback>
+                                  </Avatar>
+                                ))}
+                                <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs border-2 border-white">
+                                  <Plus size={12} />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between">
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                              <Heart className="h-4 w-4" />
+                            </Button>
+                            {list.likes > 0 && <span className="text-sm text-muted-foreground">{list.likes}</span>}
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[200px] dropdown-menu">
+                              <DropdownMenuItem className="dropdown-item">
+                                <Edit2 className="mr-2 h-4 w-4" />
+                                <span>Edit List</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dropdown-item">
+                                <Share2 className="mr-2 h-4 w-4" />
+                                <span>Share List</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="dropdown-item">
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                <span>Add Collaborators</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-red-600 dropdown-item">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                <span>Delete List</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </CardFooter>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                ))}
+                
+                {/* Add List Card */}
                 <motion.div
-                  key={list.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
                 >
-                  <Link to={`/reading-list/${list.id}`} className="block h-full">
-                    <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100">
-                      <div className="relative h-40">
-                        <img 
-                          src={list.coverImage} 
-                          alt={list.title} 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                          <div className="p-4 text-white">
-                            <h3 className="font-bold text-lg">{list.title}</h3>
-                            <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
-                          </div>
-                        </div>
-                        {!list.isPublic && (
-                          <div className="absolute top-2 right-2">
-                            <Badge variant="outline" className="bg-black/50 text-white border-transparent backdrop-blur-sm">
-                              Private
-                            </Badge>
-                          </div>
-                        )}
+                  <Card 
+                    className="h-full border-dashed border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center text-center cursor-pointer text-foreground"
+                    onClick={() => setNewListOpen(true)}
+                  >
+                    <CardContent className="p-6 flex flex-col items-center">
+                      <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <FolderPlus className="h-8 w-8 text-blue-600" />
                       </div>
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-center text-sm text-muted-foreground">
-                          <span className="flex items-center">
-                            <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
-                            {list.stories} stories
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 text-blue-500" />
-                            Updated {list.lastUpdated}
-                          </span>
+                      <h3 className="font-medium text-lg text-blue-700 mb-2">Create a New List</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Organize your favorite stories into custom collections
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+            )}
+            
+            {activeTab === "shared" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {sharedLists.map((list) => (
+                  <motion.div
+                    key={list.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Link to={`/reading-list/${list.id}`} className="block h-full">
+                      <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100 bg-card text-card-foreground">
+                        <div className="relative h-40">
+                          <img 
+                            src={list.coverImage} 
+                            alt={list.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                            <div className="p-4 text-white">
+                              <h3 className="font-bold text-lg">{list.title}</h3>
+                              <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
+                            </div>
+                          </div>
                         </div>
-                        
-                        {list.collaborators && (
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={list.owner.avatar} />
+                              <AvatarFallback>{list.owner.name.substring(0, 2)}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-foreground">
+                              Created by <span className="font-medium">{list.owner.name}</span>
+                            </span>
+                          </div>
+                          
+                          <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <span className="flex items-center">
+                              <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
+                              {list.stories} stories
+                            </span>
+                            <span className="flex items-center">
+                              <Clock className="h-4 w-4 mr-1 text-blue-500" />
+                              Updated {list.lastUpdated}
+                            </span>
+                          </div>
+                          
                           <div className="mt-3">
                             <p className="text-xs text-muted-foreground mb-1">Collaborators:</p>
                             <div className="flex -space-x-2">
@@ -403,223 +529,99 @@ const ReadingLists = () => {
                                   <AvatarFallback>{collaborator.name.substring(0, 2)}</AvatarFallback>
                                 </Avatar>
                               ))}
-                              <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs border-2 border-white">
-                                <Plus size={12} />
-                              </div>
                             </div>
                           </div>
-                        )}
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between">
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                            <Heart className="h-4 w-4" />
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-end">
+                          <Button variant="outline" size="sm" className="rounded-full">
+                            <ChevronRight className="h-4 w-4" />
+                            <span>View List</span>
                           </Button>
-                          {list.likes > 0 && <span className="text-sm text-muted-foreground">{list.likes}</span>}
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-[200px]">
-                            <DropdownMenuItem>
-                              <Edit2 className="mr-2 h-4 w-4" />
-                              <span>Edit List</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Share2 className="mr-2 h-4 w-4" />
-                              <span>Share List</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <UserPlus className="mr-2 h-4 w-4" />
-                              <span>Add Collaborators</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              <span>Delete List</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-              
-              {/* Add List Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-              >
-                <Card 
-                  className="h-full border-dashed border-2 border-blue-200 bg-blue-50/50 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center text-center cursor-pointer"
-                  onClick={() => setNewListOpen(true)}
-                >
-                  <CardContent className="p-6 flex flex-col items-center">
-                    <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                      <FolderPlus className="h-8 w-8 text-blue-600" />
+                        </CardFooter>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                ))}
+                
+                {sharedLists.length === 0 && (
+                  <div className="text-center py-12 col-span-full">
+                    <div className="mb-4 bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                      <Folder className="h-8 w-8 text-blue-500" />
                     </div>
-                    <h3 className="font-medium text-lg text-blue-700 mb-2">Create a New List</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Organize your favorite stories into custom collections
+                    <h3 className="text-lg font-medium mb-2 text-foreground">No shared lists yet</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                      When someone shares a reading list with you, it will appear here.
                     </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="shared" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sharedLists.map((list) => (
-                <motion.div
-                  key={list.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Link to={`/reading-list/${list.id}`} className="block h-full">
-                    <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100">
-                      <div className="relative h-40">
-                        <img 
-                          src={list.coverImage} 
-                          alt={list.title} 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                          <div className="p-4 text-white">
-                            <h3 className="font-bold text-lg">{list.title}</h3>
-                            <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={list.owner.avatar} />
-                            <AvatarFallback>{list.owner.name.substring(0, 2)}</AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">
-                            Created by <span className="font-medium">{list.owner.name}</span>
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-sm text-muted-foreground">
-                          <span className="flex items-center">
-                            <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
-                            {list.stories} stories
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 text-blue-500" />
-                            Updated {list.lastUpdated}
-                          </span>
-                        </div>
-                        
-                        <div className="mt-3">
-                          <p className="text-xs text-muted-foreground mb-1">Collaborators:</p>
-                          <div className="flex -space-x-2">
-                            {list.collaborators.map((collaborator) => (
-                              <Avatar key={collaborator.id} className="h-6 w-6 border-2 border-white">
-                                <AvatarImage src={collaborator.avatar} />
-                                <AvatarFallback>{collaborator.name.substring(0, 2)}</AvatarFallback>
-                              </Avatar>
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-end">
-                        <Button variant="outline" size="sm" className="rounded-full">
-                          <ChevronRight className="h-4 w-4" />
-                          <span>View List</span>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-            
-            {sharedLists.length === 0 && (
-              <div className="text-center py-12">
-                <div className="mb-4 bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
-                  <Folder className="h-8 w-8 text-blue-500" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">No shared lists yet</h3>
-                <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                  When someone shares a reading list with you, it will appear here.
-                </p>
+                  </div>
+                )}
               </div>
             )}
-          </TabsContent>
-          
-          <TabsContent value="featured" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredLists.map((list) => (
-                <motion.div
-                  key={list.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Link to={`/reading-list/${list.id}`} className="block h-full">
-                    <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100">
-                      <div className="relative h-40">
-                        <img 
-                          src={list.coverImage} 
-                          alt={list.title} 
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                          <div className="p-4 text-white">
-                            <Badge variant="outline" className="bg-blue-500/80 text-white border-transparent backdrop-blur-sm mb-2">
-                              Featured List
-                            </Badge>
-                            <h3 className="font-bold text-lg">{list.title}</h3>
-                            <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
+            
+            {activeTab === "featured" && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredLists.map((list) => (
+                  <motion.div
+                    key={list.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Link to={`/reading-list/${list.id}`} className="block h-full">
+                      <Card className="overflow-hidden h-full hover:shadow-md transition-shadow border-blue-100 bg-card text-card-foreground">
+                        <div className="relative h-40">
+                          <img 
+                            src={list.coverImage} 
+                            alt={list.title} 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                            <div className="p-4 text-white">
+                              <Badge variant="outline" className="bg-blue-500/80 text-white border-transparent backdrop-blur-sm mb-2">
+                                Featured List
+                              </Badge>
+                              <h3 className="font-bold text-lg">{list.title}</h3>
+                              <p className="text-sm text-white/80 line-clamp-1">{list.description}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <CardContent className="p-4">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={list.curator.avatar} />
-                            <AvatarFallback>{list.curator.name.substring(0, 2)}</AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">
-                            Curated by <span className="font-medium">{list.curator.name}</span>
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-sm text-muted-foreground">
-                          <span className="flex items-center">
-                            <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
-                            {list.stories} stories
-                          </span>
-                          <span className="flex items-center">
-                            <Heart className="h-4 w-4 mr-1 text-red-500" />
-                            {list.likes} likes
-                          </span>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between">
-                        <Button variant="ghost" size="sm" className="text-blue-600">
-                          <Star className="h-4 w-4 mr-1.5" />
-                          Save to My Lists
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-                          <Share2 className="h-4 w-4" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </TabsContent>
+                        <CardContent className="p-4">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={list.curator.avatar} />
+                              <AvatarFallback>{list.curator.name.substring(0, 2)}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-foreground">
+                              Curated by <span className="font-medium">{list.curator.name}</span>
+                            </span>
+                          </div>
+                          
+                          <div className="flex justify-between items-center text-sm text-muted-foreground">
+                            <span className="flex items-center">
+                              <BookMarked className="h-4 w-4 mr-1 text-blue-500" />
+                              {list.stories} stories
+                            </span>
+                            <span className="flex items-center">
+                              <Heart className="h-4 w-4 mr-1 text-red-500" />
+                              {list.likes} likes
+                            </span>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between">
+                          <Button variant="ghost" size="sm" className="text-blue-600">
+                            <Star className="h-4 w-4 mr-1.5" />
+                            Save to My Lists
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </main>
       

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, Bell, User, BookOpen, PenTool, BookMarked, Sparkles, Star, Clock, Compass, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
@@ -154,10 +153,10 @@ const Header = () => {
                 </svg>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 p-2 z-50 bg-white">
+            <DropdownMenuContent align="end" className="w-48 p-2 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
               {moreNavLinks.map((link) => (
                 <DropdownMenuItem key={link.name} asChild>
-                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer w-full">
+                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer w-full text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                     <link.icon size={16} />
                     <span>{link.name}</span>
                     {link.badge && (
@@ -234,7 +233,7 @@ const Header = () => {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 z-50 bg-white">
+            <DropdownMenuContent align="end" className="w-80 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
               <DropdownMenuLabel className="flex justify-between items-center">
                 <span>Notifications</span>
                 <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-blue-600 hover:text-blue-700">
@@ -243,7 +242,7 @@ const Header = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notificationItems.map((item, index) => (
-                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-blue-50 focus:bg-blue-50">
+                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 focus:bg-blue-50 dark:focus:bg-gray-700 text-gray-800 dark:text-gray-200">
                   <div className="flex w-full">
                     <div className="mr-3 mt-0.5">
                       {item.type === 'comment' && <MessageSquare size={16} className="text-blue-500" />}
@@ -276,7 +275,7 @@ const Header = () => {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 z-50 bg-white">
+            <DropdownMenuContent align="end" className="w-64 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
               <div className="p-2">
                 <div className="flex items-center gap-3 p-2">
                   <Avatar>
@@ -284,17 +283,17 @@ const Header = () => {
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium">Jane Doe</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Jane Doe</p>
                     <p className="text-xs text-muted-foreground">@janedoe</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-1 mt-2">
                   <div className="p-2 rounded-lg bg-primary/5 text-center">
-                    <p className="text-sm font-medium">12</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">12</p>
                     <p className="text-xs text-muted-foreground">Stories</p>
                   </div>
                   <div className="p-2 rounded-lg bg-primary/5 text-center">
-                    <p className="text-sm font-medium">1.2k</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">1.2k</p>
                     <p className="text-xs text-muted-foreground">Followers</p>
                   </div>
                 </div>
@@ -304,7 +303,7 @@ const Header = () => {
                 <p className="text-xs font-medium text-muted-foreground px-2 py-1.5">Quick Links</p>
                 {quickLinks.map((link, i) => (
                   <DropdownMenuItem key={i} asChild>
-                    <Link to={link.path} className="cursor-pointer">
+                    <Link to={link.path} className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                       <div className="flex items-start gap-2">
                         <link.icon size={16} className="mt-0.5 text-primary" />
                         <div>
@@ -318,25 +317,25 @@ const Header = () => {
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer">
+                <Link to="/profile" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <User size={16} className="mr-2" />
                   Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/dashboard" className="cursor-pointer">
+                <Link to="/dashboard" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <FileText size={16} className="mr-2" />
                   My Dashboard
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer">
+                <Link to="/settings" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <Settings size={16} className="mr-2" />
                   Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer">
+              <DropdownMenuItem className="text-red-600 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                 <LogOut size={16} className="mr-2" />
                 Sign Out
               </DropdownMenuItem>
@@ -376,7 +375,7 @@ const Header = () => {
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Jane Doe</p>
+                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Jane Doe</p>
                   <p className="text-xs text-muted-foreground">@janedoe</p>
                 </div>
                 <Link to="/profile">
@@ -446,7 +445,6 @@ const Header = () => {
 
 export default Header;
 
-// Missing icons for specific types
 const Sun = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
     <circle cx="12" cy="12" r="4"></circle>
@@ -476,8 +474,8 @@ const Settings = (props) => (
 
 const Trophy = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+    <path d="M6 9H4.5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <path d="M18 9h1.5a2 2 0 0 0 0-5H18"></path>
     <path d="M4 22h16"></path>
     <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
     <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>

@@ -41,3 +41,30 @@
 .read-the-docs {
   color: #9b87f5;
 }
+
+/* Added improved contrast styles */
+.dropdown-menu {
+  background-color: white;
+  color: #1A1F2C;
+  border: 1px solid #E5DEFF;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.dropdown-item {
+  color: #1A1F2C;
+}
+
+.dropdown-item:hover {
+  background-color: #F1F0FB;
+}
+
+/* Improved text contrast */
+.text-improved-contrast {
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.bg-improved-contrast {
+  background-color: rgba(0, 0, 0, 0.7);
+}

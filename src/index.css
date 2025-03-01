@@ -130,4 +130,13 @@
   .purple-button-glow {
     box-shadow: 0 0 15px rgba(155, 135, 245, 0.4);
   }
+
+  /* Added dropdown specific styles for better contrast */
+  .dropdown-menu {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-lg;
+  }
+  
+  .dropdown-item {
+    @apply text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
+  }
 }
