@@ -52,6 +52,9 @@ import VideoUploader from "@/components/VideoUploader";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// Import AI Writing Assistant component
+import { AIWritingAssistant } from "@/components/AIWritingAssistant";
+
 // Import icons
 import { 
   Award, 
@@ -88,7 +91,8 @@ import {
   Facebook as FacebookIcon,
   Instagram as InstagramIcon,
   Users as UsersIcon,
-  LogOut
+  LogOut,
+  ArrowRight
 } from "lucide-react";
 
 interface Challenge {
