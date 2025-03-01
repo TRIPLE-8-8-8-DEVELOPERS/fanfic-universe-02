@@ -50,7 +50,6 @@ const Header = () => {
 
   const handleThemeChange = (value: string) => {
     setTheme(value as 'light' | 'dark' | 'system');
-    // Here you would integrate with a theme system
     document.documentElement.classList.toggle('dark', value === 'dark');
   };
 
@@ -82,16 +81,13 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page with query parameter using react-router navigate
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
       setSearchOpen(false);
     }
   };
 
   const handleNavLinkClick = (path: string) => {
-    // Close any open menus
     setMobileMenuOpen(false);
-    // Navigate to the selected path
     navigate(path);
   };
 
@@ -99,12 +95,11 @@ const Header = () => {
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm py-3' 
-          : 'bg-transparent py-5'
+          ? 'bg-white/90 dark:bg-black/90 backdrop-blur-md shadow-sm py-3' 
+          : 'bg-background py-5'
       }`}
     >
       <div className="container flex items-center justify-between">
-        {/* Logo */}
         <Link 
           to="/" 
           className="font-serif text-2xl font-bold text-primary transition-all hover:opacity-80 relative group"
@@ -120,7 +115,6 @@ const Header = () => {
           />
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-2">
           {primaryNavLinks.map((link) => (
             <Link
@@ -153,10 +147,10 @@ const Header = () => {
                 </svg>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 p-2 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
+            <DropdownMenuContent align="end" className="w-56 p-2 z-[100] dropdown-menu">
               {moreNavLinks.map((link) => (
                 <DropdownMenuItem key={link.name} asChild>
-                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer w-full text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <Link to={link.path} className="flex items-center gap-2 cursor-pointer w-full dropdown-item">
                     <link.icon size={16} />
                     <span>{link.name}</span>
                     {link.badge && (
@@ -171,7 +165,6 @@ const Header = () => {
           </DropdownMenu>
         </nav>
 
-        {/* Search Bar - Expandable */}
         <AnimatePresence>
           {searchOpen && (
             <motion.form 
@@ -201,13 +194,11 @@ const Header = () => {
           )}
         </AnimatePresence>
 
-        {/* Actions */}
         <div className="hidden md:flex items-center gap-1">
           <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setSearchOpen(true)}>
             <Search size={18} />
           </Button>
 
-          {/* Theme Toggle */}
           <div className="border rounded-full p-1 mx-1">
             <Tabs defaultValue={theme} onValueChange={handleThemeChange}>
               <TabsList className="h-7 p-0.5 bg-transparent">
@@ -220,8 +211,7 @@ const Header = () => {
               </TabsList>
             </Tabs>
           </div>
-          
-          {/* Notifications Dropdown */}
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full relative">
@@ -233,7 +223,7 @@ const Header = () => {
                 )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
+            <DropdownMenuContent align="end" className="w-80 z-[100] dropdown-menu">
               <DropdownMenuLabel className="flex justify-between items-center">
                 <span>Notifications</span>
                 <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-blue-600 hover:text-blue-700">
@@ -265,7 +255,6 @@ const Header = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 p-0">
@@ -275,7 +264,7 @@ const Header = () => {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 z-50 bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700">
+            <DropdownMenuContent align="end" className="w-64 z-[100] dropdown-menu">
               <div className="p-2">
                 <div className="flex items-center gap-3 p-2">
                   <Avatar>
@@ -349,7 +338,6 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
         <Button 
           variant="ghost" 
           size="icon" 
@@ -359,11 +347,10 @@ const Header = () => {
           {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
         </Button>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
-              className="absolute top-full left-0 right-0 bg-white dark:bg-black shadow-lg p-4 md:hidden z-40"
+              className="absolute top-full left-0 right-0 bg-white dark:bg-black shadow-lg p-4 md:hidden z-[90]"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

@@ -28,6 +28,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import WatchStreams from "./pages/WatchStreams";
 
 import "./App.css";
 
@@ -64,6 +65,7 @@ function App() {
         <Route path="/authors" element={<Authors />} />
         <Route path="/fandoms" element={<Fandoms />} />
         <Route path="/reading-clubs" element={<ReadingClubs />} />
+        <Route path="/watch-streams" element={<WatchStreams />} />
         <Route path="/forums" element={<Forums />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/about" element={<AboutUs />} />

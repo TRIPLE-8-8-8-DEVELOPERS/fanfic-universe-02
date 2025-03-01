@@ -49,6 +49,8 @@
   border: 1px solid #E5DEFF;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  z-index: 100 !important;
+  position: relative;
 }
 
 .dropdown-item {
