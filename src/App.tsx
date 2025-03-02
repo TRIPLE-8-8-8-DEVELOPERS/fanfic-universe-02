@@ -29,6 +29,8 @@ import NotFound from "./pages/NotFound";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import WatchStreams from "./pages/WatchStreams";
+import Challenges from "./pages/Challenges";
+import Marketplace from "./pages/Marketplace";
 
 import "./App.css";
 
@@ -75,6 +77,8 @@ function App() {
         <Route path="/updates" element={<Updates />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/challenges" element={<Challenges />} />
+        <Route path="/marketplace" element={<Marketplace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
