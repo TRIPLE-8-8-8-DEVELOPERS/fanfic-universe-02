@@ -46,7 +46,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
               <h2 className="font-serif text-2xl font-bold">
-                FanFic<span className="text-gradient">Universe</span>
+                FAN<span className="text-gradient">VERSE</span>
               </h2>
             </Link>
             <p className="text-muted-foreground mb-6 max-w-md">
@@ -85,7 +85,7 @@ const Footer = () => {
 
         <div className="border-t border-border mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} FanFic Universe. All rights reserved.
+            © {currentYear} FANVERSE. All rights reserved.
           </p>
           <p className="text-muted-foreground text-sm flex items-center">
             Made with <Heart className="h-3.5 w-3.5 text-red-400 mx-1" /> for
