@@ -23,23 +23,24 @@ const Footer = () => {
         { label: "Forums", href: "/forums" },
         { label: "Writing Contests", href: "/contests" },
         { label: "Reading Clubs", href: "/reading-clubs" },
+        { label: "Watch Streams", href: "/watch-streams" },
         { label: "Support", href: "/support" },
       ],
     },
     {
       title: "Company",
       links: [
-        { label: "About Us", href: "/about-us" },
+        { label: "About Us", href: "/about" },
         { label: "Blog", href: "/blog" },
-        { label: "Terms of Service", href: "/terms-of-service" },
-        { label: "Privacy Policy", href: "/privacy-policy" },
+        { label: "Terms of Service", href: "/terms" },
+        { label: "Privacy Policy", href: "/privacy" },
       ],
     },
   ];
 
   return (
-    <footer className="bg-secondary py-16">
-      <div className="container">
+    <footer className="bg-secondary py-16 w-full">
+      <div className="container content-container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Logo and Newsletter */}
           <div className="lg:col-span-2">

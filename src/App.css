@@ -1,14 +1,14 @@
-
 #root {
-  max-width: 1280px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
 }
 
 @media (max-width: 768px) {
   #root {
-    padding: 1rem;
+    padding: 0;
   }
 }
 
@@ -81,9 +81,12 @@
 header.sticky {
   z-index: 50;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
 }
 
 main {
+  width: 100%;
+  max-width: 100%;
   padding-top: 80px; /* Adjust based on your header height */
 }
 
@@ -176,4 +179,30 @@ p, h1, h2, h3, h4, h5, h6, span, div {
 .dark .glass-card {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Full-width container */
+.container {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.content-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Add padding to main content but keep header/footer full width */
+.page-content {
+  width: 100%;
 }

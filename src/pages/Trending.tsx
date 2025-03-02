@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -143,36 +142,37 @@ const Trending = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full">
       <Header />
       
-      <main className="flex-grow container py-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2 font-serif flex items-center gap-2">
-              <TrendingUp className="h-8 w-8 text-primary" /> 
-              Trending Stories
-            </h1>
-            <p className="text-muted-foreground">
-              Discover what's hot and happening in the fan fiction community right now
-            </p>
-          </div>
-          
-          <div className="w-full md:w-auto flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search trending stories..."
-                className="pl-9 rounded-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+      <main className="flex-grow w-full">
+        <div className="container content-container py-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-serif flex items-center gap-2">
+                <TrendingUp className="h-8 w-8 text-primary" /> 
+                Trending Stories
+              </h1>
+              <p className="text-muted-foreground">
+                Discover what's hot and happening in the fan fiction community right now
+              </p>
             </div>
-            <Button className="rounded-full">
-              <Filter className="h-4 w-4 mr-2" /> Filters
-            </Button>
+            
+            <div className="w-full md:w-auto flex gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search trending stories..."
+                  className="pl-9 rounded-full"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <Button className="rounded-full">
+                <Filter className="h-4 w-4 mr-2" /> Filters
+              </Button>
+            </div>
           </div>
-        </div>
 
         {/* Time period selection */}
         <div className="mb-8">
@@ -331,40 +331,41 @@ const Trending = () => {
           </Button>
         </div>
 
-        {/* Stats Cards - Dashboard Element */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="dashboard-card">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium">Total Reads</h3>
-                <Badge variant="outline" className="rounded-full">This Week</Badge>
-              </div>
-              <p className="dashboard-stat">457,892</p>
-              <p className="dashboard-stat-label">+12.5% from last week</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="dashboard-card">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium">New Stories</h3>
-                <Badge variant="outline" className="rounded-full">This Week</Badge>
-              </div>
-              <p className="dashboard-stat">1,245</p>
-              <p className="dashboard-stat-label">+8.3% from last week</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="dashboard-card">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium">Active Users</h3>
-                <Badge variant="outline" className="rounded-full">Now</Badge>
-              </div>
-              <p className="dashboard-stat">12,678</p>
-              <p className="dashboard-stat-label">+15.2% from yesterday</p>
-            </CardContent>
-          </Card>
+          {/* Stats Cards - Dashboard Element */}
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">Total Reads</h3>
+                  <Badge variant="outline" className="rounded-full">This Week</Badge>
+                </div>
+                <p className="dashboard-stat">457,892</p>
+                <p className="dashboard-stat-label">+12.5% from last week</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">New Stories</h3>
+                  <Badge variant="outline" className="rounded-full">This Week</Badge>
+                </div>
+                <p className="dashboard-stat">1,245</p>
+                <p className="dashboard-stat-label">+8.3% from last week</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">Active Users</h3>
+                  <Badge variant="outline" className="rounded-full">Now</Badge>
+                </div>
+                <p className="dashboard-stat">12,678</p>
+                <p className="dashboard-stat-label">+15.2% from yesterday</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
       
