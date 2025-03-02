@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 
 @tailwind base;
@@ -142,11 +143,11 @@
   }
 
   .dropdown-menu {
-    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg rounded-lg;
+    @apply bg-card text-card-foreground border border-border shadow-lg rounded-lg;
   }
   
   .dropdown-item {
-    @apply text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply text-card-foreground hover:bg-muted;
   }
   
   .full-width {
@@ -161,5 +162,59 @@
   .content-width {
     max-width: 1280px;
     margin: 0 auto;
+  }
+  
+  /* Font size utilities for story reading */
+  .text-size-sm {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .text-size-base {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+  
+  .text-size-lg {
+    font-size: 1.25rem;
+    line-height: 1.8;
+  }
+  
+  /* Reading container styles */
+  .reading-container {
+    max-width: 70ch;
+    margin: 0 auto;
+  }
+  
+  /* Story card hover effect */
+  .story-card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .story-card-hover:hover {
+    @apply transform -translate-y-1 shadow-lg border-primary/50;
+  }
+  
+  /* Author profile hover effect */
+  .author-avatar {
+    @apply transition-all duration-300 border-2 border-primary/20;
+  }
+  
+  .author-avatar:hover {
+    @apply border-primary;
+  }
+  
+  /* Enhanced reading progress bar */
+  .reading-progress {
+    @apply h-1.5 bg-muted;
+  }
+  
+  .reading-progress-value {
+    @apply h-full bg-gradient-to-r from-primary to-purple-400;
+  }
+  
+  /* Audio player styling */
+  .audio-player {
+    @apply p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-between;
   }
 }
