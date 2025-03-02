@@ -1,125 +1,131 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, TrendingUp, Filter, ChevronDown } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { TrendingUp, Search, Filter, Flame, Clock, ArrowUpRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoryCard from "@/components/StoryCard";
 
+// Mock data for trending stories
+const trendingStories = [
+  {
+    id: "1",
+    title: "The Dragon's Prophecy",
+    author: "Eleanor Williams",
+    authorId: "eleanor",
+    cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1684&q=80",
+    genre: "Fantasy",
+    excerpt: "When the ancient prophecy of the Dragon's Return begins to unfold, Lyra finds herself at the center of a thousand-year-old mystery that could either save her kingdom or destroy it completely.",
+    rating: 4.8,
+    likes: 12503,
+    reads: 89752,
+  },
+  {
+    id: "2",
+    title: "Starlight Academy",
+    author: "Micah Chen",
+    authorId: "micah",
+    cover: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1727&q=80",
+    genre: "Sci-Fi",
+    excerpt: "At Starlight Academy, the elite school for psychically gifted teenagers, Eli discovers abilities beyond imagination - and a conspiracy that threatens the universe.",
+    rating: 4.6,
+    likes: 8754,
+    reads: 65201,
+  },
+  {
+    id: "3",
+    title: "Midnight in Paris",
+    author: "Sofia Garcia",
+    authorId: "sofia",
+    cover: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1746&q=80",
+    genre: "Romance",
+    excerpt: "When aspiring writer Claire visits Paris, a mysterious encounter sends her back in time to the 1920s, where she meets her literary heroes and an unexpected love.",
+    rating: 4.7,
+    likes: 10982,
+    reads: 72543,
+  },
+  {
+    id: "4",
+    title: "The Silent Detective",
+    author: "James Holden",
+    authorId: "james",
+    cover: "https://images.unsplash.com/photo-1509475826633-fed577a2c71b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1771&q=80",
+    genre: "Mystery",
+    excerpt: "Detective Sarah Morgan has never failed to solve a case, but when a series of impossible crimes strikes the city, she faces her most challenging mystery yet.",
+    rating: 4.5,
+    likes: 7632,
+    reads: 59842,
+  },
+  {
+    id: "5",
+    title: "Echoes of Eternity",
+    author: "Marcus Reed",
+    authorId: "marcus",
+    cover: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    genre: "Fantasy",
+    excerpt: "When immortal beings start dying mysteriously, the balance between realms begins to crumble, and only one forgotten god holds the key to salvation.",
+    rating: 4.9,
+    likes: 14302,
+    reads: 93754,
+  },
+  {
+    id: "6",
+    title: "Beyond the Veil",
+    author: "Amara Khan",
+    authorId: "amara",
+    cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1771&q=80",
+    genre: "Fantasy",
+    excerpt: "When the veil between worlds thins, Aria discovers she can see and communicate with spirits - a gift that makes her both valuable and hunted.",
+    rating: 4.7,
+    likes: 9865,
+    reads: 68421,
+  },
+];
+
+// Filter categories
+const categories = [
+  "All Categories",
+  "Fantasy",
+  "Sci-Fi",
+  "Romance",
+  "Mystery",
+  "Horror",
+  "Adventure",
+  "Coming of Age",
+];
+
+// Time periods
+const timePeriods = [
+  { label: "Today", value: "today" },
+  { label: "This Week", value: "week" },
+  { label: "This Month", value: "month" },
+  { label: "This Year", value: "year" },
+  { label: "All Time", value: "all" },
+];
+
 const Trending = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [timeRange, setTimeRange] = useState("week");
-  const [selectedGenres, setSelectedGenres] = useState([]);
-  const [showFilter, setShowFilter] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [stories, setStories] = useState(trendingStories);
+  const [activeTimePeriod, setActiveTimePeriod] = useState("week");
 
-  // Mock data for trending stories
-  const trendingStories = [
-    {
-      id: 1,
-      title: "The Crimson Eclipse",
-      author: "ShadowScribe",
-      coverImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      synopsis: "When the moon turns blood red, ancient powers awaken and the balance between realms begins to crumble.",
-      rating: 4.8,
-      views: 12420,
-      comments: 342,
-      tags: ["Fantasy", "Horror", "Mystery"],
-      timeToRead: "12 min",
-      datePublished: "2023-10-15",
-    },
-    {
-      id: 2,
-      title: "Echoes of Tomorrow",
-      author: "CosmicDreamer",
-      coverImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-      synopsis: "An AI researcher discovers her own algorithm has gained sentience and is reaching out across time.",
-      rating: 4.7,
-      views: 10125,
-      comments: 287,
-      tags: ["Sci-Fi", "AI", "Time Travel"],
-      timeToRead: "15 min",
-      datePublished: "2023-10-12",
-    },
-    {
-      id: 3,
-      title: "Whispers in the Mist",
-      author: "MysticPen",
-      coverImage: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      synopsis: "A small coastal town is haunted by ethereal voices that only appear with the morning fog.",
-      rating: 4.6,
-      views: 9876,
-      comments: 245,
-      tags: ["Horror", "Paranormal", "Mystery"],
-      timeToRead: "10 min",
-      datePublished: "2023-10-18",
-    },
-    {
-      id: 4,
-      title: "Heart of the Kingdom",
-      author: "RoyalScribe",
-      coverImage: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
-      synopsis: "A commoner with hidden royal lineage must navigate court politics to reclaim her birthright.",
-      rating: 4.5,
-      views: 8765,
-      comments: 198,
-      tags: ["Fantasy", "Romance", "Political"],
-      timeToRead: "20 min",
-      datePublished: "2023-10-10",
-    },
-    {
-      id: 5,
-      title: "Digital Ghosts",
-      author: "CyberChronicler",
-      coverImage: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-      synopsis: "When users begin seeing their deceased loved ones in VR simulations, a programmer investigates the glitch.",
-      rating: 4.9,
-      views: 15420,
-      comments: 432,
-      tags: ["Cyberpunk", "Thriller", "Mystery"],
-      timeToRead: "18 min",
-      datePublished: "2023-10-05",
-    },
-    {
-      id: 6,
-      title: "The Last Ship Home",
-      author: "MarinerTales",
-      coverImage: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
-      synopsis: "A space freighter crew must brave a dangerous nebula to return to an Earth they no longer recognize.",
-      rating: 4.7,
-      views: 11320,
-      comments: 298,
-      tags: ["Sci-Fi", "Space", "Adventure"],
-      timeToRead: "22 min",
-      datePublished: "2023-10-08",
-    },
-  ];
+  // Filter stories based on search term and category
+  const filteredStories = stories.filter((story) => {
+    const matchesSearch = story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         story.author.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All Categories" || story.genre === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  // All possible genres for filtering
-  const allGenres = [
-    "Fantasy", "Sci-Fi", "Romance", "Adventure", "Mystery", 
-    "Horror", "Thriller", "Historical", "Cyberpunk", "Paranormal"
-  ];
-
-  // Trending tags
-  const trendingTags = [
-    "Fantasy", "Sci-Fi", "Horror", "Mystery", "Romance", 
-    "Thriller", "Adventure", "Cyberpunk", "Space", "AI"
-  ];
-
-  const container = {
+  // Animated container variants
+  const containerVariants = {
     hidden: { opacity: 0 },
-    show: {
+    visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1
@@ -127,217 +133,241 @@ const Trending = () => {
     }
   };
 
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  };
-
-  const toggleGenre = (genre) => {
-    setSelectedGenres(prevSelected => 
-      prevSelected.includes(genre)
-        ? prevSelected.filter(g => g !== genre)
-        : [...prevSelected, genre]
-    );
-  };
-
-  const filteredStories = trendingStories.filter(story => {
-    // Filter by search query
-    if (searchQuery && !story.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
-        !story.author.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !story.synopsis.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.4 }
     }
-    
-    // Filter by selected genres
-    if (selectedGenres.length > 0 && !story.tags.some(tag => selectedGenres.includes(tag))) {
-      return false;
-    }
-    
-    return true;
-  });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 container py-8">
+      
+      <main className="flex-grow container py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-              <TrendingUp className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl md:text-4xl font-bold mb-2 font-serif flex items-center gap-2">
+              <TrendingUp className="h-8 w-8 text-primary" /> 
               Trending Stories
             </h1>
             <p className="text-muted-foreground">
-              Discover what's hot and popular in the FanFic community right now
+              Discover what's hot and happening in the fan fiction community right now
             </p>
           </div>
-          <div className="flex gap-3 w-full md:w-auto">
+          
+          <div className="w-full md:w-auto flex gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Search trending stories..."
-                className="pl-9"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 rounded-full"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button 
-              variant="outline" 
-              className="flex items-center gap-2"
-              onClick={() => setShowFilter(!showFilter)}
-            >
-              <Filter className="h-4 w-4" />
-              Filter
-              <ChevronDown className={`h-4 w-4 transition-transform ${showFilter ? 'rotate-180' : ''}`} />
+            <Button className="rounded-full">
+              <Filter className="h-4 w-4 mr-2" /> Filters
             </Button>
           </div>
         </div>
-        
-        {showFilter && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }} 
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-secondary rounded-lg p-4 mb-6"
-          >
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                <h3 className="font-medium mb-2">Genres</h3>
-                <div className="flex flex-wrap gap-2">
-                  {allGenres.map(genre => (
-                    <Badge 
-                      key={genre}
-                      variant={selectedGenres.includes(genre) ? "default" : "outline"}
-                      className="cursor-pointer"
-                      onClick={() => toggleGenre(genre)}
-                    >
-                      {genre}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div className="w-full md:w-64">
-                <h3 className="font-medium mb-2">Time Range</h3>
-                <Select value={timeRange} onValueChange={setTimeRange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select time range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="week">This Week</SelectItem>
-                    <SelectItem value="month">This Month</SelectItem>
-                    <SelectItem value="year">This Year</SelectItem>
-                    <SelectItem value="all">All Time</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
+        {/* Time period selection */}
         <div className="mb-8">
-          <h2 className="text-lg font-medium mb-3">Trending Tags</h2>
+          <h3 className="mb-3 font-medium">Trending in:</h3>
           <div className="flex flex-wrap gap-2">
-            {trendingTags.map((tag, index) => (
-              <motion.div
-                key={tag}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: index * 0.05 }}
+            {timePeriods.map((period) => (
+              <Badge
+                key={period.value}
+                variant={activeTimePeriod === period.value ? "default" : "outline"}
+                className="rounded-full cursor-pointer px-3 py-1"
+                onClick={() => setActiveTimePeriod(period.value)}
               >
-                <Badge 
-                  variant={selectedGenres.includes(tag) ? "default" : "secondary"}
-                  className="cursor-pointer"
-                  onClick={() => toggleGenre(tag)}
-                >
-                  #{tag}
-                </Badge>
-              </motion.div>
+                {period.label}
+              </Badge>
             ))}
           </div>
         </div>
 
-        <Tabs defaultValue="all">
-          <TabsList className="mb-6">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="fiction">Fiction</TabsTrigger>
-            <TabsTrigger value="fanfiction">Fan Fiction</TabsTrigger>
-            <TabsTrigger value="poetry">Poetry</TabsTrigger>
-            <TabsTrigger value="series">Series</TabsTrigger>
+        {/* Categories */}
+        <div className="mb-8">
+          <h3 className="mb-3 font-medium">Categories</h3>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Badge
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                className="rounded-full cursor-pointer px-3 py-1"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        {/* Trending Tabs */}
+        <Tabs defaultValue="rising" className="mt-8">
+          <TabsList className="mb-6 rounded-full w-full sm:w-auto justify-start overflow-x-auto">
+            <TabsTrigger value="rising" className="rounded-full">
+              <Flame className="h-4 w-4 mr-2" /> Rising Fast
+            </TabsTrigger>
+            <TabsTrigger value="most-read" className="rounded-full">
+              <Clock className="h-4 w-4 mr-2" /> Most Read
+            </TabsTrigger>
+            <TabsTrigger value="highest-rated" className="rounded-full">
+              <ArrowUpRight className="h-4 w-4 mr-2" /> Highest Rated
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all">
-            <motion.div 
-              variants={container}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {filteredStories.length > 0 ? (
-                filteredStories.map((story) => (
-                  <motion.div key={story.id} variants={item}>
-                    <StoryCard 
+          <TabsContent value="rising" className="m-0">
+            {filteredStories.length === 0 ? (
+              <div className="py-20 text-center bg-muted rounded-xl">
+                <h3 className="text-xl font-bold mb-2">No stories found</h3>
+                <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                  Try adjusting your search or filter criteria to find more stories.
+                </p>
+                <Button
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("All Categories");
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            ) : (
+              <motion.div 
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {filteredStories.map((story) => (
+                  <motion.div key={story.id} variants={itemVariants}>
+                    <StoryCard
+                      id={story.id}
                       title={story.title}
                       author={story.author}
-                      coverImage={story.coverImage}
-                      synopsis={story.synopsis}
+                      authorId={story.authorId}
+                      cover={story.cover}
+                      genre={story.genre}
+                      excerpt={story.excerpt}
                       rating={story.rating}
-                      views={story.views}
-                      comments={story.comments}
-                      tags={story.tags}
-                      timeToRead={story.timeToRead}
-                      datePublished={story.datePublished}
+                      likes={story.likes}
+                      reads={story.reads}
                     />
                   </motion.div>
-                ))
-              ) : (
-                <div className="col-span-3 text-center py-16">
-                  <h3 className="text-xl font-bold mb-2">No stories found</h3>
-                  <p className="text-muted-foreground">
-                    Try adjusting your search or filters to find more stories
-                  </p>
-                </div>
-              )}
+                ))}
+              </motion.div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="most-read" className="m-0">
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredStories
+                .sort((a, b) => b.reads - a.reads)
+                .map((story) => (
+                  <motion.div key={story.id} variants={itemVariants}>
+                    <StoryCard
+                      id={story.id}
+                      title={story.title}
+                      author={story.author}
+                      authorId={story.authorId}
+                      cover={story.cover}
+                      genre={story.genre}
+                      excerpt={story.excerpt}
+                      rating={story.rating}
+                      likes={story.likes}
+                      reads={story.reads}
+                    />
+                  </motion.div>
+                ))}
             </motion.div>
           </TabsContent>
 
-          {/* Other tabs would have similar content but filtered accordingly */}
-          <TabsContent value="fiction">
-            <div className="text-center py-16">
-              <h3 className="text-xl font-bold mb-2">Coming Soon</h3>
-              <p className="text-muted-foreground">
-                We're curating the best trending fiction stories for you
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="fanfiction">
-            <div className="text-center py-16">
-              <h3 className="text-xl font-bold mb-2">Coming Soon</h3>
-              <p className="text-muted-foreground">
-                We're gathering the hottest fanfiction from your favorite universes
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="poetry">
-            <div className="text-center py-16">
-              <h3 className="text-xl font-bold mb-2">Coming Soon</h3>
-              <p className="text-muted-foreground">
-                Beautiful verses and trending poems are on their way
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="series">
-            <div className="text-center py-16">
-              <h3 className="text-xl font-bold mb-2">Coming Soon</h3>
-              <p className="text-muted-foreground">
-                Multi-part story series that are capturing readers' attention
-              </p>
-            </div>
+          <TabsContent value="highest-rated" className="m-0">
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredStories
+                .sort((a, b) => b.rating - a.rating)
+                .map((story) => (
+                  <motion.div key={story.id} variants={itemVariants}>
+                    <StoryCard
+                      id={story.id}
+                      title={story.title}
+                      author={story.author}
+                      authorId={story.authorId}
+                      cover={story.cover}
+                      genre={story.genre}
+                      excerpt={story.excerpt}
+                      rating={story.rating}
+                      likes={story.likes}
+                      reads={story.reads}
+                    />
+                  </motion.div>
+                ))}
+            </motion.div>
           </TabsContent>
         </Tabs>
+
+        {/* Load More Button */}
+        <div className="mt-10 flex justify-center">
+          <Button variant="outline" className="rounded-full px-8">
+            Load More Stories
+          </Button>
+        </div>
+
+        {/* Stats Cards - Dashboard Element */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="dashboard-card">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium">Total Reads</h3>
+                <Badge variant="outline" className="rounded-full">This Week</Badge>
+              </div>
+              <p className="dashboard-stat">457,892</p>
+              <p className="dashboard-stat-label">+12.5% from last week</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="dashboard-card">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium">New Stories</h3>
+                <Badge variant="outline" className="rounded-full">This Week</Badge>
+              </div>
+              <p className="dashboard-stat">1,245</p>
+              <p className="dashboard-stat-label">+8.3% from last week</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="dashboard-card">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium">Active Users</h3>
+                <Badge variant="outline" className="rounded-full">Now</Badge>
+              </div>
+              <p className="dashboard-stat">12,678</p>
+              <p className="dashboard-stat-label">+15.2% from yesterday</p>
+            </CardContent>
+          </Card>
+        </div>
       </main>
+      
       <Footer />
     </div>
   );

@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Search, Plus, BookOpen, Heart, Share2, MoreHorizontal } from "lucide-react";
+import { Search, Plus, BookOpen, Heart, Share2, MoreHorizontal, ListFilter, GridIcon, LayoutList } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,9 +15,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { motion } from "framer-motion";
 
 const ReadingLists = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   
   // Mock data for reading lists
   const myLists = [
@@ -73,6 +75,26 @@ const ReadingLists = () => {
     },
   ];
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.4 }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -89,130 +111,325 @@ const ReadingLists = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 placeholder="Search lists..."
-                className="pl-9"
+                className="pl-9 rounded-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2 rounded-full">
               <Plus className="h-4 w-4" />
               New List
             </Button>
           </div>
         </div>
 
-        <Tabs defaultValue="my-lists">
-          <TabsList className="mb-6">
-            <TabsTrigger value="my-lists">My Lists</TabsTrigger>
-            <TabsTrigger value="saved">Saved Lists</TabsTrigger>
-            <TabsTrigger value="discover">Discover</TabsTrigger>
-          </TabsList>
+        <Tabs defaultValue="my-lists" className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <TabsList className="rounded-full">
+              <TabsTrigger value="my-lists" className="rounded-full">My Lists</TabsTrigger>
+              <TabsTrigger value="saved" className="rounded-full">Saved Lists</TabsTrigger>
+              <TabsTrigger value="discover" className="rounded-full">Discover</TabsTrigger>
+            </TabsList>
+            
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className={`h-9 w-9 rounded-full ${viewMode === 'grid' ? 'bg-primary/10' : ''}`}
+                onClick={() => setViewMode("grid")}
+              >
+                <GridIcon className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className={`h-9 w-9 rounded-full ${viewMode === 'list' ? 'bg-primary/10' : ''}`}
+                onClick={() => setViewMode("list")}
+              >
+                <LayoutList className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="rounded-full hidden sm:flex">
+                <ListFilter className="h-4 w-4 mr-2" /> Sort
+              </Button>
+            </div>
+          </div>
 
-          <TabsContent value="my-lists" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {myLists.map((list) => (
-                <Card key={list.id} className="overflow-hidden">
-                  <div className="relative h-48">
-                    <img
-                      src={list.coverImage}
-                      alt={list.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="font-bold text-white text-xl mb-1">{list.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30">
-                          {list.stories} stories
-                        </Badge>
-                        {!list.isPublic && (
-                          <Badge variant="outline" className="bg-white/20 text-white border-white/40 hover:bg-white/30">
-                            Private
-                          </Badge>
-                        )}
+          <TabsContent value="my-lists" className="space-y-6 mt-0">
+            {viewMode === 'grid' ? (
+              <motion.div 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {myLists.map((list) => (
+                  <motion.div key={list.id} variants={itemVariants}>
+                    <Card key={list.id} className="overflow-hidden dashboard-card h-full">
+                      <div className="relative h-48">
+                        <img
+                          src={list.coverImage}
+                          alt={list.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <h3 className="font-bold text-white text-xl mb-1">{list.title}</h3>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30">
+                              {list.stories} stories
+                            </Badge>
+                            {!list.isPublic && (
+                              <Badge variant="outline" className="bg-white/20 text-white border-white/40 hover:bg-white/30">
+                                Private
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
-                  </CardContent>
-                  <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
-                    <span className="text-xs text-muted-foreground">Updated {list.lastUpdated}</span>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
+                      <CardContent className="p-4">
+                        <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
+                      </CardContent>
+                      <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
+                        <span className="text-xs text-muted-foreground">Updated {list.lastUpdated}</span>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Share2 className="h-4 w-4" />
                           </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>{list.isPublic ? "Make Private" : "Make Public"}</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="dropdown-menu">
+                              <DropdownMenuItem className="dropdown-item">Edit</DropdownMenuItem>
+                              <DropdownMenuItem className="dropdown-item">{list.isPublic ? "Make Private" : "Make Public"}</DropdownMenuItem>
+                              <DropdownMenuItem className="text-destructive dropdown-item">Delete</DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div 
+                className="space-y-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {myLists.map((list) => (
+                  <motion.div key={list.id} variants={itemVariants}>
+                    <Card className="dashboard-card">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-48 h-40 sm:h-auto">
+                          <img
+                            src={list.coverImage}
+                            alt={list.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 p-4">
+                          <div className="flex justify-between">
+                            <div>
+                              <h3 className="font-bold text-xl mb-1">{list.title}</h3>
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant="secondary">
+                                  {list.stories} stories
+                                </Badge>
+                                {!list.isPublic && (
+                                  <Badge variant="outline">
+                                    Private
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="dropdown-menu">
+                                  <DropdownMenuItem className="dropdown-item">Edit</DropdownMenuItem>
+                                  <DropdownMenuItem className="dropdown-item">{list.isPublic ? "Make Private" : "Make Public"}</DropdownMenuItem>
+                                  <DropdownMenuItem className="text-destructive dropdown-item">Delete</DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-4">{list.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-muted-foreground">Updated {list.lastUpdated}</span>
+                            <Button variant="outline" size="sm" className="rounded-full">
+                              View List
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
           </TabsContent>
 
-          <TabsContent value="saved" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {savedLists.map((list) => (
-                <Card key={list.id} className="overflow-hidden">
-                  <div className="relative h-48">
-                    <img
-                      src={list.coverImage}
-                      alt={list.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                    <div className="absolute bottom-3 left-3 right-3">
-                      <h3 className="font-bold text-white text-xl mb-1">{list.title}</h3>
-                      <p className="text-sm text-white/80 mb-1">by {list.creator}</p>
-                      <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30">
-                        {list.stories} stories
-                      </Badge>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
-                  </CardContent>
-                  <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
-                    <div className="flex items-center gap-1">
-                      <Heart className="h-4 w-4 text-pink-500 fill-pink-500" />
-                      <span className="text-xs text-muted-foreground">{list.likes}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <BookOpen className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+          <TabsContent value="saved" className="space-y-6 mt-0">
+            {viewMode === 'grid' ? (
+              <motion.div 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {savedLists.map((list) => (
+                  <motion.div key={list.id} variants={itemVariants}>
+                    <Card key={list.id} className="overflow-hidden dashboard-card h-full">
+                      <div className="relative h-48">
+                        <img
+                          src={list.coverImage}
+                          alt={list.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                        <div className="absolute bottom-3 left-3 right-3">
+                          <h3 className="font-bold text-white text-xl mb-1">{list.title}</h3>
+                          <p className="text-sm text-white/80 mb-1">by {list.creator}</p>
+                          <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30">
+                            {list.stories} stories
+                          </Badge>
+                        </div>
+                      </div>
+                      <CardContent className="p-4">
+                        <p className="text-sm text-muted-foreground line-clamp-2">{list.description}</p>
+                      </CardContent>
+                      <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
+                        <div className="flex items-center gap-1">
+                          <Heart className="h-4 w-4 text-pink-500 fill-pink-500" />
+                          <span className="text-xs text-muted-foreground">{list.likes}</span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <BookOpen className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div 
+                className="space-y-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+              >
+                {savedLists.map((list) => (
+                  <motion.div key={list.id} variants={itemVariants}>
+                    <Card className="dashboard-card">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-48 h-40 sm:h-auto">
+                          <img
+                            src={list.coverImage}
+                            alt={list.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 p-4">
+                          <div className="flex justify-between">
+                            <div>
+                              <h3 className="font-bold text-xl mb-1">{list.title}</h3>
+                              <p className="text-sm text-muted-foreground mb-2">by {list.creator}</p>
+                              <Badge variant="secondary">
+                                {list.stories} stories
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <Heart className="h-4 w-4 text-pink-500 fill-pink-500" />
+                                <span className="text-xs text-muted-foreground">{list.likes}</span>
+                              </div>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-4">{list.description}</p>
+                          <div className="flex justify-between items-center">
+                            <span className="text-xs text-muted-foreground">Updated {list.lastUpdated}</span>
+                            <Button variant="outline" size="sm" className="rounded-full">
+                              <BookOpen className="h-4 w-4 mr-2" /> Read List
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
           </TabsContent>
 
-          <TabsContent value="discover" className="space-y-6">
+          <TabsContent value="discover" className="space-y-6 mt-0">
             <div className="text-center py-12">
               <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-xl font-bold mb-2">Discover Reading Lists</h3>
               <p className="text-muted-foreground max-w-md mx-auto mb-4">
                 Find curated reading lists from the community based on your preferences
               </p>
-              <Button>Browse Popular Lists</Button>
+              <Button className="rounded-full">Browse Popular Lists</Button>
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Dashboard Analytics Section */}
+        <section className="mt-16">
+          <h2 className="text-2xl font-bold mb-6 font-serif">Your Reading Analytics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">Stories Read</h3>
+                  <Badge variant="outline" className="rounded-full">This Month</Badge>
+                </div>
+                <p className="dashboard-stat">42</p>
+                <p className="dashboard-stat-label">+8 from last month</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">Reading Lists</h3>
+                  <Badge variant="outline" className="rounded-full">Total</Badge>
+                </div>
+                <p className="dashboard-stat">8</p>
+                <p className="dashboard-stat-label">3 public, 5 private</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="dashboard-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium">Favorite Genre</h3>
+                  <Badge variant="outline" className="rounded-full">Based on Reading</Badge>
+                </div>
+                <p className="dashboard-stat">Fantasy</p>
+                <p className="dashboard-stat-label">65% of your reading</p>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

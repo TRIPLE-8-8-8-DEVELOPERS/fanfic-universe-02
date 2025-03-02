@@ -6,6 +6,12 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -107,4 +113,67 @@ p, h1, h2, h3, h4, h5, h6, span, div {
 .dropdown-menu-item {
   color: hsl(var(--foreground)) !important;
   background: hsl(var(--background));
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .mobile-p-4 {
+    padding: 1rem !important;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem !important;
+  }
+  
+  .mobile-hidden {
+    display: none !important;
+  }
+  
+  .mobile-flex-col {
+    flex-direction: column !important;
+  }
+  
+  .mobile-w-full {
+    width: 100% !important;
+  }
+  
+  .mobile-mt-4 {
+    margin-top: 1rem !important;
+  }
+}
+
+/* Dashboard specific styles */
+.dashboard-card {
+  @apply bg-card rounded-lg border border-border shadow-sm transition-all duration-200;
+}
+
+.dashboard-card:hover {
+  @apply shadow-md border-primary/20;
+  transform: translateY(-2px);
+}
+
+.dashboard-stat {
+  @apply text-2xl font-bold;
+}
+
+.dashboard-stat-label {
+  @apply text-sm text-muted-foreground;
+}
+
+/* Glass effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
