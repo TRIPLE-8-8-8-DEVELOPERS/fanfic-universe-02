@@ -81,37 +81,32 @@ const Write = () => {
   const [isMoodListVisible, setIsMoodListVisible] = useState(false);
   const [moodList, setMoodList] = useState<string[]>([]);
   const [isPOVListVisible, setIsPOVListVisible] = useState(false);
-	const [povList, setPOVList] = useState<string[]>([]);
+  const [povList, setPOVList] = useState<string[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const speechSynthesisRef = useRef<SpeechSynthesis | null>(null);
 
   useEffect(() => {
-    // Update word count, character count, and reading time whenever content changes
     const words = content.trim().split(/\s+/).filter(Boolean).length;
     const characters = content.length;
-    const time = Math.ceil(words / 200); // Assuming 200 words per minute reading speed
+    const time = Math.ceil(words / 200);
 
     setWordCount(words);
     setCharacterCount(characters);
     setReadingTime(time);
 
-    // Update progress
     const newProgress = targetWordCount > 0 ? Math.min((words / targetWordCount) * 100, 100) : 0;
     setProgress(newProgress);
   }, [content, targetWordCount]);
 
   useEffect(() => {
-    // Initialize speech synthesis
     speechSynthesisRef.current = window.speechSynthesis;
 
-    // Get available voices
     const voices = speechSynthesisRef.current.getVoices();
     if (voices.length > 0) {
       setVoice(voices[0]);
     }
 
-    // Handle voice changes
     speechSynthesisRef.current.onvoiceschanged = () => {
       const updatedVoices = speechSynthesisRef.current?.getVoices();
       if (updatedVoices && updatedVoices.length > 0) {
@@ -119,14 +114,12 @@ const Write = () => {
       }
     };
 
-    // Clean up on unmount
     return () => {
       speechSynthesisRef.current?.cancel();
     };
   }, []);
 
   useEffect(() => {
-    // Load theme from local storage
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme) {
       setTheme(storedTheme);
@@ -135,14 +128,12 @@ const Write = () => {
   }, []);
 
   useEffect(() => {
-    // Apply theme to body
     if (theme === "dark") {
       document.body.classList.add("dark");
     } else {
       document.body.classList.remove("dark");
     }
 
-    // Save theme to local storage
     localStorage.setItem("theme", theme);
   }, [theme]);
 
@@ -272,7 +263,6 @@ const Write = () => {
 
   const handleAiSuggestionRequest = async () => {
     setIsAiGenerating(true);
-    // Simulate AI suggestion generation
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setAiSuggestions(["Suggestion 1", "Suggestion 2", "Suggestion 3"]);
     setIsAiGenerating(false);
@@ -323,7 +313,7 @@ const Write = () => {
   };
 
   const handlePOVListToggle = () => {
-		setIsPOVListVisible(!isPOVListVisible);
+    setIsPOVListVisible(!isPOVListVisible);
   };
 
   const speakText = () => {
@@ -334,7 +324,7 @@ const Write = () => {
     utterance.rate = speechRate;
     utterance.pitch = speechPitch;
 
-    speechSynthesisRef.current.cancel(); // Stop any ongoing speech
+    speechSynthesisRef.current.cancel();
     speechSynthesisRef.current.speak(utterance);
   };
 
@@ -467,7 +457,6 @@ const Write = () => {
             <Card>
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Visibility Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="visibility">Visibility</Label>
@@ -478,7 +467,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Genre Setting */}
                   <div>
                     <Label htmlFor="genre">Genre</Label>
                     <Select onValueChange={handleGenreChange}>
@@ -501,7 +489,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Font Size Setting */}
                   <div>
                     <Label htmlFor="font-size">Font Size ({fontSize}px)</Label>
                     <Slider
@@ -517,7 +504,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Font Family Setting */}
                   <div>
                     <Label htmlFor="font-family">Font Family</Label>
                     <Select onValueChange={handleFontFamilyChange}>
@@ -537,7 +523,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Theme Setting */}
                   <div>
                     <Label htmlFor="theme">Theme</Label>
                     <Select onValueChange={handleThemeChange}>
@@ -554,7 +539,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Speech Synthesis Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="speech-synthesis">Speech Synthesis</Label>
@@ -565,7 +549,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Voice Setting */}
                   {speechSynthesisEnabled && (
                     <div>
                       <Label htmlFor="voice">Voice</Label>
@@ -587,7 +570,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Speech Rate Setting */}
                   {speechSynthesisEnabled && (
                     <div>
                       <Label htmlFor="speech-rate">Speech Rate ({speechRate * 100}%)</Label>
@@ -605,7 +587,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Speech Pitch Setting */}
                   {speechSynthesisEnabled && (
                     <div>
                       <Label htmlFor="speech-pitch">Speech Pitch ({speechPitch * 100}%)</Label>
@@ -623,7 +604,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Collaboration Mode Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="collaboration-mode">Collaboration Mode</Label>
@@ -634,7 +614,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Add Collaborator Button */}
                   {collaborationMode && (
                     <div>
                       <Button onClick={handleCollaboratorAdd}>Add Collaborator</Button>
@@ -644,7 +623,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Timer Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="timer">Timer ({timerDuration} min)</Label>
@@ -652,7 +630,6 @@ const Write = () => {
                     </div>
                   </div>
 
-                  {/* Timer Duration Setting */}
                   {timerEnabled && (
                     <div>
                       <Input
@@ -669,7 +646,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Target Word Count Setting */}
                   <div>
                     <Label htmlFor="target-word-count">Target Word Count ({targetWordCount})</Label>
                     <Input
@@ -682,7 +658,6 @@ const Write = () => {
                     <Progress value={progress} />
                   </div>
 
-                  {/* Distraction-Free Mode Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="distraction-free-mode">Distraction-Free Mode</Label>
@@ -693,7 +668,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Music Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="music">Music</Label>
@@ -704,7 +678,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Music Volume Setting */}
                   {musicEnabled && (
                     <div>
                       <Label htmlFor="music-volume">Music Volume ({musicVolume}%)</Label>
@@ -722,7 +695,6 @@ const Write = () => {
                     </div>
                   )}
 
-                  {/* Auto-Save Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="auto-save">Auto-Save</Label>
@@ -733,7 +705,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* AI Suggestion Button */}
                   <div>
                     <Button disabled={isAiGenerating} onClick={handleAiSuggestionRequest}>
                       {isAiGenerating ? "Generating..." : "Get AI Suggestions"}
@@ -747,7 +718,6 @@ const Write = () => {
                     )}
                   </div>
 
-                  {/* Grammar Check Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="grammar-check">Grammar Check</Label>
@@ -758,7 +728,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Spell Check Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="spell-check">Spell Check</Label>
@@ -769,7 +738,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Story Summary Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="story-summary">Story Summary</Label>
@@ -780,7 +748,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Character List Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="character-list">Character List</Label>
@@ -791,7 +758,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Setting List Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="setting-list">Setting List</Label>
@@ -802,7 +768,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Object List Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="object-list">Object List</Label>
@@ -813,7 +778,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Event List Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="event-list">Event List</Label>
@@ -824,7 +788,6 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Conflict List Setting */}
                   <div>
                     <div className="flex items-center justify-between">
                       <Label htmlFor="conflict-list">Conflict List</Label>
@@ -835,6 +798,55 @@ const Write = () => {
                     </p>
                   </div>
 
-                  {/* Theme List Setting */}
                   <div>
-                    <div className="flex items-center
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="theme-list">Theme List</Label>
+                      <Switch id="theme-list" checked={isThemeListVisible} onCheckedChange={handleThemeListToggle} />
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Show or hide the theme list.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="symbol-list">Symbol List</Label>
+                      <Switch id="symbol-list" checked={isSymbolListVisible} onCheckedChange={handleSymbolListToggle} />
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Show or hide the symbol list.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="mood-list">Mood List</Label>
+                      <Switch id="mood-list" checked={isMoodListVisible} onCheckedChange={handleMoodListToggle} />
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Show or hide the mood list.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="pov-list">POV List</Label>
+                      <Switch id="pov-list" checked={isPOVListVisible} onCheckedChange={handlePOVListToggle} />
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Show or hide the POV list.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default Write;
