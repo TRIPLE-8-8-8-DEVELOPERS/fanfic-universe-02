@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -10,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ShoppingCart, Search, Book, Tag, Star, BookOpen, Sparkles, DollarSign, Lightbulb, ShieldCheck, Award, ArrowUpRight } from "lucide-react";
+import { ShoppingCart, Search, Book, Tag, Star, BookOpen, Sparkles, DollarSign, Lightbulb, ShieldCheck, Award, ArrowUpRight, Check, UsersIcon } from "lucide-react";
 import { toast } from "sonner";
 
 const Marketplace = () => {
@@ -595,7 +594,7 @@ const Marketplace = () => {
                     </div>
                   </div>
                   <div className="flex items-start">
-                    <Users className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                    <UsersIcon className="h-5 w-5 text-primary mr-2 mt-0.5" />
                     <div>
                       <h3 className="font-medium">Join Community</h3>
                       <p className="text-sm text-muted-foreground">Connect with creators worldwide</p>
@@ -661,19 +660,19 @@ const Marketplace = () => {
                   <h3 className="font-medium">Features:</h3>
                   <ul className="space-y-2">
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
                       <span>Instant digital download</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
                       <span>Compatible with popular writing software</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
                       <span>Lifetime access to future updates</span>
                     </li>
                     <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
                       <span>30-day satisfaction guarantee</span>
                     </li>
                   </ul>
