@@ -172,8 +172,8 @@ const Write = () => {
     setContent(e.target.value);
   };
 
-  const handleGenreChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGenre(e.target.value);
+  const handleGenreChange = (value: string) => {
+    setGenre(value);
   };
 
   const handleVisibilityChange = (checked: boolean) => {
@@ -188,8 +188,8 @@ const Write = () => {
     setFontSize(parseInt(e.target.value));
   };
 
-  const handleFontFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFontFamily(e.target.value);
+  const handleFontFamilyChange = (value: string) => {
+    setFontFamily(value);
   };
 
   const handleThemeChange = (newTheme: string) => {
@@ -201,8 +201,8 @@ const Write = () => {
     setSpeechSynthesisEnabled(!speechSynthesisEnabled);
   };
 
-  const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedVoice = speechSynthesisRef.current?.getVoices().find((v) => v.name === e.target.value);
+  const handleVoiceChange = (value: string) => {
+    const selectedVoice = speechSynthesisRef.current?.getVoices().find((v) => v.name === value);
     if (selectedVoice) {
       setVoice(selectedVoice);
     }
@@ -314,6 +314,11 @@ const Write = () => {
 
   const handlePOVListToggle = () => {
     setIsPOVListVisible(!isPOVListVisible);
+  };
+
+  const handleApplyAiSuggestion = (text: string) => {
+    setContent(prevContent => prevContent + "\n\n" + text);
+    toast.success("AI suggestion applied to your story");
   };
 
   const speakText = () => {
@@ -448,7 +453,10 @@ const Write = () => {
           <TabsContent value="ai-assist">
             <Card>
               <CardContent className="p-6">
-                <AIWritingAssistant />
+                <AIWritingAssistant 
+                  currentText={content} 
+                  onSuggestionApply={handleApplyAiSuggestion} 
+                />
               </CardContent>
             </Card>
           </TabsContent>
