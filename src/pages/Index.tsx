@@ -23,6 +23,7 @@ const featuredStoryData = {
   excerpt: "In a world where shadows hold secrets, one woman discovers the truth behind the veil...",
   rating: 4.8,
   likes: 1243,
+  comments: 356, // Adding the missing comments property
   reads: 5680
 };
 

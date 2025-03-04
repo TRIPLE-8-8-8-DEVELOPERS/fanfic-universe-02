@@ -38,3 +38,9 @@ import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const Settings = () => {
+  // ... keep existing code (component implementation)
+};
+
+export default Settings;
