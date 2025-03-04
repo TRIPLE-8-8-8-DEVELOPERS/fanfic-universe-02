@@ -12,6 +12,69 @@ import { BookOpen, Sparkles, TrendingUp, ThumbsUp, PlusCircle, Crown } from "luc
 import PremiumFeatureShowcase from "../components/PremiumFeatureShowcase";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 
+// Sample featured story data
+const featuredStoryData = {
+  id: "featured-1",
+  title: "The Shadow Beyond",
+  author: "Emma Richards",
+  authorId: "emma123",
+  cover: "/placeholder.svg",
+  genre: "Fantasy",
+  excerpt: "In a world where shadows hold secrets, one woman discovers the truth behind the veil...",
+  rating: 4.8,
+  likes: 1243,
+  reads: 5680
+};
+
+// Sample stories for different categories
+const trendingStories = [
+  {
+    id: "trending-1",
+    title: "The Last Horizon",
+    author: "Michael Chen",
+    authorId: "mchen",
+    cover: "/placeholder.svg",
+    genre: "Sci-Fi",
+    excerpt: "The colony ship Artemis nears its destination after 300 years in space...",
+    rating: 4.7,
+    likes: 985,
+    reads: 4300
+  },
+  // ... more trending stories
+];
+
+const popularStories = [
+  {
+    id: "popular-1",
+    title: "Whispers in the Dark",
+    author: "Sarah Johnson",
+    authorId: "sjohnson",
+    cover: "/placeholder.svg",
+    genre: "Mystery",
+    excerpt: "Detective Anna Moore finds herself pursuing a killer who leaves cryptic messages...",
+    rating: 4.9,
+    likes: 1587,
+    reads: 7230
+  },
+  // ... more popular stories
+];
+
+const recommendedStories = [
+  {
+    id: "recommended-1",
+    title: "Beyond the Mountains",
+    author: "David Williams",
+    authorId: "dwilliams",
+    cover: "/placeholder.svg",
+    genre: "Adventure",
+    excerpt: "After losing everything, Marcus sets out on a journey that will test his limits...",
+    rating: 4.6,
+    likes: 845,
+    reads: 3890
+  },
+  // ... more recommended stories
+];
+
 const Index = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
@@ -67,7 +130,8 @@ const Index = () => {
             </div>
             <div className="w-full lg:w-2/5 mt-8 lg:mt-0">
               <AIWritingAssistant 
-                onApply={() => {}}
+                currentText=""
+                onSuggestionApply={() => {}}
                 isPremium={isPremium} 
                 onUpgradeRequest={openSubscriptionModal}
               />
@@ -79,7 +143,7 @@ const Index = () => {
           <h2 className="text-3xl font-bold tracking-tight mb-8">
             Featured Story
           </h2>
-          <FeaturedStory />
+          <FeaturedStory {...featuredStoryData} />
         </section>
 
         <Tabs defaultValue="trending" className="mb-12">
@@ -104,15 +168,27 @@ const Index = () => {
           </div>
           
           <TabsContent value="trending">
-            <StoryGrid category="trending" />
+            <StoryGrid 
+              title="Trending Stories" 
+              description="Stories gaining popularity right now" 
+              stories={trendingStories} 
+            />
           </TabsContent>
           
           <TabsContent value="popular">
-            <StoryGrid category="popular" />
+            <StoryGrid 
+              title="Popular Stories" 
+              description="Readers' all-time favorites" 
+              stories={popularStories} 
+            />
           </TabsContent>
           
           <TabsContent value="recommended">
-            <StoryGrid category="recommended" />
+            <StoryGrid 
+              title="Recommended For You" 
+              description="Personalized recommendations based on your reading history" 
+              stories={recommendedStories} 
+            />
           </TabsContent>
         </Tabs>
         

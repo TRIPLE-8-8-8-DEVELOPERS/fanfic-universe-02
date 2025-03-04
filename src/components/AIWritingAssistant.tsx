@@ -30,12 +30,19 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Sparkles, Brain, Wand, MessageSquare, ThumbsUp, RefreshCw, Zap, ArrowRight, CheckCircle2, Lightbulb } from "lucide-react";
 
-interface AIWritingAssistantProps {
+export interface AIWritingAssistantProps {
   currentText: string;
   onSuggestionApply: (text: string) => void;
+  isPremium?: boolean;
+  onUpgradeRequest?: () => void;
 }
 
-export const AIWritingAssistant = ({ currentText, onSuggestionApply }: AIWritingAssistantProps) => {
+export const AIWritingAssistant = ({ 
+  currentText = "", 
+  onSuggestionApply, 
+  isPremium = false,
+  onUpgradeRequest = () => {} 
+}: AIWritingAssistantProps) => {
   const [aiSuggestion, setAiSuggestion] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState("");

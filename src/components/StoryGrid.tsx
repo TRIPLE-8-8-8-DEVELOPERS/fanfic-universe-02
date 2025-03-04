@@ -19,9 +19,10 @@ interface StoryGridProps {
   title: string;
   description?: string;
   stories: Story[];
+  category?: string; // Added to support the category prop
 }
 
-const StoryGrid = ({ title, description, stories }: StoryGridProps) => {
+const StoryGrid = ({ title, description, stories, category }: StoryGridProps) => {
   return (
     <section className="section-padding">
       <div className="container">
