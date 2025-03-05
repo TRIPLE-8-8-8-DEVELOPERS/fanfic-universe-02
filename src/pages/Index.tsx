@@ -1,9 +1,12 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+
+import { useState, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
   BookOpen, Sparkles, TrendingUp, ThumbsUp, PlusCircle, Crown,
-  Award, BookOpenCheck, Lightbulb, Feather, Eye, MessagesSquare
+  Award, BookOpenCheck, Lightbulb, Feather, Eye, MessagesSquare,
+  ArrowRight, Rocket, TrendingUp as TrendingUpIcon, Heart, Clock,
+  Bookmark, Share2, Users, Star, PenTool, BadgeCheck, Gift
 } from "lucide-react";
 
 import Header from "../components/Header";
@@ -16,8 +19,11 @@ import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 const featuredStoryData = {
   id: "featured-1",
@@ -186,17 +192,119 @@ const recommendedStories = [
   },
 ];
 
+// Top authors
+const topAuthors = [
+  { 
+    id: "author1", 
+    name: "Jennifer Lee", 
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    stories: 24,
+    followers: 8700,
+    verified: true
+  },
+  { 
+    id: "author2", 
+    name: "Marcus Williams", 
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    stories: 17,
+    followers: 5200,
+    verified: true
+  },
+  { 
+    id: "author3", 
+    name: "Sophia Chen", 
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    stories: 31,
+    followers: 12400,
+    verified: true
+  },
+  { 
+    id: "author4", 
+    name: "Ethan Parker", 
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    stories: 15,
+    followers: 4300,
+    verified: false
+  },
+  { 
+    id: "author5", 
+    name: "Amara Johnson", 
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2",
+    stories: 28,
+    followers: 9100,
+    verified: true
+  }
+];
+
+// Writing prompts
+const writingPrompts = [
+  "A character discovers a hidden door in their home that wasn't there before...",
+  "Two strangers keep meeting in their dreams, but have never met in real life...",
+  "A world where people's memories can be transferred into objects...",
+  "Someone receives a mysterious letter from their future self...",
+  "In a society where emotions are regulated by law..."
+];
+
+// Upcoming events
+const upcomingEvents = [
+  {
+    id: "event1",
+    title: "Summer Writing Challenge",
+    date: "Jun 15 - Jul 15",
+    description: "Write a complete short story in 30 days and win prizes!",
+    participants: 325
+  },
+  {
+    id: "event2",
+    title: "Fantasy World Building Workshop",
+    date: "May 28",
+    description: "Learn how to create immersive fantasy worlds with author J.R. Martin",
+    participants: 189
+  },
+  {
+    id: "event3",
+    title: "Character Development Masterclass",
+    date: "Jun 5",
+    description: "Transform flat characters into memorable personalities",
+    participants: 204
+  }
+];
+
 const Index = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [activePrompt, setActivePrompt] = useState(0);
+  const controls = useAnimation();
+
+  // Rotate through writing prompts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActivePrompt((prev) => (prev + 1) % writingPrompts.length);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animate the prompt when it changes
+  useEffect(() => {
+    controls.start({
+      y: [20, 0],
+      opacity: [0, 1],
+      transition: { duration: 0.5 }
+    });
+  }, [activePrompt, controls]);
 
   const handleSubscribe = () => {
     setIsPremium(true);
     setIsSubscriptionModalOpen(false);
+    toast.success("Welcome to FANVERSE Premium! Enjoy all features.");
   };
 
   const openSubscriptionModal = () => {
     setIsSubscriptionModalOpen(true);
+  };
+
+  const handleStartWriting = () => {
+    toast.success("Opening the writing editor. Let your creativity flow!");
   };
 
   return (
@@ -204,7 +312,8 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        <section className="relative py-20 md:py-28 overflow-hidden">
+        {/* Hero Section - Enhanced with more modern UI elements */}
+        <section className="relative py-20 md:py-32 overflow-hidden hero-pattern">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-100 dark:from-gray-900 dark:via-purple-950/30 dark:to-indigo-950/20 z-0"></div>
           <div className="absolute inset-0 opacity-20 dark:opacity-10">
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-purple-200 dark:bg-purple-900 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/3"></div>
@@ -219,12 +328,12 @@ const Index = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <Badge className="mb-6 text-sm py-1.5 px-4 bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:hover:bg-purple-900">
+                <Badge className="mb-6 text-sm py-1.5 px-4 bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:hover:bg-purple-900 flex items-center w-fit">
                   <Sparkles className="w-4 h-4 mr-1.5" />
                   Creativity Unleashed
                 </Badge>
                 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-gradient">
                   Where Stories<br />Come to Life
                 </h1>
                 
@@ -233,14 +342,14 @@ const Index = () => {
                 </p>
                 
                 <div className="flex flex-wrap gap-4">
-                  <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md" asChild>
+                  <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md hover-lift" asChild onClick={handleStartWriting}>
                     <Link to="/write">
                       <Feather className="mr-2 h-5 w-5" />
                       Start Writing
                     </Link>
                   </Button>
                   
-                  <Button size="lg" variant="outline" className="rounded-full px-8 border-gray-300 dark:border-gray-700" asChild>
+                  <Button size="lg" variant="outline" className="rounded-full px-8 border-gray-300 dark:border-gray-700 hover-lift" asChild>
                     <Link to="/explore">
                       <BookOpen className="mr-2 h-5 w-5" />
                       Explore Stories
@@ -251,13 +360,34 @@ const Index = () => {
                     <Button 
                       size="lg" 
                       variant="outline" 
-                      className="rounded-full px-8 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/20"
+                      className="rounded-full px-8 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/20 hover-lift"
                       onClick={openSubscriptionModal}
                     >
                       <Crown className="mr-2 h-5 w-5 text-amber-500" />
                       Try Premium
                     </Button>
                   )}
+                </div>
+                
+                {/* Daily writing prompt */}
+                <div className="mt-10 max-w-lg">
+                  <div className="flex items-center mb-3">
+                    <Lightbulb className="h-5 w-5 text-amber-500 mr-2" />
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Daily Writing Prompt</h3>
+                  </div>
+                  <motion.div 
+                    className="p-4 border border-gray-200 dark:border-gray-800 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+                    key={activePrompt}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={controls}
+                  >
+                    <p className="text-gray-700 dark:text-gray-300 italic">{writingPrompts[activePrompt]}</p>
+                    <Button variant="link" size="sm" className="mt-2 p-0 h-auto" asChild>
+                      <Link to="/write" className="flex items-center">
+                        Write now <ArrowRight className="ml-1 h-3 w-3" />
+                      </Link>
+                    </Button>
+                  </motion.div>
                 </div>
               </motion.div>
               
@@ -278,6 +408,35 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Stats section - New! */}
+        <section className="py-10 bg-white dark:bg-gray-800">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col items-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <PenTool className="h-8 w-8 text-purple-500 mb-3" />
+                <span className="text-3xl font-bold">250K+</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Stories Written</span>
+              </div>
+              <div className="flex flex-col items-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <Users className="h-8 w-8 text-blue-500 mb-3" />
+                <span className="text-3xl font-bold">1.2M+</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Active Users</span>
+              </div>
+              <div className="flex flex-col items-center p-6 bg-pink-50 dark:bg-pink-900/20 rounded-lg">
+                <Heart className="h-8 w-8 text-pink-500 mb-3" />
+                <span className="text-3xl font-bold">15M+</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Story Likes</span>
+              </div>
+              <div className="flex flex-col items-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <BookOpen className="h-8 w-8 text-green-500 mb-3" />
+                <span className="text-3xl font-bold">45M+</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">Reading Hours</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        {/* Featured Story section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <motion.div
@@ -298,7 +457,65 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Top Authors - New! */}
         <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-8"
+            >
+              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <Star className="mr-3 text-amber-500" />
+                Top Authors
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">Discover talented writers making waves in our community</p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {topAuthors.map((author) => (
+                <Card key={author.id} className="hover-lift border-glow overflow-hidden">
+                  <CardContent className="p-0">
+                    <div className="bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/20 p-6 text-center">
+                      <Avatar className="h-20 w-20 mx-auto border-4 border-white dark:border-gray-800 shadow-lg">
+                        <AvatarImage src={author.avatar} alt={author.name} />
+                        <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <h3 className="mt-4 font-semibold flex items-center justify-center">
+                        {author.name}
+                        {author.verified && (
+                          <BadgeCheck className="h-4 w-4 text-blue-500 ml-1" />
+                        )}
+                      </h3>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {author.stories} stories
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {author.followers.toLocaleString()} followers
+                      </div>
+                      <Button variant="outline" size="sm" className="mt-4 w-full">
+                        Follow
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="text-center mt-8">
+              <Button variant="outline" className="rounded-full" asChild>
+                <Link to="/authors">
+                  View All Authors <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+        
+        {/* Platform Features section */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -324,7 +541,7 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="flex flex-col"
               >
-                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow hover-lift">
                   <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-6">
                     <Feather className="h-10 w-10 text-white mb-4" />
                     <h3 className="text-xl font-bold text-white mb-2">Intuitive Editor</h3>
@@ -353,7 +570,7 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="flex flex-col"
               >
-                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow hover-lift">
                   <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-6">
                     <BookOpenCheck className="h-10 w-10 text-white mb-4" />
                     <h3 className="text-xl font-bold text-white mb-2">Reading Experience</h3>
@@ -382,7 +599,7 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="flex flex-col"
               >
-                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow hover-lift">
                   <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-6">
                     <MessagesSquare className="h-10 w-10 text-white mb-4" />
                     <h3 className="text-xl font-bold text-white mb-2">Vibrant Community</h3>
@@ -407,6 +624,55 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Upcoming Events - New! */}
+        <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-8"
+            >
+              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <Calendar className="mr-3 text-purple-500" />
+                Upcoming Events
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">Join these exciting events to improve your skills and connect with other writers</p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {upcomingEvents.map((event) => (
+                <Card key={event.id} className="hover-lift overflow-hidden">
+                  <div className="h-2 bg-gradient-to-r from-purple-500 to-indigo-600"></div>
+                  <CardHeader>
+                    <CardTitle>{event.title}</CardTitle>
+                    <CardDescription>
+                      <span className="font-medium text-purple-600 dark:text-purple-400">{event.date}</span> • {event.participants} participants
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full">
+                      Remind Me
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="mt-8 p-6 rounded-lg bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 text-center">
+              <h3 className="text-xl font-semibold mb-2">Have an event idea?</h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Submit your proposal for a community event, workshop, or challenge</p>
+              <Button>
+                <Gift className="mr-2 h-4 w-4" />
+                Submit Event Idea
+              </Button>
+            </div>
+          </div>
+        </section>
+        
+        {/* Discover Stories Tabs section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <Tabs defaultValue="trending" className="mb-12">
@@ -471,12 +737,14 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Premium Features section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <PremiumFeatureShowcase onSubscribe={openSubscriptionModal} />
           </div>
         </section>
         
+        {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600">
           <div className="container mx-auto px-4 text-center">
             <motion.div
@@ -489,7 +757,7 @@ const Index = () => {
               <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
                 Join thousands of writers who have found their voice on our platform. Start writing today!
               </p>
-              <Button size="lg" className="rounded-full px-10 py-6 text-lg bg-white text-purple-700 hover:bg-gray-100" asChild>
+              <Button size="lg" className="rounded-full px-10 py-6 text-lg bg-white text-purple-700 hover:bg-gray-100 hover-lift" asChild>
                 <Link to="/write">
                   <PlusCircle className="mr-2 h-5 w-5" />
                   Start Writing
@@ -521,5 +789,28 @@ const CheckItem = ({ text }: { text: string }) => (
     <span className="text-gray-700 dark:text-gray-300">{text}</span>
   </>
 );
+
+// Adding Calendar icon since it's used in the Upcoming Events section
+const Calendar = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+      <line x1="16" x2="16" y1="2" y2="6" />
+      <line x1="8" x2="8" y1="2" y2="6" />
+      <line x1="3" x2="21" y1="10" y2="10" />
+    </svg>
+  );
+};
 
 export default Index;
