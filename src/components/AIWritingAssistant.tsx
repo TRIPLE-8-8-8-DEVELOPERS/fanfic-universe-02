@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
