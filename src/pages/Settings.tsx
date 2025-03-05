@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -735,3 +736,304 @@ const Settings = () => {
                           </div>
                           <div className="mt-4">
                             <Button className="w-full md:w-auto">
+                              Subscribe
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="rounded-lg border p-4">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h4 className="font-medium">Pro</h4>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                For professional authors and publishers
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium">$24.99</p>
+                              <p className="text-sm text-muted-foreground">per month</p>
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">Everything in Premium</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">Advanced publishing tools</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">Monetization options</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Check className="h-4 w-4 text-green-500" />
+                              <span className="text-sm">Marketing assistance</span>
+                            </div>
+                          </div>
+                          <div className="mt-4">
+                            <Button className="w-full md:w-auto">
+                              Subscribe
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </ScrollArea>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleSaveSettings}>Save Changes</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="language" className="mt-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Language Settings</CardTitle>
+                  <CardDescription>
+                    Manage your language preferences
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="interface-language">Interface Language</Label>
+                      <Select defaultValue="en">
+                        <SelectTrigger id="interface-language">
+                          <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="en">English</SelectItem>
+                          <SelectItem value="es">Español</SelectItem>
+                          <SelectItem value="fr">Français</SelectItem>
+                          <SelectItem value="de">Deutsch</SelectItem>
+                          <SelectItem value="ja">日本語</SelectItem>
+                          <SelectItem value="zh">中文</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="content-languages">Content Languages</Label>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Select languages for content you'd like to see
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-en" defaultChecked />
+                          <Label htmlFor="lang-en">English</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-es" />
+                          <Label htmlFor="lang-es">Español</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-fr" />
+                          <Label htmlFor="lang-fr">Français</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-de" />
+                          <Label htmlFor="lang-de">Deutsch</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-ja" />
+                          <Label htmlFor="lang-ja">日本語</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-zh" />
+                          <Label htmlFor="lang-zh">中文</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-ko" />
+                          <Label htmlFor="lang-ko">한국어</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-ru" />
+                          <Label htmlFor="lang-ru">Русский</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="lang-pt" />
+                          <Label htmlFor="lang-pt">Português</Label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleSaveSettings}>Save Changes</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="appearance" className="mt-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Appearance Settings</CardTitle>
+                  <CardDescription>
+                    Customize how the application looks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Theme</h3>
+                    <RadioGroup defaultValue="system">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="light" id="theme-light" className="sr-only" />
+                          <div className="rounded-md bg-[#FFFFFF] border w-full h-16 mb-2"></div>
+                          <Label htmlFor="theme-light">Light</Label>
+                        </div>
+                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="dark" id="theme-dark" className="sr-only" />
+                          <div className="rounded-md bg-[#1A1F2C] border border-gray-600 w-full h-16 mb-2"></div>
+                          <Label htmlFor="theme-dark">Dark</Label>
+                        </div>
+                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="system" id="theme-system" className="sr-only" />
+                          <div className="rounded-md w-full h-16 mb-2 bg-gradient-to-r from-[#FFFFFF] to-[#1A1F2C] border"></div>
+                          <Label htmlFor="theme-system">System</Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Font Size</h3>
+                    <RadioGroup defaultValue="medium">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="small" id="font-small" />
+                          <Label htmlFor="font-small" className="text-sm">Small</Label>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="medium" id="font-medium" />
+                          <Label htmlFor="font-medium" className="text-base">Medium</Label>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
+                          <RadioGroupItem value="large" id="font-large" />
+                          <Label htmlFor="font-large" className="text-lg">Large</Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleSaveSettings}>Save Changes</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="reading" className="mt-0">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Reading Settings</CardTitle>
+                  <CardDescription>
+                    Customize your reading experience
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Reading Preferences</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="reading-mode">Reading Mode</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Enable distraction-free reading mode
+                          </p>
+                        </div>
+                        <Switch id="reading-mode" defaultChecked />
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="progress-tracking">Progress Tracking</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Track your reading progress across stories
+                          </p>
+                        </div>
+                        <Switch id="progress-tracking" defaultChecked />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Font & Formatting</h3>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="font-family">Font Family</Label>
+                        <Select defaultValue="serif">
+                          <SelectTrigger id="font-family">
+                            <SelectValue placeholder="Select font" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="serif">Serif</SelectItem>
+                            <SelectItem value="sans-serif">Sans-serif</SelectItem>
+                            <SelectItem value="monospace">Monospace</SelectItem>
+                            <SelectItem value="dyslexic">Dyslexic Friendly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="line-spacing">Line Spacing</Label>
+                        <Select defaultValue="1.5">
+                          <SelectTrigger id="line-spacing">
+                            <SelectValue placeholder="Select spacing" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">Compact (1.0)</SelectItem>
+                            <SelectItem value="1.5">Normal (1.5)</SelectItem>
+                            <SelectItem value="2">Relaxed (2.0)</SelectItem>
+                            <SelectItem value="2.5">Spacious (2.5)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Auto-Scrolling</h3>
+                    <div className="grid gap-4">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label htmlFor="auto-scroll">Auto-Scroll</Label>
+                          <p className="text-sm text-muted-foreground">
+                            Automatically scroll while reading
+                          </p>
+                        </div>
+                        <Switch id="auto-scroll" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="scroll-speed">Scroll Speed</Label>
+                        <Select defaultValue="medium" disabled={true}>
+                          <SelectTrigger id="scroll-speed">
+                            <SelectValue placeholder="Select speed" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="slow">Slow</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="fast">Fast</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleSaveSettings}>Save Changes</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+};
+
+export default Settings;
