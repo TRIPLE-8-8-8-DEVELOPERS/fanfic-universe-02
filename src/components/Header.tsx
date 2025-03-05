@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, Bell, User, BookOpen, PenTool, BookMarked, Sparkles, Star, Clock, Compass, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
@@ -24,6 +25,14 @@ const Header = () => {
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Check if we should hide the header (on dashboard page)
+  const shouldHideHeader = location.pathname === '/dashboard';
+
+  // If we should hide the header, return null early
+  if (shouldHideHeader) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
