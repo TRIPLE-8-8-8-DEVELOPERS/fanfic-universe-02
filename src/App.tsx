@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
 import Write from "./pages/Write";
@@ -31,6 +31,7 @@ import Settings from "./pages/Settings";
 import WatchStreams from "./pages/WatchStreams";
 import Challenges from "./pages/Challenges";
 import Marketplace from "./pages/Marketplace";
+import MainSidebar from "./components/MainSidebar";
 
 import "./App.css";
 
@@ -45,41 +46,60 @@ const ScrollToTop = () => {
   return null;
 };
 
+// Layout component to wrap all pages with MainSidebar
+const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { pathname } = useLocation();
+
+  return (
+    <div className="flex h-screen w-full">
+      <MainSidebar 
+        collapsed={sidebarCollapsed} 
+        setCollapsed={setSidebarCollapsed}
+        currentPath={pathname}
+      />
+      <div className="flex-grow flex flex-col overflow-auto">
+        {children}
+      </div>
+    </div>
+  );
+};
+
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/browse" element={<Browse />} />
-        <Route path="/write" element={<Write />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/story/:id" element={<Story />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="/reading-lists" element={<ReadingLists />} />
-        <Route path="/trending" element={<Trending />} />
-        <Route path="/popular" element={<Popular />} />
-        <Route path="/contests" element={<Contests />} />
-        <Route path="/communities" element={<Communities />} />
-        <Route path="/community/:id" element={<Community />} />
-        <Route path="/authors" element={<Authors />} />
-        <Route path="/fandoms" element={<Fandoms />} />
-        <Route path="/reading-clubs" element={<ReadingClubs />} />
-        <Route path="/watch-streams" element={<WatchStreams />} />
-        <Route path="/forums" element={<Forums />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/support" element={<Support />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/updates" element={<Updates />} />
+        <Route path="/" element={<AppLayout><Index /></AppLayout>} />
+        <Route path="/browse" element={<AppLayout><Browse /></AppLayout>} />
+        <Route path="/write" element={<AppLayout><Write /></AppLayout>} />
+        <Route path="/explore" element={<AppLayout><Explore /></AppLayout>} />
+        <Route path="/story/:id" element={<AppLayout><Story /></AppLayout>} />
+        <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+        <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+        <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
+        <Route path="/reading-lists" element={<AppLayout><ReadingLists /></AppLayout>} />
+        <Route path="/trending" element={<AppLayout><Trending /></AppLayout>} />
+        <Route path="/popular" element={<AppLayout><Popular /></AppLayout>} />
+        <Route path="/contests" element={<AppLayout><Contests /></AppLayout>} />
+        <Route path="/communities" element={<AppLayout><Communities /></AppLayout>} />
+        <Route path="/community/:id" element={<AppLayout><Community /></AppLayout>} />
+        <Route path="/authors" element={<AppLayout><Authors /></AppLayout>} />
+        <Route path="/fandoms" element={<AppLayout><Fandoms /></AppLayout>} />
+        <Route path="/reading-clubs" element={<AppLayout><ReadingClubs /></AppLayout>} />
+        <Route path="/watch-streams" element={<AppLayout><WatchStreams /></AppLayout>} />
+        <Route path="/forums" element={<AppLayout><Forums /></AppLayout>} />
+        <Route path="/blog" element={<AppLayout><Blog /></AppLayout>} />
+        <Route path="/about" element={<AppLayout><AboutUs /></AppLayout>} />
+        <Route path="/support" element={<AppLayout><Support /></AppLayout>} />
+        <Route path="/privacy" element={<AppLayout><PrivacyPolicy /></AppLayout>} />
+        <Route path="/terms" element={<AppLayout><TermsOfService /></AppLayout>} />
+        <Route path="/updates" element={<AppLayout><Updates /></AppLayout>} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/challenges" element={<Challenges />} />
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />
+        <Route path="/marketplace" element={<AppLayout><Marketplace /></AppLayout>} />
+        <Route path="*" element={<AppLayout><NotFound /></AppLayout>} />
       </Routes>
     </Router>
   );

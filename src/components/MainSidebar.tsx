@@ -62,7 +62,7 @@ const MainSidebar = ({
   return (
     <div 
       className={cn(
-        "h-screen border-r bg-background transition-all duration-300 flex flex-col relative",
+        "h-screen border-r bg-background transition-all duration-300 flex flex-col relative flex-shrink-0",
         collapsed ? "w-16" : "w-72"
       )}
     >

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -5,16 +6,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BookOpenText, Save, Share2, EyeOff, Pencil, 
   Sparkles, Settings, ArrowRight, Zap, 
-  Crown, Clock, Target, Volume2, VolumeX
+  Crown, Clock, Target, Volume2, VolumeX, BookOpen, ChevronDown
 } from "lucide-react";
 import WritingEditor from "../components/writing/WritingEditor";
 import AiAssistantPanel from "../components/writing/AiAssistantPanel";
 import WritingSettings from "../components/writing/WritingSettings";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 import SubscriptionBanner from "../components/writing/SubscriptionBanner";
-import MainSidebar from "../components/MainSidebar";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { 
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Write = () => {
   const [title, setTitle] = useState("");
@@ -26,7 +40,15 @@ const Write = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [savedStatus, setSavedStatus] = useState("saved"); // "saved", "saving", "unsaved"
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Sample chapters data
+  const [chapters, setChapters] = useState([
+    { id: 1, title: "Introduction", wordCount: 1250, status: "published" },
+    { id: 2, title: "The Beginning", wordCount: 2100, status: "draft" },
+    { id: 3, title: "Rising Action", wordCount: 1875, status: "draft" },
+    { id: 4, title: "Conflict", wordCount: 0, status: "outline" },
+  ]);
+  const [activeChapter, setActiveChapter] = useState(1);
 
   useEffect(() => {
     const words = content.trim().split(/\s+/).filter(Boolean).length;
@@ -98,25 +120,38 @@ const Write = () => {
     toast.success("Welcome to premium features!");
   };
 
+  const handleAddChapter = () => {
+    const newChapter = {
+      id: chapters.length + 1,
+      title: `Chapter ${chapters.length + 1}`,
+      wordCount: 0,
+      status: "outline"
+    };
+    setChapters([...chapters, newChapter]);
+    toast.success("New chapter added");
+  };
+
+  const handleSelectChapter = (chapterId: number) => {
+    setActiveChapter(chapterId);
+    const selectedChapter = chapters.find(chapter => chapter.id === chapterId);
+    if (selectedChapter) {
+      toast.info(`Switched to ${selectedChapter.title}`);
+    }
+  };
+
   return (
-    <div className="dark:bg-gray-900 dark:text-white min-h-screen flex">
-      <MainSidebar 
-        collapsed={sidebarCollapsed}
-        setCollapsed={setSidebarCollapsed}
-        currentPath="/write"
-      />
+    <div className="dark:bg-gray-900 dark:text-white min-h-screen flex flex-col">
+      <Header />
 
-      <div className="flex-grow flex flex-col">
-        <Header />
+      <main className="flex-grow container mx-auto py-6 px-4">
+        {!isPremium && (
+          <SubscriptionBanner 
+            onSubscribe={() => setIsSubscriptionModalOpen(true)}
+          />
+        )}
 
-        <main className="flex-grow container mx-auto py-6 px-4">
-          {!isPremium && (
-            <SubscriptionBanner 
-              onSubscribe={() => setIsSubscriptionModalOpen(true)}
-            />
-          )}
-
-          <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col space-y-6">
+          <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold tracking-tight">
               {title || "Untitled Story"}
             </h1>
@@ -146,6 +181,42 @@ const Write = () => {
             </div>
           </div>
 
+          {/* Chapters selector */}
+          <div className="flex items-center gap-2 mb-4">
+            <Button variant="ghost" size="sm" className="h-8 gap-1">
+              <BookOpen className="h-4 w-4" />
+              Chapters
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  Chapter {activeChapter}: {chapters.find(c => c.id === activeChapter)?.title}
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {chapters.map((chapter) => (
+                  <DropdownMenuItem 
+                    key={chapter.id}
+                    onClick={() => handleSelectChapter(chapter.id)}
+                    className="flex justify-between"
+                  >
+                    <span>
+                      {chapter.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {chapter.wordCount} words
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuItem onClick={handleAddChapter}>
+                  + Add new chapter
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="mb-4">
               <TabsTrigger value="compose" className="gap-1.5">
@@ -163,17 +234,61 @@ const Write = () => {
             </TabsList>
             
             <TabsContent value="compose">
-              <WritingEditor
-                title={title}
-                content={content}
-                wordCount={wordCount}
-                characterCount={characterCount}
-                readingTime={readingTime}
-                onTitleChange={handleTitleChange}
-                onContentChange={handleContentChange}
-                isPremium={isPremium}
-                onExport={handleExportDocument}
-              />
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <div className="lg:col-span-3">
+                  <WritingEditor
+                    title={title}
+                    content={content}
+                    wordCount={wordCount}
+                    characterCount={characterCount}
+                    readingTime={readingTime}
+                    onTitleChange={handleTitleChange}
+                    onContentChange={handleContentChange}
+                    isPremium={isPremium}
+                    onExport={handleExportDocument}
+                  />
+                </div>
+                
+                <div className="lg:col-span-1">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Chapters</CardTitle>
+                      <CardDescription>Organize your story</CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <ScrollArea className="h-[300px]">
+                        <div className="p-4 pt-0">
+                          {chapters.map((chapter) => (
+                            <div
+                              key={chapter.id}
+                              className={`
+                                py-2 px-3 mb-2 rounded-md cursor-pointer flex justify-between items-center
+                                ${chapter.id === activeChapter ? 'bg-secondary text-secondary-foreground' : 'hover:bg-secondary/20'}
+                              `}
+                              onClick={() => handleSelectChapter(chapter.id)}
+                            >
+                              <div>
+                                <div className="font-medium">{chapter.title}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {chapter.wordCount} words · {chapter.status}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full mt-2"
+                            onClick={handleAddChapter}
+                          >
+                            + Add Chapter
+                          </Button>
+                        </div>
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="ai-assist">
@@ -192,16 +307,16 @@ const Write = () => {
               />
             </TabsContent>
           </Tabs>
-        </main>
-        
-        <Footer />
+        </div>
+      </main>
+      
+      <Footer />
 
-        <PremiumFeatureAlert
-          isOpen={isSubscriptionModalOpen}
-          onClose={() => setIsSubscriptionModalOpen(false)}
-          onSubscribe={handleSubscribe}
-        />
-      </div>
+      <PremiumFeatureAlert
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+        onSubscribe={handleSubscribe}
+      />
     </div>
   );
 };

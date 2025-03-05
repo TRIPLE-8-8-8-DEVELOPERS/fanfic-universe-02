@@ -13,7 +13,6 @@ import StoryGrid from "../components/StoryGrid";
 import AIWritingAssistant from "../components/AIWritingAssistant";
 import PremiumFeatureShowcase from "../components/PremiumFeatureShowcase";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
-import MainSidebar from "../components/MainSidebar";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -190,7 +189,6 @@ const recommendedStories = [
 const Index = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleSubscribe = () => {
     setIsPremium(true);
@@ -203,322 +201,312 @@ const Index = () => {
 
   return (
     <div className="dark:bg-gray-900 min-h-screen flex flex-col">
-      <div className="flex w-full">
-        <MainSidebar 
-          collapsed={sidebarCollapsed} 
-          setCollapsed={setSidebarCollapsed}
-          currentPath="/"
-        />
-        
-        <div className="flex-grow flex flex-col">
-          <Header />
+      <Header />
+      
+      <main className="flex-grow">
+        <section className="relative py-20 md:py-28 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-100 dark:from-gray-900 dark:via-purple-950/30 dark:to-indigo-950/20 z-0"></div>
+          <div className="absolute inset-0 opacity-20 dark:opacity-10">
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-purple-200 dark:bg-purple-900 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-200 dark:bg-blue-900 rounded-full filter blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+          </div>
           
-          <main className="flex-grow">
-            <section className="relative py-20 md:py-28 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-100 dark:from-gray-900 dark:via-purple-950/30 dark:to-indigo-950/20 z-0"></div>
-              <div className="absolute inset-0 opacity-20 dark:opacity-10">
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-purple-200 dark:bg-purple-900 rounded-full filter blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-200 dark:bg-blue-900 rounded-full filter blur-3xl translate-y-1/2 -translate-x-1/3"></div>
-              </div>
-              
-              <div className="container mx-auto relative z-10 px-4">
-                <div className="flex flex-col lg:flex-row items-center gap-12">
-                  <motion.div 
-                    className="flex-1"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                  >
-                    <Badge className="mb-6 text-sm py-1.5 px-4 bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:hover:bg-purple-900">
-                      <Sparkles className="w-4 h-4 mr-1.5" />
-                      Creativity Unleashed
-                    </Badge>
-                    
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
-                      Where Stories<br />Come to Life
-                    </h1>
-                    
-                    <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl">
-                      Join our community of passionate writers and readers. Create immersive worlds, share captivating tales, and discover your next favorite story.
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-4">
-                      <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md" asChild>
-                        <Link to="/write">
-                          <Feather className="mr-2 h-5 w-5" />
-                          Start Writing
-                        </Link>
-                      </Button>
-                      
-                      <Button size="lg" variant="outline" className="rounded-full px-8 border-gray-300 dark:border-gray-700" asChild>
-                        <Link to="/explore">
-                          <BookOpen className="mr-2 h-5 w-5" />
-                          Explore Stories
-                        </Link>
-                      </Button>
-                      
-                      {!isPremium && (
-                        <Button 
-                          size="lg" 
-                          variant="outline" 
-                          className="rounded-full px-8 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/20"
-                          onClick={openSubscriptionModal}
-                        >
-                          <Crown className="mr-2 h-5 w-5 text-amber-500" />
-                          Try Premium
-                        </Button>
-                      )}
-                    </div>
-                  </motion.div>
-                  
-                  <motion.div 
-                    className="w-full lg:w-2/5"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                  >
-                    <AIWritingAssistant 
-                      currentText=""
-                      onSuggestionApply={() => {}}
-                      isPremium={isPremium} 
-                      onUpgradeRequest={openSubscriptionModal}
-                    />
-                  </motion.div>
-                </div>
-              </div>
-            </section>
-            
-            <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
-              <div className="container mx-auto px-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                  className="mb-8"
-                >
-                  <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
-                    <Award className="mr-3 text-amber-500" />
-                    Featured Story
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">Our editors' pick for the best story of the week</p>
-                </motion.div>
+          <div className="container mx-auto relative z-10 px-4">
+            <div className="flex flex-col lg:flex-row items-center gap-12">
+              <motion.div 
+                className="flex-1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Badge className="mb-6 text-sm py-1.5 px-4 bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:hover:bg-purple-900">
+                  <Sparkles className="w-4 h-4 mr-1.5" />
+                  Creativity Unleashed
+                </Badge>
                 
-                <FeaturedStory {...featuredStoryData} />
-              </div>
-            </section>
-            
-            <section className="py-16 bg-white dark:bg-gray-900">
-              <div className="container mx-auto px-4">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                  className="text-center mb-16"
-                >
-                  <Badge className="mb-4 bg-indigo-100 text-indigo-800 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-200">
-                    Platform Features
-                  </Badge>
-                  <h2 className="text-4xl font-bold mb-4">Empower Your Creative Journey</h2>
-                  <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Our platform offers all the tools you need to create, share, and discover amazing stories
-                  </p>
-                </motion.div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-indigo-600 dark:from-purple-400 dark:to-indigo-400">
+                  Where Stories<br />Come to Life
+                </h1>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col"
-                  >
-                    <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
-                      <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-6">
-                        <Feather className="h-10 w-10 text-white mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Intuitive Editor</h3>
-                        <p className="text-purple-100">Write with our powerful yet simple editor with AI-powered assistance</p>
-                      </div>
-                      <CardContent className="p-6">
-                        <ul className="space-y-2">
-                          <li className="flex items-start">
-                            <CheckItem text="Rich formatting options" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="AI writing suggestions" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="Auto-save functionality" />
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col"
-                  >
-                    <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
-                      <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-6">
-                        <BookOpenCheck className="h-10 w-10 text-white mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Reading Experience</h3>
-                        <p className="text-blue-100">Immerse yourself in stories with our customizable reading interface</p>
-                      </div>
-                      <CardContent className="p-6">
-                        <ul className="space-y-2">
-                          <li className="flex items-start">
-                            <CheckItem text="Distraction-free reading mode" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="Font and theme customization" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="Progress tracking across devices" />
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col"
-                  >
-                    <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
-                      <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-6">
-                        <MessagesSquare className="h-10 w-10 text-white mb-4" />
-                        <h3 className="text-xl font-bold text-white mb-2">Vibrant Community</h3>
-                        <p className="text-amber-100">Connect with fellow writers and readers in our growing community</p>
-                      </div>
-                      <CardContent className="p-6">
-                        <ul className="space-y-2">
-                          <li className="flex items-start">
-                            <CheckItem text="Thoughtful comments and feedback" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="Reading clubs and challenges" />
-                          </li>
-                          <li className="flex items-start">
-                            <CheckItem text="Writing contests with prizes" />
-                          </li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </div>
-              </div>
-            </section>
-            
-            <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
-              <div className="container mx-auto px-4">
-                <Tabs defaultValue="trending" className="mb-12">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                    <div>
-                      <h2 className="text-3xl font-bold tracking-tight mb-2">
-                        Discover Stories
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-400 max-w-2xl">
-                        Explore our vast library of stories from talented writers around the world
-                      </p>
-                    </div>
-                    <TabsList className="bg-white dark:bg-gray-800">
-                      <TabsTrigger value="trending" className="gap-1.5">
-                        <TrendingUp className="h-4 w-4" />
-                        Trending
-                      </TabsTrigger>
-                      <TabsTrigger value="popular" className="gap-1.5">
-                        <ThumbsUp className="h-4 w-4" />
-                        Popular
-                      </TabsTrigger>
-                      <TabsTrigger value="recommended" className="gap-1.5">
-                        <Sparkles className="h-4 w-4" />
-                        For You
-                      </TabsTrigger>
-                    </TabsList>
-                  </div>
-                  
-                  <TabsContent value="trending">
-                    <StoryGrid 
-                      title="Trending Stories" 
-                      description="Stories gaining popularity right now" 
-                      stories={trendingStories} 
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="popular">
-                    <StoryGrid 
-                      title="Popular Stories" 
-                      description="Readers' all-time favorites" 
-                      stories={popularStories} 
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="recommended">
-                    <StoryGrid 
-                      title="Recommended For You" 
-                      description="Personalized recommendations based on your reading history" 
-                      stories={recommendedStories} 
-                    />
-                  </TabsContent>
-                </Tabs>
+                <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl">
+                  Join our community of passionate writers and readers. Create immersive worlds, share captivating tales, and discover your next favorite story.
+                </p>
                 
-                <div className="text-center mt-10">
-                  <Button size="lg" variant="outline" className="rounded-full px-8" asChild>
-                    <Link to="/explore">
-                      <Eye className="mr-2 h-5 w-5" />
-                      Browse All Stories
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </section>
-            
-            <section className="py-16">
-              <div className="container mx-auto px-4">
-                <PremiumFeatureShowcase onSubscribe={openSubscriptionModal} />
-              </div>
-            </section>
-            
-            <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600">
-              <div className="container mx-auto px-4 text-center">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  <h2 className="text-4xl font-bold text-white mb-6">Ready to Share Your Story?</h2>
-                  <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-                    Join thousands of writers who have found their voice on our platform. Start writing today!
-                  </p>
-                  <Button size="lg" className="rounded-full px-10 py-6 text-lg bg-white text-purple-700 hover:bg-gray-100" asChild>
+                <div className="flex flex-wrap gap-4">
+                  <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md" asChild>
                     <Link to="/write">
-                      <PlusCircle className="mr-2 h-5 w-5" />
+                      <Feather className="mr-2 h-5 w-5" />
                       Start Writing
                     </Link>
                   </Button>
-                </motion.div>
+                  
+                  <Button size="lg" variant="outline" className="rounded-full px-8 border-gray-300 dark:border-gray-700" asChild>
+                    <Link to="/explore">
+                      <BookOpen className="mr-2 h-5 w-5" />
+                      Explore Stories
+                    </Link>
+                  </Button>
+                  
+                  {!isPremium && (
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="rounded-full px-8 border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-950/20"
+                      onClick={openSubscriptionModal}
+                    >
+                      <Crown className="mr-2 h-5 w-5 text-amber-500" />
+                      Try Premium
+                    </Button>
+                  )}
+                </div>
+              </motion.div>
+              
+              <motion.div 
+                className="w-full lg:w-2/5"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                <AIWritingAssistant 
+                  currentText=""
+                  onSuggestionApply={() => {}}
+                  isPremium={isPremium} 
+                  onUpgradeRequest={openSubscriptionModal}
+                />
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="mb-8"
+            >
+              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <Award className="mr-3 text-amber-500" />
+                Featured Story
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">Our editors' pick for the best story of the week</p>
+            </motion.div>
+            
+            <FeaturedStory {...featuredStoryData} />
+          </div>
+        </section>
+        
+        <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <Badge className="mb-4 bg-indigo-100 text-indigo-800 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:text-indigo-200">
+                Platform Features
+              </Badge>
+              <h2 className="text-4xl font-bold mb-4">Empower Your Creative Journey</h2>
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                Our platform offers all the tools you need to create, share, and discover amazing stories
+              </p>
+            </motion.div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="flex flex-col"
+              >
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-6">
+                    <Feather className="h-10 w-10 text-white mb-4" />
+                    <h3 className="text-xl font-bold text-white mb-2">Intuitive Editor</h3>
+                    <p className="text-purple-100">Write with our powerful yet simple editor with AI-powered assistance</p>
+                  </div>
+                  <CardContent className="p-6">
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <CheckItem text="Rich formatting options" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="AI writing suggestions" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="Auto-save functionality" />
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="flex flex-col"
+              >
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-600 p-6">
+                    <BookOpenCheck className="h-10 w-10 text-white mb-4" />
+                    <h3 className="text-xl font-bold text-white mb-2">Reading Experience</h3>
+                    <p className="text-blue-100">Immerse yourself in stories with our customizable reading interface</p>
+                  </div>
+                  <CardContent className="p-6">
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <CheckItem text="Distraction-free reading mode" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="Font and theme customization" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="Progress tracking across devices" />
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="flex flex-col"
+              >
+                <Card className="flex-1 overflow-hidden border-0 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="bg-gradient-to-br from-amber-500 to-orange-600 p-6">
+                    <MessagesSquare className="h-10 w-10 text-white mb-4" />
+                    <h3 className="text-xl font-bold text-white mb-2">Vibrant Community</h3>
+                    <p className="text-amber-100">Connect with fellow writers and readers in our growing community</p>
+                  </div>
+                  <CardContent className="p-6">
+                    <ul className="space-y-2">
+                      <li className="flex items-start">
+                        <CheckItem text="Thoughtful comments and feedback" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="Reading clubs and challenges" />
+                      </li>
+                      <li className="flex items-start">
+                        <CheckItem text="Writing contests with prizes" />
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
+          <div className="container mx-auto px-4">
+            <Tabs defaultValue="trending" className="mb-12">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                <div>
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">
+                    Discover Stories
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 max-w-2xl">
+                    Explore our vast library of stories from talented writers around the world
+                  </p>
+                </div>
+                <TabsList className="bg-white dark:bg-gray-800">
+                  <TabsTrigger value="trending" className="gap-1.5">
+                    <TrendingUp className="h-4 w-4" />
+                    Trending
+                  </TabsTrigger>
+                  <TabsTrigger value="popular" className="gap-1.5">
+                    <ThumbsUp className="h-4 w-4" />
+                    Popular
+                  </TabsTrigger>
+                  <TabsTrigger value="recommended" className="gap-1.5">
+                    <Sparkles className="h-4 w-4" />
+                    For You
+                  </TabsTrigger>
+                </TabsList>
               </div>
-            </section>
-          </main>
-          
-          <Footer />
-          
-          <PremiumFeatureAlert
-            isOpen={isSubscriptionModalOpen}
-            onClose={() => setIsSubscriptionModalOpen(false)}
-            onSubscribe={handleSubscribe}
-          />
-        </div>
-      </div>
+              
+              <TabsContent value="trending">
+                <StoryGrid 
+                  title="Trending Stories" 
+                  description="Stories gaining popularity right now" 
+                  stories={trendingStories} 
+                />
+              </TabsContent>
+              
+              <TabsContent value="popular">
+                <StoryGrid 
+                  title="Popular Stories" 
+                  description="Readers' all-time favorites" 
+                  stories={popularStories} 
+                />
+              </TabsContent>
+              
+              <TabsContent value="recommended">
+                <StoryGrid 
+                  title="Recommended For You" 
+                  description="Personalized recommendations based on your reading history" 
+                  stories={recommendedStories} 
+                />
+              </TabsContent>
+            </Tabs>
+            
+            <div className="text-center mt-10">
+              <Button size="lg" variant="outline" className="rounded-full px-8" asChild>
+                <Link to="/explore">
+                  <Eye className="mr-2 h-5 w-5" />
+                  Browse All Stories
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+        
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <PremiumFeatureShowcase onSubscribe={openSubscriptionModal} />
+          </div>
+        </section>
+        
+        <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600">
+          <div className="container mx-auto px-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl font-bold text-white mb-6">Ready to Share Your Story?</h2>
+              <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of writers who have found their voice on our platform. Start writing today!
+              </p>
+              <Button size="lg" className="rounded-full px-10 py-6 text-lg bg-white text-purple-700 hover:bg-gray-100" asChild>
+                <Link to="/write">
+                  <PlusCircle className="mr-2 h-5 w-5" />
+                  Start Writing
+                </Link>
+              </Button>
+            </motion.div>
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
+      
+      <PremiumFeatureAlert
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+        onSubscribe={handleSubscribe}
+      />
     </div>
   );
 };
