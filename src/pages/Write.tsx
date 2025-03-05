@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -13,7 +12,7 @@ import AiAssistantPanel from "../components/writing/AiAssistantPanel";
 import WritingSettings from "../components/writing/WritingSettings";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 import SubscriptionBanner from "../components/writing/SubscriptionBanner";
-import WritingSidebar from "../components/writing/WritingSidebar";
+import MainSidebar from "../components/MainSidebar";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
@@ -29,7 +28,6 @@ const Write = () => {
   const [savedStatus, setSavedStatus] = useState("saved"); // "saved", "saving", "unsaved"
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Calculate word count, character count, and reading time whenever content changes
   useEffect(() => {
     const words = content.trim().split(/\s+/).filter(Boolean).length;
     const characters = content.length;
@@ -40,7 +38,6 @@ const Write = () => {
     setReadingTime(time);
   }, [content]);
 
-  // Auto-save simulation
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
       if (savedStatus === "unsaved") {
@@ -63,7 +60,6 @@ const Write = () => {
 
   const handleSave = () => {
     setSavedStatus("saving");
-    // Simulate save operation
     setTimeout(() => {
       setSavedStatus("saved");
       toast.success("Your story has been saved");
@@ -104,20 +100,16 @@ const Write = () => {
 
   return (
     <div className="dark:bg-gray-900 dark:text-white min-h-screen flex">
-      <WritingSidebar 
+      <MainSidebar 
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
-        isPremium={isPremium}
-        currentTab={activeTab}
-        onTabChange={handleTabChange}
-        onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+        currentPath="/write"
       />
 
       <div className="flex-grow flex flex-col">
         <Header />
 
         <main className="flex-grow container mx-auto py-6 px-4">
-          {/* Premium Banner */}
           {!isPremium && (
             <SubscriptionBanner 
               onSubscribe={() => setIsSubscriptionModalOpen(true)}
@@ -155,6 +147,21 @@ const Write = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={handleTabChange}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="compose" className="gap-1.5">
+                <Pencil className="h-4 w-4" />
+                Compose
+              </TabsTrigger>
+              <TabsTrigger value="ai-assist" className="gap-1.5">
+                <Sparkles className="h-4 w-4" />
+                AI Assistant
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="gap-1.5">
+                <Settings className="h-4 w-4" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
+            
             <TabsContent value="compose">
               <WritingEditor
                 title={title}
@@ -189,7 +196,6 @@ const Write = () => {
         
         <Footer />
 
-        {/* Premium Feature Alert Modal */}
         <PremiumFeatureAlert
           isOpen={isSubscriptionModalOpen}
           onClose={() => setIsSubscriptionModalOpen(false)}
