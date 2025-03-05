@@ -154,35 +154,37 @@ const Write = () => {
             </div>
           </div>
 
-          <TabsContent value="compose" className={activeTab === "compose" ? "block" : "hidden"}>
-            <WritingEditor
-              title={title}
-              content={content}
-              wordCount={wordCount}
-              characterCount={characterCount}
-              readingTime={readingTime}
-              onTitleChange={handleTitleChange}
-              onContentChange={handleContentChange}
-              isPremium={isPremium}
-              onExport={handleExportDocument}
-            />
-          </TabsContent>
+          <Tabs value={activeTab} onValueChange={handleTabChange}>
+            <TabsContent value="compose">
+              <WritingEditor
+                title={title}
+                content={content}
+                wordCount={wordCount}
+                characterCount={characterCount}
+                readingTime={readingTime}
+                onTitleChange={handleTitleChange}
+                onContentChange={handleContentChange}
+                isPremium={isPremium}
+                onExport={handleExportDocument}
+              />
+            </TabsContent>
 
-          <TabsContent value="ai-assist" className={activeTab === "ai-assist" ? "block" : "hidden"}>
-            <AiAssistantPanel
-              currentText={content}
-              onSuggestionApply={handleApplyAiSuggestion}
-              isPremium={isPremium}
-              onUpgradeRequest={() => setIsSubscriptionModalOpen(true)}
-            />
-          </TabsContent>
+            <TabsContent value="ai-assist">
+              <AiAssistantPanel
+                currentText={content}
+                onSuggestionApply={handleApplyAiSuggestion}
+                isPremium={isPremium}
+                onUpgradeRequest={() => setIsSubscriptionModalOpen(true)}
+              />
+            </TabsContent>
 
-          <TabsContent value="settings" className={activeTab === "settings" ? "block" : "hidden"}>
-            <WritingSettings 
-              isPremium={isPremium} 
-              onUpgradeRequest={() => setIsSubscriptionModalOpen(true)} 
-            />
-          </TabsContent>
+            <TabsContent value="settings">
+              <WritingSettings 
+                isPremium={isPremium} 
+                onUpgradeRequest={() => setIsSubscriptionModalOpen(true)} 
+              />
+            </TabsContent>
+          </Tabs>
         </main>
         
         <Footer />
