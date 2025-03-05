@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   width: 100%;
@@ -51,21 +50,21 @@
 
 /* Improved dropdown menu styles for better contrast */
 .dropdown-menu {
-  background-color: white;
-  color: #1A1F2C;
-  border: 1px solid #E5DEFF;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   z-index: 100 !important;
   position: relative;
 }
 
 .dropdown-item {
-  color: #1A1F2C;
+  color: hsl(var(--card-foreground));
 }
 
 .dropdown-item:hover {
-  background-color: #F1F0FB;
+  background-color: hsl(var(--secondary));
 }
 
 /* Improved text contrast */
@@ -99,17 +98,9 @@ p, h1, h2, h3, h4, h5, h6, span, div {
   color: hsl(var(--foreground)) !important;
 }
 
-.dark .card-content p, .dark .card-content span {
-  color: hsl(var(--muted-foreground)) !important;
-}
-
 .story-text, .story-content {
   color: hsl(var(--foreground));
   line-height: 1.7;
-}
-
-.dark .story-text, .dark .story-content {
-  color: hsl(var(--foreground));
 }
 
 /* Ensure dropdown menus always have good contrast */

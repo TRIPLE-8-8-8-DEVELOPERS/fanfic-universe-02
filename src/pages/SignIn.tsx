@@ -40,7 +40,7 @@ const SignIn = () => {
     console.log(values);
     toast({
       title: "Sign in successful",
-      description: "Welcome back to FanFic Universe!",
+      description: "Welcome back to FanVerse!",
     });
     navigate("/profile");
   }
@@ -139,13 +139,12 @@ const SignIn = () => {
           </div>
         </div>
 
-        <div className="mt-6 text-center text-sm">
-          Don't have an account?{" "}
-          <Link
-            to="/sign-up"
-            className="text-primary hover:underline font-medium"
-          >
-            Sign up
+        <div className="mt-6 text-center">
+          <p className="text-sm mb-2">Don't have an account?</p>
+          <Link to="/sign-up">
+            <Button variant="outline" className="w-full rounded-full border-purple-500 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-purple-300">
+              Sign up for FanVerse
+            </Button>
           </Link>
         </div>
       </div>

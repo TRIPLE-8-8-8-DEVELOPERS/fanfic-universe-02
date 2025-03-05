@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Search, Bell, User, BookOpen, PenTool, Compass, BookMarked, Sparkles, Star, Clock, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
@@ -14,7 +13,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -22,7 +20,6 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState(3);
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -55,11 +52,6 @@ const Header = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
-  };
-
-  const handleThemeChange = (value: string) => {
-    setTheme(value as 'light' | 'dark' | 'system');
-    document.documentElement.classList.toggle('dark', value === 'dark');
   };
 
   const primaryNavLinks = [
@@ -210,19 +202,6 @@ const Header = () => {
             <Search size={16} />
           </Button>
 
-          <div className="border rounded-full h-8 mx-1">
-            <Tabs defaultValue={theme} onValueChange={handleThemeChange}>
-              <TabsList className="h-7 p-0.5 bg-transparent">
-                <TabsTrigger value="light" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-purple-100">
-                  <Sun size={14} className="text-purple-700" />
-                </TabsTrigger>
-                <TabsTrigger value="dark" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-purple-100">
-                  <Moon size={14} className="text-purple-700" />
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full relative h-8 w-8">
@@ -243,7 +222,7 @@ const Header = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notificationItems.map((item, index) => (
-                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700 focus:bg-purple-50 dark:focus:bg-gray-700 text-gray-800 dark:text-gray-200">
+                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-secondary focus:bg-secondary">
                   <div className="flex w-full">
                     <div className="mr-3 mt-0.5">
                       {item.type === 'comment' && <MessageSquare size={16} className="text-purple-500" />}
@@ -283,17 +262,17 @@ const Header = () => {
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Jane Doe</p>
+                    <p className="text-sm font-medium">Jane Doe</p>
                     <p className="text-xs text-muted-foreground">@janedoe</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-1 mt-2">
                   <div className="p-2 rounded-lg bg-primary/5 text-center">
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">12</p>
+                    <p className="text-sm font-medium">12</p>
                     <p className="text-xs text-muted-foreground">Stories</p>
                   </div>
                   <div className="p-2 rounded-lg bg-primary/5 text-center">
-                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200">1.2k</p>
+                    <p className="text-sm font-medium">1.2k</p>
                     <p className="text-xs text-muted-foreground">Followers</p>
                   </div>
                 </div>
@@ -303,7 +282,7 @@ const Header = () => {
                 <p className="text-xs font-medium text-muted-foreground px-2 py-1.5">Quick Links</p>
                 {quickLinks.map((link, i) => (
                   <DropdownMenuItem key={i} asChild>
-                    <Link to={link.path} className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <Link to={link.path} className="cursor-pointer hover:bg-secondary">
                       <div className="flex items-start gap-2">
                         <link.icon size={16} className="mt-0.5 text-primary" />
                         <div>
@@ -317,25 +296,25 @@ const Header = () => {
               </div>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Link to="/profile" className="cursor-pointer hover:bg-secondary">
                   <User size={16} className="mr-2" />
                   Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/dashboard" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Link to="/dashboard" className="cursor-pointer hover:bg-secondary">
                   <FileText size={16} className="mr-2" />
                   My Dashboard
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <Link to="/settings" className="cursor-pointer hover:bg-secondary">
                   <Settings size={16} className="mr-2" />
                   Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
+              <DropdownMenuItem className="text-red-600 cursor-pointer hover:bg-secondary">
                 <LogOut size={16} className="mr-2" />
                 Sign Out
               </DropdownMenuItem>
@@ -343,7 +322,7 @@ const Header = () => {
           </DropdownMenu>
 
           <Link to="/sign-in">
-            <Button variant="default" className="rounded-full px-4 ml-2 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm">
+            <Button variant="default" className="rounded-full px-5 ml-3 h-9 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm font-medium shadow-md shadow-purple-900/20">
               Sign In
             </Button>
           </Link>
@@ -373,12 +352,9 @@ const Header = () => {
                   <AvatarFallback>JD</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-800 dark:text-gray-200">Jane Doe</p>
+                  <p className="text-sm font-medium">Jane Doe</p>
                   <p className="text-xs text-muted-foreground">@janedoe</p>
                 </div>
-                <Link to="/profile">
-                  <Button variant="outline" size="sm" className="h-8 rounded-full">Profile</Button>
-                </Link>
               </div>
               
               <div className="py-3 border-b">
@@ -419,7 +395,7 @@ const Header = () => {
                       <link.icon size={18} />
                       {link.name}
                       {link.badge && (
-                        <Badge variant="outline" className="ml-auto bg-purple-50 text-purple-700 border-purple-200 text-[10px]">
+                        <Badge variant="outline" className="ml-auto bg-primary/10 text-primary border-primary/20 text-[10px]">
                           {link.badge}
                         </Badge>
                       )}
@@ -430,7 +406,7 @@ const Header = () => {
               
               <div className="pt-4">
                 <Link to="/sign-in">
-                  <Button className="w-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700" size="lg">Sign In</Button>
+                  <Button className="w-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md shadow-purple-900/20" size="lg">Sign In</Button>
                 </Link>
               </div>
             </motion.div>
