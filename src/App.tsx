@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
@@ -31,11 +30,11 @@ import Settings from "./pages/Settings";
 import WatchStreams from "./pages/WatchStreams";
 import Challenges from "./pages/Challenges";
 import Marketplace from "./pages/Marketplace";
+import Dashboard from "./pages/Dashboard";
 import MainSidebar from "./components/MainSidebar";
 
 import "./App.css";
 
-// Scroll to top on route change
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -46,7 +45,6 @@ const ScrollToTop = () => {
   return null;
 };
 
-// Layout component to wrap all pages with MainSidebar
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { pathname } = useLocation();
@@ -95,6 +93,7 @@ function App() {
         <Route path="/privacy" element={<AppLayout><PrivacyPolicy /></AppLayout>} />
         <Route path="/terms" element={<AppLayout><TermsOfService /></AppLayout>} />
         <Route path="/updates" element={<AppLayout><Updates /></AppLayout>} />
+        <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />

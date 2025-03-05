@@ -5,7 +5,7 @@ import {
   BookOpen, ChevronRight, BookText, Users, Award, 
   TrendingUp, Layout, MessageCircle, Trophy, BookOpenCheck,
   Video, Heart, Star, Bookmark, UserRound, Clock,
-  Sparkles, BarChart2, Globe, Eye, Search, Home
+  Sparkles, BarChart2, Globe, Eye, Search, Home, LineChart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -53,6 +53,7 @@ const MainSidebar = ({
       items: [
         { icon: Bookmark, label: "Reading Lists", path: "/reading-lists" },
         { icon: BookText, label: "My Stories", path: "/write" },
+        { icon: LineChart, label: "Dashboard", path: "/dashboard" },
         { icon: UserRound, label: "Profile", path: "/profile" },
         { icon: Clock, label: "Recent Updates", path: "/updates" },
       ]
