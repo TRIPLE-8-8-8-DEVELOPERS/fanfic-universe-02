@@ -13,7 +13,9 @@ import AiAssistantPanel from "../components/writing/AiAssistantPanel";
 import WritingSettings from "../components/writing/WritingSettings";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 import SubscriptionBanner from "../components/writing/SubscriptionBanner";
+import WritingSidebar from "../components/writing/WritingSidebar";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const Write = () => {
   const [title, setTitle] = useState("");
@@ -25,6 +27,7 @@ const Write = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [savedStatus, setSavedStatus] = useState("saved"); // "saved", "saving", "unsaved"
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Calculate word count, character count, and reading time whenever content changes
   useEffect(() => {
@@ -100,62 +103,58 @@ const Write = () => {
   };
 
   return (
-    <div className="dark:bg-gray-900 dark:text-white min-h-screen flex flex-col">
-      <Header />
+    <div className="dark:bg-gray-900 dark:text-white min-h-screen flex">
+      <WritingSidebar 
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+        isPremium={isPremium}
+        currentTab={activeTab}
+        onTabChange={handleTabChange}
+        onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+      />
 
-      <main className="flex-grow container mx-auto py-6 px-4">
-        {/* Premium Banner */}
-        {!isPremium && (
-          <SubscriptionBanner 
-            onSubscribe={() => setIsSubscriptionModalOpen(true)}
-          />
-        )}
+      <div className="flex-grow flex flex-col">
+        <Header />
 
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold tracking-tight">
-            {title || "Untitled Story"}
-          </h1>
-          
-          <div className="flex items-center space-x-2">
-            <div className="text-sm text-muted-foreground">
-              {savedStatus === "saved" && "All changes saved"}
-              {savedStatus === "saving" && "Saving..."}
-              {savedStatus === "unsaved" && "Unsaved changes"}
+        <main className="flex-grow container mx-auto py-6 px-4">
+          {/* Premium Banner */}
+          {!isPremium && (
+            <SubscriptionBanner 
+              onSubscribe={() => setIsSubscriptionModalOpen(true)}
+            />
+          )}
+
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">
+              {title || "Untitled Story"}
+            </h1>
+            
+            <div className="flex items-center space-x-2">
+              <div className="text-sm text-muted-foreground">
+                {savedStatus === "saved" && "All changes saved"}
+                {savedStatus === "saving" && "Saving..."}
+                {savedStatus === "unsaved" && "Unsaved changes"}
+              </div>
+              <Button
+                onClick={handleSave}
+                variant="outline"
+                size="sm"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save
+              </Button>
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                size="sm"
+              >
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
             </div>
-            <button
-              onClick={handleSave}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-            >
-              <Save className="h-4 w-4 mr-2" />
-              Save
-            </button>
-            <button
-              onClick={handleShare}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-            >
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </button>
           </div>
-        </div>
 
-        <Tabs defaultValue="compose" className="w-full" onValueChange={handleTabChange}>
-          <TabsList className="mb-6 bg-muted/50">
-            <TabsTrigger value="compose" className="data-[state=active]:bg-background">
-              <Pencil className="h-4 w-4 mr-2" />
-              Compose
-            </TabsTrigger>
-            <TabsTrigger value="ai-assist" className="data-[state=active]:bg-background">
-              <Sparkles className="h-4 w-4 mr-2" />
-              AI Assistant
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-background">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="compose">
+          <TabsContent value="compose" className={activeTab === "compose" ? "block" : "hidden"}>
             <WritingEditor
               title={title}
               content={content}
@@ -169,7 +168,7 @@ const Write = () => {
             />
           </TabsContent>
 
-          <TabsContent value="ai-assist">
+          <TabsContent value="ai-assist" className={activeTab === "ai-assist" ? "block" : "hidden"}>
             <AiAssistantPanel
               currentText={content}
               onSuggestionApply={handleApplyAiSuggestion}
@@ -178,23 +177,23 @@ const Write = () => {
             />
           </TabsContent>
 
-          <TabsContent value="settings">
+          <TabsContent value="settings" className={activeTab === "settings" ? "block" : "hidden"}>
             <WritingSettings 
               isPremium={isPremium} 
               onUpgradeRequest={() => setIsSubscriptionModalOpen(true)} 
             />
           </TabsContent>
-        </Tabs>
-      </main>
-      
-      <Footer />
+        </main>
+        
+        <Footer />
 
-      {/* Premium Feature Alert Modal */}
-      <PremiumFeatureAlert
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
-        onSubscribe={handleSubscribe}
-      />
+        {/* Premium Feature Alert Modal */}
+        <PremiumFeatureAlert
+          isOpen={isSubscriptionModalOpen}
+          onClose={() => setIsSubscriptionModalOpen(false)}
+          onSubscribe={handleSubscribe}
+        />
+      </div>
     </div>
   );
 };
