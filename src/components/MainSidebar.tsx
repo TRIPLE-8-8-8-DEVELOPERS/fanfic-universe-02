@@ -69,8 +69,11 @@ const MainSidebar = ({
     >
       <div className="h-14 border-b flex items-center justify-between p-4">
         {!collapsed && (
-          <Link to="/" className="font-serif text-xl font-bold">
-            FAN<span className="text-gradient">VERSE</span>
+          <Link to="/" className="font-serif text-xl font-bold flex items-center">
+            <div className="rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 p-1 mr-2">
+              <BookOpen className="h-3.5 w-3.5 text-white" />
+            </div>
+            <span className="text-gradient">FanVerse</span>
           </Link>
         )}
         <Button 

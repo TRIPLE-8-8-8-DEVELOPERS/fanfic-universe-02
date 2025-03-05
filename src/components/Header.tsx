@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, Bell, User, BookOpen, PenTool, BookMarked, Sparkles, Star, Clock, Compass, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
+import { Menu, X, Search, Bell, User, BookOpen, PenTool, Compass, BookMarked, Sparkles, Star, Clock, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -104,19 +104,21 @@ const Header = () => {
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/90 dark:bg-black/90 backdrop-blur-md shadow-sm py-3' 
-          : 'bg-background py-5'
+          ? 'bg-background/90 backdrop-blur-md border-b shadow-sm py-2' 
+          : 'bg-background py-3'
       }`}
     >
       <div className="container flex items-center justify-between">
         <Link 
           to="/" 
-          className="font-serif text-2xl font-bold text-primary transition-all hover:opacity-80 relative group"
+          className="font-serif text-xl font-bold relative group flex items-center"
         >
-          FanFic
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Universe</span>
+          <div className="rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 p-1.5 mr-2">
+            <BookOpen className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-gradient font-medium">FanVerse</span>
           <motion.span 
-            className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-blue-600 to-purple-600" 
+            className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-purple-600 to-indigo-600" 
             initial={{ width: "0%" }}
             animate={{ width: isActive('/') ? "100%" : "0%" }}
             whileHover={{ width: "100%" }}
@@ -124,22 +126,22 @@ const Header = () => {
           />
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-2">
+        <nav className="hidden md:flex items-center space-x-1">
           {primaryNavLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-colors relative ${
+              className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors relative ${
                 isActive(link.path) 
-                  ? 'text-primary bg-primary/10' 
+                  ? 'text-primary' 
                   : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
               }`}
             >
-              <link.icon size={16} />
+              <link.icon size={15} />
               {link.name}
               {isActive(link.path) && (
                 <motion.span 
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                  className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary rounded-full"
                   layoutId="navIndicator"
                   transition={{ type: 'spring', duration: 0.5 }}
                 />
@@ -163,7 +165,7 @@ const Header = () => {
                     <link.icon size={16} />
                     <span>{link.name}</span>
                     {link.badge && (
-                      <Badge variant="outline" className="ml-auto bg-blue-50 text-blue-700 border-blue-200 text-[10px] px-1.5 py-0 h-4">
+                      <Badge variant="outline" className="ml-auto bg-purple-50 text-purple-700 border-purple-200 text-[10px] px-1.5 py-0 h-4">
                         {link.badge}
                       </Badge>
                     )}
@@ -177,7 +179,7 @@ const Header = () => {
         <AnimatePresence>
           {searchOpen && (
             <motion.form 
-              className="absolute inset-x-0 top-0 bg-white dark:bg-black shadow-md py-3 px-4 flex items-center"
+              className="absolute inset-x-0 top-0 bg-background border-b shadow-md py-3 px-4 flex items-center"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -204,18 +206,18 @@ const Header = () => {
         </AnimatePresence>
 
         <div className="hidden md:flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="rounded-full" onClick={() => setSearchOpen(true)}>
-            <Search size={18} />
+          <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={() => setSearchOpen(true)}>
+            <Search size={16} />
           </Button>
 
-          <div className="border rounded-full p-1 mx-1">
+          <div className="border rounded-full h-8 mx-1">
             <Tabs defaultValue={theme} onValueChange={handleThemeChange}>
               <TabsList className="h-7 p-0.5 bg-transparent">
-                <TabsTrigger value="light" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-blue-100">
-                  <Sun size={14} className="text-blue-700" />
+                <TabsTrigger value="light" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-purple-100">
+                  <Sun size={14} className="text-purple-700" />
                 </TabsTrigger>
-                <TabsTrigger value="dark" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-blue-100">
-                  <Moon size={14} className="text-blue-700" />
+                <TabsTrigger value="dark" className="h-6 w-6 p-0 rounded-full data-[state=active]:bg-purple-100">
+                  <Moon size={14} className="text-purple-700" />
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -223,8 +225,8 @@ const Header = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full relative">
-                <Bell size={18} />
+              <Button variant="ghost" size="icon" className="rounded-full relative h-8 w-8">
+                <Bell size={16} />
                 {notifications > 0 && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
                     {notifications}
@@ -235,16 +237,16 @@ const Header = () => {
             <DropdownMenuContent align="end" className="w-80 z-[100] dropdown-menu">
               <DropdownMenuLabel className="flex justify-between items-center">
                 <span>Notifications</span>
-                <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-blue-600 hover:text-blue-700">
+                <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-purple-600 hover:text-purple-700">
                   Mark all as read
                 </Button>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               {notificationItems.map((item, index) => (
-                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 focus:bg-blue-50 dark:focus:bg-gray-700 text-gray-800 dark:text-gray-200">
+                <DropdownMenuItem key={index} className="flex flex-col items-start p-3 cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700 focus:bg-purple-50 dark:focus:bg-gray-700 text-gray-800 dark:text-gray-200">
                   <div className="flex w-full">
                     <div className="mr-3 mt-0.5">
-                      {item.type === 'comment' && <MessageSquare size={16} className="text-blue-500" />}
+                      {item.type === 'comment' && <MessageSquare size={16} className="text-purple-500" />}
                       {item.type === 'like' && <Heart size={16} className="text-red-500" />}
                       {item.type === 'alert' && <Zap size={16} className="text-amber-500" />}
                     </div>
@@ -257,7 +259,7 @@ const Header = () => {
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/notifications" className="flex justify-center cursor-pointer py-2 text-sm text-blue-600 hover:text-blue-700">
+                <Link to="/notifications" className="flex justify-center cursor-pointer py-2 text-sm text-purple-600 hover:text-purple-700">
                   View all notifications
                 </Link>
               </DropdownMenuItem>
@@ -266,10 +268,10 @@ const Header = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 p-0">
-                <Avatar className="h-8 w-8 border-2 border-primary/20">
+              <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 p-0">
+                <Avatar className="h-7 w-7 border-2 border-primary/20">
                   <AvatarImage src="https://i.pravatar.cc/100" />
-                  <AvatarFallback className="bg-primary/10 text-primary">JD</AvatarFallback>
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs">JD</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
@@ -341,7 +343,7 @@ const Header = () => {
           </DropdownMenu>
 
           <Link to="/sign-in">
-            <Button variant="default" className="rounded-full px-6 ml-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600">
+            <Button variant="default" className="rounded-full px-4 ml-2 h-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-sm">
               Sign In
             </Button>
           </Link>
@@ -359,7 +361,7 @@ const Header = () => {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
-              className="absolute top-full left-0 right-0 bg-white dark:bg-black shadow-lg p-4 md:hidden z-[90]"
+              className="absolute top-full left-0 right-0 bg-background border-b shadow-lg p-4 md:hidden z-[90]"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -417,7 +419,7 @@ const Header = () => {
                       <link.icon size={18} />
                       {link.name}
                       {link.badge && (
-                        <Badge variant="outline" className="ml-auto bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
+                        <Badge variant="outline" className="ml-auto bg-purple-50 text-purple-700 border-purple-200 text-[10px]">
                           {link.badge}
                         </Badge>
                       )}
@@ -428,7 +430,7 @@ const Header = () => {
               
               <div className="pt-4">
                 <Link to="/sign-in">
-                  <Button className="w-full rounded-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600" size="lg">Sign In</Button>
+                  <Button className="w-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700" size="lg">Sign In</Button>
                 </Link>
               </div>
             </motion.div>
