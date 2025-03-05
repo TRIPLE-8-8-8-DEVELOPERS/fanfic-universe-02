@@ -16,6 +16,8 @@ import { Badge } from "@/components/ui/badge";
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,17 +35,30 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
+      const currentScrollY = window.scrollY;
+      const isScrolled = currentScrollY > 10;
+      
+      // Determine if we should show or hide the header
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down and past threshold
+        setVisible(false);
+      } else {
+        // Scrolling up or at the top
+        setVisible(true);
+      }
+      
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
       }
+      
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [scrolled]);
+  }, [lastScrollY, scrolled]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -93,12 +108,15 @@ const Header = () => {
   };
 
   return (
-    <header
+    <motion.header
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled 
           ? 'bg-background/90 backdrop-blur-md border-b shadow-sm py-2' 
           : 'bg-background py-3'
       }`}
+      initial={{ translateY: 0 }}
+      animate={{ translateY: visible ? 0 : '-100%' }}
+      transition={{ duration: 0.3 }}
     >
       <div className="container flex items-center justify-between">
         <Link 
@@ -413,7 +431,7 @@ const Header = () => {
           )}
         </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 };
 
