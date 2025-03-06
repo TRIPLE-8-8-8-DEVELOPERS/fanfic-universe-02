@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
@@ -30,6 +31,9 @@ import Settings from "./pages/Settings";
 import WatchStreams from "./pages/WatchStreams";
 import Challenges from "./pages/Challenges";
 import Marketplace from "./pages/Marketplace";
+import MarketplaceProduct from "./pages/MarketplaceProduct";
+import MarketplaceCheckout from "./pages/MarketplaceCheckout";
+import MarketplaceSuccess from "./pages/MarketplaceSuccess";
 import Dashboard from "./pages/Dashboard";
 import MainSidebar from "./components/MainSidebar";
 
@@ -98,6 +102,9 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />
         <Route path="/marketplace" element={<AppLayout><Marketplace /></AppLayout>} />
+        <Route path="/marketplace/product/:slug" element={<AppLayout><MarketplaceProduct /></AppLayout>} />
+        <Route path="/marketplace/checkout" element={<AppLayout><MarketplaceCheckout /></AppLayout>} />
+        <Route path="/marketplace/success" element={<AppLayout><MarketplaceSuccess /></AppLayout>} />
         <Route path="*" element={<AppLayout><NotFound /></AppLayout>} />
       </Routes>
     </Router>
