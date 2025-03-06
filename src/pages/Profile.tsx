@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Heart, MessageSquare, BookOpen, PenTool, Award, Star, Users } from "lucide-react";
+import { Calendar, Heart, MessageSquare, BookOpen, PenTool, Award, Star, Users, MessageCircle } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoryCard from "@/components/StoryCard";
@@ -171,7 +171,14 @@ const Profile = () => {
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <Button className="rounded-full px-8 mb-4">Follow</Button>
+                  <div className="flex gap-2 mb-4">
+                    <Button className="rounded-full px-6">Follow</Button>
+                    <Link to="/messages/conv1">
+                      <Button variant="outline" className="rounded-full" size="icon">
+                        <MessageCircle size={18} />
+                      </Button>
+                    </Link>
+                  </div>
                   <div className="flex items-center gap-4 text-sm text-center">
                     <div>
                       <div className="font-bold">{user.followers}</div>
