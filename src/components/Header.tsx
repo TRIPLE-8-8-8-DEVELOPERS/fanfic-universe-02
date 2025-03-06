@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, Bell, User, BookOpen, PenTool, Compass, BookMarked, Sparkles, Star, Clock, Heart, TrendingUp, FileText, Zap } from 'lucide-react';
+import { Menu, X, Search, Bell, User, BookOpen, PenTool, Compass, BookMarked, Sparkles, Star, Clock, Heart, TrendingUp, FileText, Zap, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,10 +25,8 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check if we should hide the header (on dashboard page)
   const shouldHideHeader = location.pathname === '/dashboard';
 
-  // If we should hide the header, return null early
   if (shouldHideHeader) {
     return null;
   }
@@ -38,12 +36,9 @@ const Header = () => {
       const currentScrollY = window.scrollY;
       const isScrolled = currentScrollY > 10;
       
-      // Determine if we should show or hide the header
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down and past threshold
         setVisible(false);
       } else {
-        // Scrolling up or at the top
         setVisible(true);
       }
       
@@ -79,7 +74,8 @@ const Header = () => {
     { name: 'Reading Lists', path: '/reading-lists', icon: BookMarked },
     { name: 'Trending', path: '/trending', icon: TrendingUp },
     { name: 'Contests', path: '/contests', icon: Trophy, badge: 'New' },
-    { name: 'Communities', path: '/communities', icon: Heart }
+    { name: 'Communities', path: '/communities', icon: Heart },
+    { name: 'Marketplace', path: '/marketplace', icon: ShoppingBag }
   ];
 
   const quickLinks = [
@@ -184,6 +180,25 @@ const Header = () => {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <Link
+            to="/marketplace"
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors relative ${
+              isActive('/marketplace') 
+                ? 'text-primary' 
+                : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+            }`}
+          >
+            <ShoppingBag size={15} />
+            Marketplace
+            {isActive('/marketplace') && (
+              <motion.span 
+                className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary rounded-full"
+                layoutId="navIndicator"
+                transition={{ type: 'spring', duration: 0.5 }}
+              />
+            )}
+          </Link>
         </nav>
 
         <AnimatePresence>
@@ -219,6 +234,12 @@ const Header = () => {
           <Button variant="ghost" size="icon" className="rounded-full h-8 w-8" onClick={() => setSearchOpen(true)}>
             <Search size={16} />
           </Button>
+
+          <Link to="/marketplace">
+            <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 relative">
+              <ShoppingBag size={16} />
+            </Button>
+          </Link>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -419,6 +440,17 @@ const Header = () => {
                       )}
                     </Link>
                   ))}
+                  <Link
+                    to="/marketplace"
+                    className={`flex items-center gap-2 text-base font-medium transition-colors p-2 rounded-md ${
+                      isActive('/marketplace') 
+                        ? 'text-primary bg-primary/10' 
+                        : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                    }`}
+                  >
+                    <ShoppingBag size={18} />
+                    Marketplace
+                  </Link>
                 </nav>
               </div>
               
