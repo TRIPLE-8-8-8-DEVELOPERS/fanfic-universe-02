@@ -22,7 +22,6 @@ interface WritingSettingsProps {
 }
 
 const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) => {
-  const [theme, setTheme] = useState("light");
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Arial, sans-serif");
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
@@ -46,19 +45,34 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
   const [keyboardShortcutsEnabled, setKeyboardShortcutsEnabled] = useState(true);
 
   useEffect(() => {
-    if ('speechSynthesis' in window) {
-      const loadVoices = () => {
-        const availableVoices = window.speechSynthesis.getVoices();
-        if (availableVoices.length > 0) {
-          setVoices(availableVoices);
-          setSelectedVoice(availableVoices[0].name);
-        }
-      };
+    // Safely initialize speech synthesis
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        const loadVoices = () => {
+          const availableVoices = window.speechSynthesis.getVoices();
+          if (availableVoices.length > 0) {
+            setVoices(availableVoices);
+            if (!selectedVoice && availableVoices.length > 0) {
+              setSelectedVoice(availableVoices[0].name);
+            }
+          }
+        };
 
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
+        // Load voices initially
+        loadVoices();
+        
+        // Chrome needs this event to load voices
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        
+        return () => {
+          // Clean up event listener
+          window.speechSynthesis.onvoiceschanged = null;
+        };
+      } catch (error) {
+        console.error("Error initializing speech synthesis:", error);
+      }
     }
-  }, []);
+  }, [selectedVoice]);
 
   const handleCollaboratorAdd = () => {
     if (!newCollaborator.trim()) {
@@ -82,20 +96,25 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
   };
 
   const handleTestVoice = () => {
-    if ('speechSynthesis' in window && selectedVoice) {
-      const utterance = new SpeechSynthesisUtterance("This is a test of the speech synthesis voice.");
-      const voice = voices.find(v => v.name === selectedVoice);
-      if (voice) {
-        utterance.voice = voice;
-        utterance.rate = speechRate / 100;
-        utterance.pitch = speechPitch / 100;
-        window.speechSynthesis.speak(utterance);
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && selectedVoice) {
+      try {
+        const utterance = new SpeechSynthesisUtterance("This is a test of the speech synthesis voice.");
+        const voice = voices.find(v => v.name === selectedVoice);
+        if (voice) {
+          utterance.voice = voice;
+          utterance.rate = speechRate / 100;
+          utterance.pitch = speechPitch / 100;
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (error) {
+        console.error("Error testing voice:", error);
+        toast.error("Could not test voice. Speech synthesis may not be supported in your browser.");
       }
     }
   };
 
   return (
-    <Card>
+    <Card className="border-border bg-background text-foreground">
       <CardHeader className="pb-3">
         <CardTitle className="text-xl flex items-center gap-2">
           <Settings className="h-5 w-5" />
@@ -104,7 +123,7 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
             <Button 
               size="sm" 
               variant="outline"
-              className="ml-auto gap-1 text-xs border-amber-300 text-amber-700"
+              className="ml-auto gap-1 text-xs border-amber-300 text-amber-500"
               onClick={onUpgradeRequest}
             >
               <Crown className="h-3 w-3 text-amber-500" />
@@ -140,26 +159,6 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
           
           <TabsContent value="appearance" className="space-y-6">
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="theme">Theme</Label>
-                <Select 
-                  value={theme} 
-                  onValueChange={setTheme}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a theme" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Choose the appearance theme for the editor
-                </p>
-              </div>
-              
               <div>
                 <Label htmlFor="font-size">Font Size ({fontSize}px)</Label>
                 <Slider
@@ -370,14 +369,17 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
                           <SelectValue placeholder="Select a voice" />
                         </SelectTrigger>
                         <SelectContent>
-                          {voices.map((voice) => (
+                          {voices.length > 0 ? voices.map((voice) => (
                             <SelectItem key={voice.name} value={voice.name}>
                               {voice.name} ({voice.lang})
                             </SelectItem>
-                          ))}
+                          )) : (
+                            <SelectItem value="default">Default Voice</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
-                      <Button size="sm" variant="outline" onClick={handleTestVoice}>
+                      <Button size="sm" variant="outline" onClick={handleTestVoice} 
+                        disabled={!selectedVoice || voices.length === 0}>
                         Test
                       </Button>
                     </div>
@@ -525,12 +527,12 @@ const WritingSettings = ({ isPremium, onUpgradeRequest }: WritingSettingsProps) 
               )}
               
               {!isPremium && (
-                <div className="border border-amber-200 bg-amber-50 dark:bg-amber-950/20 rounded-lg p-4 mt-4">
+                <div className="border border-amber-200 bg-amber-950/20 rounded-lg p-4 mt-4">
                   <div className="flex items-start gap-3">
                     <Crown className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-medium text-amber-800 dark:text-amber-300">Premium Feature</h4>
-                      <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
+                      <h4 className="font-medium text-amber-300">Premium Feature</h4>
+                      <p className="text-sm text-amber-400 mt-1">
                         Collaboration features are available with a premium subscription.
                       </p>
                       <Button onClick={onUpgradeRequest} className="mt-3 gap-1 bg-amber-600 hover:bg-amber-700">

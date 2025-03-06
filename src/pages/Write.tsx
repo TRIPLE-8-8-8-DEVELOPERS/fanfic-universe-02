@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -41,7 +40,6 @@ const Write = () => {
   const [readingTime, setReadingTime] = useState(0);
   const [savedStatus, setSavedStatus] = useState("saved"); // "saved", "saving", "unsaved"
   
-  // Sample chapters data
   const [chapters, setChapters] = useState([
     { id: 1, title: "Introduction", wordCount: 1250, status: "published" },
     { id: 2, title: "The Beginning", wordCount: 2100, status: "draft" },
@@ -143,7 +141,7 @@ const Write = () => {
     <div className="dark:bg-gray-900 dark:text-white min-h-screen flex flex-col">
       <Header />
 
-      <main className="flex-grow container mx-auto py-6 px-4">
+      <main className="flex-grow container mx-auto py-6 px-4 mt-16">
         {!isPremium && (
           <SubscriptionBanner 
             onSubscribe={() => setIsSubscriptionModalOpen(true)}
@@ -181,7 +179,6 @@ const Write = () => {
             </div>
           </div>
 
-          {/* Chapters selector */}
           <div className="flex items-center gap-2 mb-4">
             <Button variant="ghost" size="sm" className="h-8 gap-1">
               <BookOpen className="h-4 w-4" />
