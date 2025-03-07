@@ -1,4 +1,4 @@
-<lov-code>
+
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -767,4 +767,536 @@ const Marketplace = () => {
                     <SelectItem value="newest">Newest</SelectItem>
                     <SelectItem value="price-low">Price: Low to High</SelectItem>
                     <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {/* Flash Sale Section */}
+              {flashSaleActive && (
+                <div id="flash-sale" className="mb-8">
+                  <h2 className="text-xl font-medium mb-4 flex items-center">
+                    <Flame className="h-5 w-5 mr-2 text-red-500" />
+                    Flash Sale Items
+                    <Badge variant="destructive" className="ml-2">30% OFF</Badge>
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {flashSaleItems.map((product) => (
+                      <Card key={`sale-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow border-red-100">
+                        <div className="relative">
+                          {product.image && (
+                            <div className="h-40 overflow-hidden">
+                              <img 
+                                src={product.image} 
+                                alt={product.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute top-2 right-2">
+                                <Badge variant="destructive" className="flex items-center gap-1">
+                                  <Percent className="h-3 w-3" />
+                                  {product.discount}% OFF
+                                </Badge>
+                              </div>
+                            </div>
+                          )}
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="absolute top-2 left-2 p-0 h-8 w-8 rounded-full bg-background/80 hover:bg-background"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleQuickPreview(product.id);
+                            }}
+                          >
+                            <EyeIcon className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between">
+                            <Badge variant="outline">{product.category}</Badge>
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="ml-1 text-sm">{product.rating}</span>
+                            </div>
+                          </div>
+                          <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(product)}>
+                            {product.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground line-clamp-2">{product.description}</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <div className="flex flex-col">
+                            <span className="text-sm line-through text-muted-foreground">${product.originalPrice}</span>
+                            <span className="font-bold text-red-600">${product.price}</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" className="p-0 h-8 w-8" onClick={() => toggleWishlist(product.id)}>
+                              <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+                            </Button>
+                            <Button variant="outline" size="sm" className="p-0 h-8 w-8" onClick={() => toggleCompare(product.id)}>
+                              <Zap className={`h-4 w-4 ${compareItems.includes(product.id) ? "text-primary" : ""}`} />
+                            </Button>
+                            <Button onClick={() => addToCart(product.id)}>
+                              Add to Cart
+                            </Button>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Main Product Grid */}
+              <Tabs defaultValue="all" className="mb-8">
+                <TabsList>
+                  <TabsTrigger value="all">All Products</TabsTrigger>
+                  <TabsTrigger value="templates">Templates</TabsTrigger>
+                  <TabsTrigger value="tools">Tools</TabsTrigger>
+                  <TabsTrigger value="services">Services</TabsTrigger>
+                  <TabsTrigger value="free">Free Resources</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="all" className="mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortProducts(filteredProducts()).map((product) => (
+                      <Card key={`product-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="relative">
+                          {product.image && (
+                            <div className="h-40 overflow-hidden">
+                              <img 
+                                src={product.image} 
+                                alt={product.title}
+                                className="w-full h-full object-cover"
+                              />
+                              {product.bestseller && (
+                                <div className="absolute top-2 left-2">
+                                  <Badge className="bg-yellow-500 hover:bg-yellow-600 flex items-center gap-1">
+                                    <Award className="h-3 w-3" />
+                                    Bestseller
+                                  </Badge>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between">
+                            <Badge variant="outline">{product.category}</Badge>
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="ml-1 text-sm">{product.rating}</span>
+                            </div>
+                          </div>
+                          <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(product)}>
+                            {product.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground line-clamp-2">{product.description}</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <span className="font-bold">${calculateDiscountedPrice(product.price)}</span>
+                          <div className="flex gap-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button variant="outline" size="sm" className="p-0 h-8 w-8" onClick={() => toggleWishlist(product.id)}>
+                                    <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{wishlist.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button variant="outline" size="sm" className="p-0 h-8 w-8" onClick={() => toggleCompare(product.id)}>
+                                    <Zap className={`h-4 w-4 ${compareItems.includes(product.id) ? "text-primary" : ""}`} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Compare</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                            
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button>Add to Cart</Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Add to Cart</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Would you like to add any special options to {product.title}?
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <div className="grid gap-4 py-4">
+                                  <div className="flex items-center gap-4">
+                                    <Switch 
+                                      id={`gift-${product.id}`} 
+                                      checked={giftWrapItems.includes(product.id)} 
+                                      onCheckedChange={() => toggleGiftWrap(product.id)} 
+                                    />
+                                    <Label htmlFor={`gift-${product.id}`} className="cursor-pointer">Gift wrap (+$2.99)</Label>
+                                  </div>
+                                </div>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction onClick={() => addToCart(product.id)}>
+                                    Add to Cart
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="templates" className="mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortProducts(premiumTemplates).map((product) => (
+                      <Card key={`template-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                        {/* Template card content - same structure as above */}
+                        <div className="relative">
+                          {product.image && (
+                            <div className="h-40 overflow-hidden">
+                              <img 
+                                src={product.image} 
+                                alt={product.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between">
+                            <Badge variant="outline">{product.category}</Badge>
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="ml-1 text-sm">{product.rating}</span>
+                            </div>
+                          </div>
+                          <CardTitle className="mt-2 text-xl">{product.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground line-clamp-2">{product.description}</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <span className="font-bold">${product.price}</span>
+                          <Button onClick={() => addToCart(product.id)}>
+                            Add to Cart
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="tools" className="mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortProducts(digitalGoods).map((product) => (
+                      <Card key={`tool-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                        {/* Tools card content - same structure */}
+                        <div className="relative">
+                          {product.image && (
+                            <div className="h-40 overflow-hidden">
+                              <img 
+                                src={product.image} 
+                                alt={product.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between">
+                            <Badge variant="outline">{product.category}</Badge>
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="ml-1 text-sm">{product.rating}</span>
+                            </div>
+                          </div>
+                          <CardTitle className="mt-2 text-xl">{product.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground line-clamp-2">{product.description}</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <span className="font-bold">${product.price}</span>
+                          <Button onClick={() => addToCart(product.id)}>
+                            Add to Cart
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="services" className="mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {sortProducts(premiumServices).map((product) => (
+                      <Card key={`service-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                        {/* Services card content */}
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between">
+                            <Badge variant="outline">{product.category}</Badge>
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                              <span className="ml-1 text-sm">{product.rating}</span>
+                            </div>
+                          </div>
+                          <CardTitle className="mt-2 text-xl">{product.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground">{product.description}</p>
+                          <div className="mt-4 flex items-center text-sm text-muted-foreground">
+                            <UsersIcon className="h-4 w-4 mr-1" />
+                            <span>{product.reviews} satisfied customers</span>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <span className="font-bold">${product.price}</span>
+                          <Button onClick={() => addToCart(product.id)}>
+                            Book Now
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="free" className="mt-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {freeResources.map((resource) => (
+                      <Card key={`free-${resource.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                        {/* Free resources card content */}
+                        <CardHeader className="pb-2">
+                          <Badge variant="outline">{resource.category}</Badge>
+                          <CardTitle className="mt-2 text-xl">{resource.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="pb-2">
+                          <p className="text-muted-foreground">{resource.description}</p>
+                          <div className="mt-4 flex items-center text-sm text-muted-foreground">
+                            <ArrowUpRight className="h-4 w-4 mr-1" />
+                            <span>{resource.downloads.toLocaleString()} downloads</span>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2">
+                          <Badge variant="secondary">Free</Badge>
+                          <Button variant="outline">
+                            Download
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+      
+      {/* Product Detail Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedProduct.title}</DialogTitle>
+                <DialogDescription>
+                  <div className="flex items-center mt-2">
+                    <Badge variant="outline">{selectedProduct.category}</Badge>
+                    <div className="flex items-center ml-4">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="ml-1 text-sm">{selectedProduct.rating}</span>
+                      <span className="ml-1 text-xs text-muted-foreground">({selectedProduct.reviews} reviews)</span>
+                    </div>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              
+              {selectedProduct.image && (
+                <div className="h-60 overflow-hidden rounded-md my-4">
+                  <img 
+                    src={selectedProduct.image} 
+                    alt={selectedProduct.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <p className="text-muted-foreground">{selectedProduct.description}</p>
+              
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => toggleWishlist(selectedProduct.id)}>
+                    <Heart className={`h-4 w-4 mr-2 ${wishlist.includes(selectedProduct.id) ? "fill-red-500 text-red-500" : ""}`} />
+                    {wishlist.includes(selectedProduct.id) ? "In Wishlist" : "Add to Wishlist"}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => toggleCompare(selectedProduct.id)}>
+                    <Zap className="h-4 w-4 mr-2" />
+                    Compare
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => shareProduct(selectedProduct)}>
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Share
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="bg-muted p-4 rounded-lg mt-4">
+                <h3 className="font-medium">Key Features</h3>
+                <ul className="mt-2 space-y-2">
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                    <span>Professional quality templates and tools</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                    <span>Immediate download after purchase</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                    <span>Compatible with popular writing software</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+                <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                <div className="flex items-center justify-between sm:justify-end gap-4 mb-4 sm:mb-0">
+                  <span className="font-bold text-xl">${selectedProduct.price}</span>
+                  <Button onClick={() => addToCart(selectedProduct.id)}>
+                    Add to Cart
+                  </Button>
+                </div>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Compare Products Dialog */}
+      <Dialog open={compareDialogOpen} onOpenChange={setCompareDialogOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Compare Products</DialogTitle>
+            <DialogDescription>
+              Compare features and specifications across products
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+            {compareItems.map(itemId => {
+              const product = [...premiumTemplates, ...digitalGoods, ...premiumServices].find(p => p.id === itemId);
+              return product ? (
+                <Card key={`compare-${itemId}`} className="overflow-hidden">
+                  {product.image && (
+                    <div className="h-32 overflow-hidden">
+                      <img 
+                        src={product.image} 
+                        alt={product.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <CardHeader className="pb-2">
+                    <Badge variant="outline">{product.category}</Badge>
+                    <CardTitle className="text-lg mt-2">{product.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Price:</span>
+                      <span className="font-medium">${product.price}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Rating:</span>
+                      <div className="flex items-center">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <span className="ml-1">{product.rating}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Reviews:</span>
+                      <span>{product.reviews}</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between pt-2">
+                    <Button variant="outline" size="sm" onClick={() => toggleCompare(itemId)}>
+                      Remove
+                    </Button>
+                    <Button size="sm" onClick={() => addToCart(itemId)}>
+                      Add to Cart
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ) : null;
+            })}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCompareDialogOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Gift Options Dialog */}
+      <Dialog open={showGiftOptionsDialog} onOpenChange={setShowGiftOptionsDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Gift Options</DialogTitle>
+            <DialogDescription>
+              Add special gift options to your purchase
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 my-4">
+            <div className="flex items-center gap-4">
+              <Switch id="gift-wrap" />
+              <div>
+                <Label htmlFor="gift-wrap">Gift Wrap</Label>
+                <p className="text-sm text-muted-foreground">Add gift wrapping for $2.99</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Switch id="gift-message" />
+              <div>
+                <Label htmlFor="gift-message">Gift Message</Label>
+                <p className="text-sm text-muted-foreground">Add a personalized message</p>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <Label htmlFor="message-text">Message</Label>
+              <Input id="message-text" placeholder="Enter your gift message here..." className="mt-1" />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowGiftOptionsDialog(false)}>Cancel</Button>
+            <Button onClick={() => {
+              setShowGiftOptionsDialog(false);
+              toast.success("Gift options added!");
+            }}>Save Options</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Marketplace;
