@@ -1,4 +1,5 @@
-import { useState } from "react";
+<lov-code>
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,13 +10,65 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ShoppingCart, Search, Book, Tag, Star, BookOpen, Sparkles, DollarSign, Lightbulb, ShieldCheck, Award, ArrowUpRight, Check, UsersIcon } from "lucide-react";
+import { 
+  ShoppingCart, Search, Book, Tag, Star, BookOpen, Sparkles, DollarSign, 
+  Lightbulb, ShieldCheck, Award, ArrowUpRight, Check, UsersIcon, Clock, 
+  TrendingUp, Zap, Gift, Heart, HeartOff, Filter, Bookmark, Share2,
+  Flame, EyeIcon, Percent, ThumbsUp
+} from "lucide-react";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const Marketplace = () => {
   const [cart, setCart] = useState<number[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [showDeals, setShowDeals] = useState(false);
+  const [compareItems, setCompareItems] = useState<number[]>([]);
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState("all");
+  const [currentPriceRange, setCurrentPriceRange] = useState("all");
+  const [currentRating, setCurrentRating] = useState("all");
+  const [showRecommended, setShowRecommended] = useState(true);
+  const [flashSaleActive, setFlashSaleActive] = useState(true);
+  const [flashSaleTimeLeft, setFlashSaleTimeLeft] = useState(3600); // 1 hour in seconds
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortOrder, setSortOrder] = useState("popular");
+  const [giftWrapItems, setGiftWrapItems] = useState<number[]>([]);
+  const [showGiftOptionsDialog, setShowGiftOptionsDialog] = useState(false);
+  const [selectedGiftItem, setSelectedGiftItem] = useState<number | null>(null);
+  const [previewingItems, setPreviewingItems] = useState<number[]>([]);
+
+  // Format flash sale countdown
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Flash sale countdown timer
+  useEffect(() => {
+    if (flashSaleActive && flashSaleTimeLeft > 0) {
+      const timer = setTimeout(() => {
+        setFlashSaleTimeLeft(flashSaleTimeLeft - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (flashSaleTimeLeft === 0) {
+      setFlashSaleActive(false);
+    }
+  }, [flashSaleActive, flashSaleTimeLeft]);
 
   const addToCart = (id: number) => {
     if (!cart.includes(id)) {
@@ -26,9 +79,135 @@ const Marketplace = () => {
     }
   };
 
+  const toggleWishlist = (id: number) => {
+    if (wishlist.includes(id)) {
+      setWishlist(wishlist.filter(itemId => itemId !== id));
+      toast.success("Removed from wishlist");
+    } else {
+      setWishlist([...wishlist, id]);
+      toast.success("Added to wishlist!");
+    }
+  };
+
+  const toggleCompare = (id: number) => {
+    if (compareItems.includes(id)) {
+      setCompareItems(compareItems.filter(itemId => itemId !== id));
+    } else {
+      if (compareItems.length >= 3) {
+        toast.error("You can only compare up to 3 items at once");
+        return;
+      }
+      setCompareItems([...compareItems, id]);
+      toast.success("Added to comparison!");
+    }
+  };
+
+  const toggleGiftWrap = (id: number) => {
+    if (giftWrapItems.includes(id)) {
+      setGiftWrapItems(giftWrapItems.filter(itemId => itemId !== id));
+    } else {
+      setGiftWrapItems([...giftWrapItems, id]);
+    }
+  };
+
+  const shareProduct = (product: any) => {
+    // Simulate sharing
+    toast.success(`Shared ${product.title} with your network!`);
+  };
+
+  const handleQuickPreview = (id: number) => {
+    // Add to previewing items
+    if (!previewingItems.includes(id)) {
+      setPreviewingItems([...previewingItems, id]);
+    }
+    
+    // Find the product
+    const product = [...premiumTemplates, ...digitalGoods, ...premiumServices].find(p => p.id === id);
+    if (product) {
+      setSelectedProduct(product);
+      setDialogOpen(true);
+    }
+  };
+
   const openProductDetails = (product: any) => {
     setSelectedProduct(product);
     setDialogOpen(true);
+  };
+
+  const openGiftOptions = (id: number) => {
+    setSelectedGiftItem(id);
+    setShowGiftOptionsDialog(true);
+  };
+
+  const calculateDiscountedPrice = (originalPrice: number) => {
+    // Apply flash sale discount (30% off)
+    if (flashSaleActive) {
+      return (originalPrice * 0.7).toFixed(2);
+    }
+    return originalPrice.toFixed(2);
+  };
+
+  const filteredProducts = () => {
+    const allProducts = [...premiumTemplates, ...digitalGoods, ...premiumServices];
+    
+    return allProducts.filter(product => {
+      // Filter by search
+      const matchesSearch = searchQuery.trim() === "" || 
+        product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Filter by category
+      const matchesCategory = currentCategory === "all" || product.category.toLowerCase() === currentCategory;
+      
+      // Filter by price range
+      let matchesPrice = true;
+      if (currentPriceRange === "free") {
+        matchesPrice = product.price === 0;
+      } else if (currentPriceRange === "under10") {
+        matchesPrice = product.price < 10;
+      } else if (currentPriceRange === "10to25") {
+        matchesPrice = product.price >= 10 && product.price <= 25;
+      } else if (currentPriceRange === "over25") {
+        matchesPrice = product.price > 25;
+      }
+      
+      // Filter by rating
+      let matchesRating = true;
+      if (currentRating === "4.5plus") {
+        matchesRating = product.rating >= 4.5;
+      } else if (currentRating === "4plus") {
+        matchesRating = product.rating >= 4.0;
+      } else if (currentRating === "3.5plus") {
+        matchesRating = product.rating >= 3.5;
+      }
+      
+      // Filter by deals
+      const matchesDeals = !showDeals || (flashSaleActive && product.price > 0);
+      
+      return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesDeals;
+    });
+  };
+
+  const sortProducts = (products: any[]) => {
+    switch (sortOrder) {
+      case "newest":
+        // In a real app, you'd sort by date
+        return [...products].sort((a, b) => b.id - a.id);
+      case "price-low":
+        return [...products].sort((a, b) => a.price - b.price);
+      case "price-high":
+        return [...products].sort((a, b) => b.price - a.price);
+      case "rating":
+        return [...products].sort((a, b) => b.rating - a.rating);
+      default: // popular
+        return [...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0));
+    }
+  };
+
+  // Get recommended products based on user behavior (this would be more sophisticated in a real app)
+  const getRecommendedProducts = () => {
+    return [...premiumTemplates, ...digitalGoods].sort(() => 0.5 - Math.random()).slice(0, 3);
   };
 
   const premiumTemplates = [
@@ -144,13 +323,58 @@ const Marketplace = () => {
     },
   ];
 
+  // New flash sale items
+  const flashSaleItems = [
+    {
+      id: 12,
+      title: "Character Arc Planner",
+      description: "Map out compelling character transformations from beginning to end with this professional planning tool.",
+      originalPrice: 19.99,
+      price: 13.99,
+      discount: 30,
+      rating: 4.8,
+      reviews: 78,
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&h=350&fit=crop",
+      category: "Character Tools",
+    },
+    {
+      id: 13,
+      title: "Story Structure Masterclass",
+      description: "Video course on advanced story structures used by bestselling authors across multiple genres.",
+      originalPrice: 49.99,
+      price: 34.99,
+      discount: 30,
+      rating: 4.9,
+      reviews: 156,
+      image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=500&h=350&fit=crop",
+      category: "Courses",
+    },
+    {
+      id: 14,
+      title: "Publishing Toolkit Bundle",
+      description: "Complete set of templates, checklists and guides for self-publishing your work professionally.",
+      originalPrice: 29.99,
+      price: 20.99,
+      discount: 30,
+      rating: 4.7,
+      reviews: 92,
+      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=500&h=350&fit=crop",
+      category: "Publishing Tools",
+    }
+  ];
+
+  // Determine recently viewed products (would typically be from user session/history)
+  const recentlyViewedProducts = previewingItems.map(id => 
+    [...premiumTemplates, ...digitalGoods, ...premiumServices, ...flashSaleItems].find(item => item.id === id)
+  ).filter(Boolean);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 p-4 md:p-6 max-w-full">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
             <div>
               <h1 className="text-4xl font-serif font-bold mb-2">Creator Marketplace</h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
@@ -161,543 +385,386 @@ const Marketplace = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input className="pl-10 min-w-[240px]" placeholder="Search marketplace..." />
+                <Input 
+                  className="pl-10 min-w-[240px]" 
+                  placeholder="Search marketplace..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               
-              <Button variant="outline" className="flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                <span>Cart ({cart.length})</span>
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2 relative">
+                      <Heart className={`h-4 w-4 ${wishlist.length > 0 ? "text-red-500 fill-red-500" : ""}`} />
+                      {wishlist.length > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {wishlist.length}
+                        </span>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Wishlist</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2 relative"
+                      onClick={() => compareItems.length > 0 && setCompareDialogOpen(true)}
+                      disabled={compareItems.length === 0}
+                    >
+                      <Zap className="h-4 w-4" />
+                      {compareItems.length > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {compareItems.length}
+                        </span>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Compare Items</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2 relative">
+                      <ShoppingCart className="h-4 w-4" />
+                      {cart.length > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                          {cart.length}
+                        </span>
+                      )}
+                      <span className="hidden sm:inline">Cart</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Your Cart</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
+          {/* Flash Sale Banner */}
+          {flashSaleActive && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 animate-pulse">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center">
+                  <Flame className="h-6 w-6 text-red-500 mr-2" />
+                  <div>
+                    <h2 className="font-bold text-lg flex items-center">
+                      Flash Sale! <span className="text-red-500 ml-2">30% OFF</span>
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Limited time offer on selected items
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <div className="text-sm text-muted-foreground">Ends in:</div>
+                    <div className="font-mono font-bold text-red-500">{formatTime(flashSaleTimeLeft)}</div>
+                  </div>
+                  <Button variant="destructive" size="sm" onClick={() => window.scrollTo({top: document.getElementById('flash-sale')?.offsetTop, behavior: 'smooth'})}>
+                    Shop Now
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Recently Viewed */}
+          {recentlyViewedProducts.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-medium mb-4 flex items-center">
+                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
+                Recently Viewed
+              </h2>
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {recentlyViewedProducts.map((product: any) => (
+                  <div 
+                    key={`recent-${product.id}`} 
+                    className="min-w-[200px] w-[200px] rounded-md border p-3 hover:shadow-md transition-shadow cursor-pointer flex flex-col"
+                    onClick={() => openProductDetails(product)}
+                  >
+                    {product.image && (
+                      <div className="h-24 overflow-hidden rounded-md mb-2">
+                        <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <h3 className="font-medium text-sm line-clamp-1">{product.title}</h3>
+                    <div className="flex items-center mt-auto pt-2">
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <span className="ml-1 text-xs">{product.rating}</span>
+                      <span className="ml-auto font-medium text-sm">${product.price}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {showRecommended && (
+            <div className="mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-medium flex items-center">
+                  <Lightbulb className="h-5 w-5 mr-2 text-yellow-500" />
+                  Recommended For You
+                </h2>
+                <Button variant="ghost" size="sm" onClick={() => setShowRecommended(false)}>
+                  Hide
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {getRecommendedProducts().map((product) => (
+                  <Card key={`rec-${product.id}`} className="overflow-hidden hover:shadow-md transition-shadow">
+                    {product.image && (
+                      <div className="h-40 overflow-hidden">
+                        <img 
+                          src={product.image} 
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardHeader className="pb-2">
+                      <div className="flex justify-between">
+                        <Badge variant="outline">{product.category}</Badge>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="ml-1 text-sm">{product.rating}</span>
+                        </div>
+                      </div>
+                      <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(product)}>
+                        {product.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <p className="text-muted-foreground line-clamp-2">{product.description}</p>
+                    </CardContent>
+                    <CardFooter className="flex justify-between items-center pt-2">
+                      <span className="font-bold">${product.price}</span>
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="p-0 h-8 w-8" onClick={() => toggleWishlist(product.id)}>
+                          <Heart className={`h-4 w-4 ${wishlist.includes(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+                        </Button>
+                        <Button onClick={() => addToCart(product.id)}>
+                          Add to Cart
+                        </Button>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-1 space-y-6">
-              <div>
-                <h2 className="font-medium mb-3">Categories</h2>
-                <div className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Book className="h-4 w-4 mr-2" />
-                    All Categories
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Tag className="h-4 w-4 mr-2" />
-                    Templates
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Lightbulb className="h-4 w-4 mr-2" />
-                    Tools
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Resources
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <ShieldCheck className="h-4 w-4 mr-2" />
-                    Services
-                  </Button>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <h2 className="font-medium mb-3">Price Range</h2>
-                <div className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start">
-                    All Prices
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    Free
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    Under $10
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    $10 - $25
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    $25+
-                  </Button>
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <h2 className="font-medium mb-3">Rating</h2>
-                <div className="space-y-2">
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
-                    4.5 & up
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
-                    4.0 & up
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
-                    3.5 & up
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="bg-primary/10 p-6 rounded-lg border border-primary/20">
-                <h3 className="font-medium mb-3 flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2 text-primary" />
-                  Become a Creator
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Have skills or resources to share? Join our marketplace as a creator and earn income from your expertise.
-                </p>
-                <Button variant="outline" size="sm" className="w-full">
-                  Learn More
+              <div className="flex justify-between items-center md:hidden mb-4">
+                <Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
                 </Button>
+                
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="popular">Most Popular</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    <SelectItem value="rating">Highest Rated</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className={`space-y-6 ${showFilters ? 'block' : 'hidden md:block'}`}>
+                <div>
+                  <h2 className="font-medium mb-3">Categories</h2>
+                  <div className="space-y-2">
+                    <Button 
+                      variant={currentCategory === "all" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentCategory("all")}
+                    >
+                      <Book className="h-4 w-4 mr-2" />
+                      All Categories
+                    </Button>
+                    <Button 
+                      variant={currentCategory === "templates" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentCategory("templates")}
+                    >
+                      <Tag className="h-4 w-4 mr-2" />
+                      Templates
+                    </Button>
+                    <Button 
+                      variant={currentCategory === "tools" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentCategory("tools")}
+                    >
+                      <Lightbulb className="h-4 w-4 mr-2" />
+                      Tools
+                    </Button>
+                    <Button 
+                      variant={currentCategory === "resources" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentCategory("resources")}
+                    >
+                      <BookOpen className="h-4 w-4 mr-2" />
+                      Resources
+                    </Button>
+                    <Button 
+                      variant={currentCategory === "services" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentCategory("services")}
+                    >
+                      <ShieldCheck className="h-4 w-4 mr-2" />
+                      Services
+                    </Button>
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div>
+                  <h2 className="font-medium mb-3">Price Range</h2>
+                  <div className="space-y-2">
+                    <Button 
+                      variant={currentPriceRange === "all" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentPriceRange("all")}
+                    >
+                      All Prices
+                    </Button>
+                    <Button 
+                      variant={currentPriceRange === "free" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentPriceRange("free")}
+                    >
+                      Free
+                    </Button>
+                    <Button 
+                      variant={currentPriceRange === "under10" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentPriceRange("under10")}
+                    >
+                      Under $10
+                    </Button>
+                    <Button 
+                      variant={currentPriceRange === "10to25" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentPriceRange("10to25")}
+                    >
+                      $10 - $25
+                    </Button>
+                    <Button 
+                      variant={currentPriceRange === "over25" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentPriceRange("over25")}
+                    >
+                      $25+
+                    </Button>
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div>
+                  <h2 className="font-medium mb-3">Rating</h2>
+                  <div className="space-y-2">
+                    <Button 
+                      variant={currentRating === "all" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentRating("all")}
+                    >
+                      <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                      All Ratings
+                    </Button>
+                    <Button 
+                      variant={currentRating === "4.5plus" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentRating("4.5plus")}
+                    >
+                      <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                      4.5 & up
+                    </Button>
+                    <Button 
+                      variant={currentRating === "4plus" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentRating("4plus")}
+                    >
+                      <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                      4.0 & up
+                    </Button>
+                    <Button 
+                      variant={currentRating === "3.5plus" ? "default" : "ghost"} 
+                      className="w-full justify-start"
+                      onClick={() => setCurrentRating("3.5plus")}
+                    >
+                      <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                      3.5 & up
+                    </Button>
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div>
+                  <h2 className="font-medium mb-3">Special Offers</h2>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="deals-only" 
+                      checked={showDeals} 
+                      onCheckedChange={setShowDeals} 
+                    />
+                    <Label htmlFor="deals-only" className="cursor-pointer">Show deals only</Label>
+                  </div>
+                </div>
+                
+                <div className="bg-primary/10 p-6 rounded-lg border border-primary/20">
+                  <h3 className="font-medium mb-3 flex items-center">
+                    <Sparkles className="h-5 w-5 mr-2 text-primary" />
+                    Become a Creator
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Have skills or resources to share? Join our marketplace as a creator and earn income from your expertise.
+                  </p>
+                  <Button variant="outline" size="sm" className="w-full">
+                    Learn More
+                  </Button>
+                </div>
               </div>
             </div>
 
             <div className="md:col-span-3">
-              <Tabs defaultValue="all" className="w-full">
-                <div className="flex justify-between items-center mb-6">
-                  <TabsList>
-                    <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="templates">Templates</TabsTrigger>
-                    <TabsTrigger value="tools">Tools</TabsTrigger>
-                    <TabsTrigger value="services">Services</TabsTrigger>
-                    <TabsTrigger value="free">Free</TabsTrigger>
-                  </TabsList>
-                  
-                  <Select defaultValue="popular">
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="popular">Most Popular</SelectItem>
-                      <SelectItem value="newest">Newest</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
-                      <SelectItem value="rating">Highest Rated</SelectItem>
-                    </SelectContent>
-                  </Select>
+              <div className="hidden md:flex justify-between items-center mb-6">
+                <div className="flex items-center">
+                  <span className="text-sm text-muted-foreground mr-2">
+                    {filteredProducts().length} {filteredProducts().length === 1 ? 'result' : 'results'}
+                  </span>
                 </div>
                 
-                <TabsContent value="all" className="space-y-10 mt-0">
-                  <section>
-                    <h2 className="text-2xl font-serif font-bold mb-6">Featured Templates</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {premiumTemplates.map((template) => (
-                        <Card key={template.id} className="overflow-hidden hover:shadow-md transition-shadow story-card-hover">
-                          <div className="relative h-40 overflow-hidden">
-                            <img 
-                              src={template.image} 
-                              alt={template.title}
-                              className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                            />
-                            {template.bestseller && (
-                              <Badge className="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600">
-                                Bestseller
-                              </Badge>
-                            )}
-                          </div>
-                          <CardHeader className="pb-2">
-                            <div className="flex justify-between">
-                              <Badge variant="outline">{template.category}</Badge>
-                              <div className="flex items-center">
-                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                <span className="ml-1 text-sm">{template.rating}</span>
-                                <span className="text-xs text-muted-foreground ml-1">({template.reviews})</span>
-                              </div>
-                            </div>
-                            <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(template)}>
-                              {template.title}
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="pb-2">
-                            <p className="text-muted-foreground line-clamp-2">{template.description}</p>
-                          </CardContent>
-                          <CardFooter className="flex justify-between items-center pt-2">
-                            <span className="font-bold">${template.price}</span>
-                            <Button onClick={() => addToCart(template.id)}>
-                              <ShoppingCart className="h-4 w-4 mr-2" />
-                              Add to Cart
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
-                    </div>
-                  </section>
-                  
-                  <section>
-                    <h2 className="text-2xl font-serif font-bold mb-6">Digital Tools</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      {digitalGoods.map((tool) => (
-                        <Card key={tool.id} className="overflow-hidden hover:shadow-md transition-shadow story-card-hover">
-                          <div className="flex flex-col md:flex-row">
-                            <div className="md:w-1/3 h-40 md:h-auto">
-                              <img 
-                                src={tool.image} 
-                                alt={tool.title}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="md:w-2/3 flex flex-col">
-                              <CardHeader className="pb-2">
-                                <div className="flex justify-between items-start">
-                                  <div>
-                                    <Badge variant="outline">{tool.category}</Badge>
-                                    {tool.bestseller && (
-                                      <Badge className="ml-2 bg-yellow-500 hover:bg-yellow-600">
-                                        Bestseller
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center">
-                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                    <span className="ml-1 text-sm">{tool.rating}</span>
-                                    <span className="text-xs text-muted-foreground ml-1">({tool.reviews})</span>
-                                  </div>
-                                </div>
-                                <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(tool)}>
-                                  {tool.title}
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent className="pb-2 flex-grow">
-                                <p className="text-muted-foreground line-clamp-2">{tool.description}</p>
-                              </CardContent>
-                              <CardFooter className="flex justify-between items-center pt-2">
-                                <span className="font-bold">${tool.price}</span>
-                                <Button onClick={() => addToCart(tool.id)}>Add to Cart</Button>
-                              </CardFooter>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  </section>
-                  
-                  <section>
-                    <h2 className="text-2xl font-serif font-bold mb-6">Creative Services</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      {premiumServices.map((service) => (
-                        <Card key={service.id} className="hover:shadow-md transition-shadow story-card-hover">
-                          <CardHeader>
-                            <Badge variant="outline">{service.category}</Badge>
-                            <CardTitle className="mt-2 text-xl">{service.title}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-muted-foreground mb-4 line-clamp-3">{service.description}</p>
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="ml-1 text-sm">{service.rating}</span>
-                              <span className="text-xs text-muted-foreground ml-1">({service.reviews} reviews)</span>
-                            </div>
-                          </CardContent>
-                          <CardFooter className="flex justify-between items-center">
-                            <span className="font-bold">${service.price}</span>
-                            <Button variant="outline" onClick={() => openProductDetails(service)}>
-                              View Details
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
-                    </div>
-                  </section>
-                  
-                  <section>
-                    <h2 className="text-2xl font-serif font-bold mb-6">Free Resources</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      {freeResources.map((resource) => (
-                        <Card key={resource.id} className="hover:shadow-md transition-shadow story-card-hover">
-                          <CardHeader>
-                            <Badge variant="outline">{resource.category}</Badge>
-                            <CardTitle className="mt-2 text-xl">{resource.title}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-muted-foreground mb-4">{resource.description}</p>
-                            <div className="text-sm text-muted-foreground">
-                              {resource.downloads.toLocaleString()} downloads
-                            </div>
-                          </CardContent>
-                          <CardFooter>
-                            <Button className="w-full">
-                              Download Free
-                            </Button>
-                          </CardFooter>
-                        </Card>
-                      ))}
-                    </div>
-                  </section>
-                </TabsContent>
-                
-                <TabsContent value="templates" className="mt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {premiumTemplates.map((template) => (
-                      <Card key={template.id} className="overflow-hidden hover:shadow-md transition-shadow story-card-hover">
-                        <div className="relative h-40 overflow-hidden">
-                          <img 
-                            src={template.image} 
-                            alt={template.title}
-                            className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
-                          />
-                          {template.bestseller && (
-                            <Badge className="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600">
-                              Bestseller
-                            </Badge>
-                          )}
-                        </div>
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between">
-                            <Badge variant="outline">{template.category}</Badge>
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span className="ml-1 text-sm">{template.rating}</span>
-                              <span className="text-xs text-muted-foreground ml-1">({template.reviews})</span>
-                            </div>
-                          </div>
-                          <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(template)}>
-                            {template.title}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="pb-2">
-                          <p className="text-muted-foreground line-clamp-2">{template.description}</p>
-                        </CardContent>
-                        <CardFooter className="flex justify-between items-center pt-2">
-                          <span className="font-bold">${template.price}</span>
-                          <Button onClick={() => addToCart(template.id)}>Add to Cart</Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="tools" className="mt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {digitalGoods.map((tool) => (
-                      <Card key={tool.id} className="overflow-hidden hover:shadow-md transition-shadow story-card-hover">
-                        <div className="flex flex-col md:flex-row">
-                          <div className="md:w-1/3 h-40 md:h-auto">
-                            <img 
-                              src={tool.image} 
-                              alt={tool.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="md:w-2/3 flex flex-col">
-                            <CardHeader className="pb-2">
-                              <div className="flex justify-between items-start">
-                                <div>
-                                  <Badge variant="outline">{tool.category}</Badge>
-                                  {tool.bestseller && (
-                                    <Badge className="ml-2 bg-yellow-500 hover:bg-yellow-600">
-                                      Bestseller
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center">
-                                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                  <span className="ml-1 text-sm">{tool.rating}</span>
-                                  <span className="text-xs text-muted-foreground ml-1">({tool.reviews})</span>
-                                </div>
-                              </div>
-                              <CardTitle className="mt-2 text-xl cursor-pointer hover:text-primary transition-colors" onClick={() => openProductDetails(tool)}>
-                                {tool.title}
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className="pb-2 flex-grow">
-                              <p className="text-muted-foreground line-clamp-2">{tool.description}</p>
-                            </CardContent>
-                            <CardFooter className="flex justify-between items-center pt-2">
-                              <span className="font-bold">${tool.price}</span>
-                              <Button onClick={() => addToCart(tool.id)}>Add to Cart</Button>
-                            </CardFooter>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="services" className="mt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {premiumServices.map((service) => (
-                      <Card key={service.id} className="hover:shadow-md transition-shadow story-card-hover">
-                        <CardHeader>
-                          <Badge variant="outline">{service.category}</Badge>
-                          <CardTitle className="mt-2 text-xl">{service.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-muted-foreground mb-4 line-clamp-3">{service.description}</p>
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="ml-1 text-sm">{service.rating}</span>
-                            <span className="text-xs text-muted-foreground ml-1">({service.reviews} reviews)</span>
-                          </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-between items-center">
-                          <span className="font-bold">${service.price}</span>
-                          <Button variant="outline" onClick={() => openProductDetails(service)}>
-                            View Details
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="free" className="mt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {freeResources.map((resource) => (
-                      <Card key={resource.id} className="hover:shadow-md transition-shadow story-card-hover">
-                        <CardHeader>
-                          <Badge variant="outline">{resource.category}</Badge>
-                          <CardTitle className="mt-2 text-xl">{resource.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-muted-foreground mb-4">{resource.description}</p>
-                          <div className="text-sm text-muted-foreground">
-                            {resource.downloads.toLocaleString()} downloads
-                          </div>
-                        </CardContent>
-                        <CardFooter>
-                          <Button className="w-full">
-                            Download Free
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-
-          <section className="bg-primary/10 border border-primary/20 rounded-xl p-8 mb-10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="md:w-2/3">
-                <h2 className="text-2xl font-serif font-bold mb-3">Become a Marketplace Creator</h2>
-                <p className="text-lg text-muted-foreground mb-4">
-                  Share your expertise with the FANVERSE community. Sell templates, tools, or offer creative services and earn income while helping other writers.
-                </p>
-                <div className="flex flex-wrap gap-6 mt-6">
-                  <div className="flex items-start">
-                    <DollarSign className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium">Earn Income</h3>
-                      <p className="text-sm text-muted-foreground">Monetize your creative expertise</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start">
-                    <Award className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium">Build Reputation</h3>
-                      <p className="text-sm text-muted-foreground">Establish yourself as an expert</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start">
-                    <UsersIcon className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                    <div>
-                      <h3 className="font-medium">Join Community</h3>
-                      <p className="text-sm text-muted-foreground">Connect with creators worldwide</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <Button size="lg" className="gap-2">
-                  Apply to Become a Creator
-                  <ArrowUpRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-      
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        {selectedProduct && (
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">{selectedProduct.title}</DialogTitle>
-              <DialogDescription>
-                {selectedProduct.category}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-              {selectedProduct.image && (
-                <div>
-                  <img 
-                    src={selectedProduct.image} 
-                    alt={selectedProduct.title}
-                    className="w-full rounded-md"
-                  />
-                </div>
-              )}
-              
-              <div>
-                <div className="flex items-center mb-4">
-                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  <span className="ml-1 text-lg font-medium">{selectedProduct.rating}</span>
-                  <span className="text-sm text-muted-foreground ml-1">({selectedProduct.reviews} reviews)</span>
-                </div>
-                
-                <p className="mb-6">{selectedProduct.description}</p>
-                
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-2xl font-bold">${selectedProduct.price}</span>
-                  <Button onClick={() => {
-                    addToCart(selectedProduct.id);
-                    setDialogOpen(false);
-                  }}>
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </Button>
-                </div>
-                
-                <Separator className="mb-6" />
-                
-                <div className="space-y-4">
-                  <h3 className="font-medium">Features:</h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                      <span>Instant digital download</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                      <span>Compatible with popular writing software</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                      <span>Lifetime access to future updates</span>
-                    </li>
-                    <li className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                      <span>30-day satisfaction guarantee</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            
-            <DialogFooter className="sm:justify-between">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Close
-              </Button>
-              <Button variant="default" onClick={() => {
-                addToCart(selectedProduct.id);
-                setDialogOpen(false);
-              }}>
-                Add to Cart
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        )}
-      </Dialog>
-      
-      <Footer />
-    </div>
-  );
-};
-
-export default Marketplace;
+                <Select value={sortOrder} onValueChange={setSortOrder}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="popular">Most Popular</SelectItem>
+                    <SelectItem value="newest">Newest</SelectItem>
+                    <SelectItem value="price-low">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high">Price: High to Low</SelectItem>
+                    
