@@ -5,7 +5,8 @@ import {
   BookOpen, ChevronRight, BookText, Users, Award, 
   TrendingUp, Layout, MessageCircle, Trophy, BookOpenCheck,
   Video, Heart, Star, Bookmark, UserRound, Clock,
-  Sparkles, BarChart2, Globe, Eye, Search, Home, LineChart
+  Sparkles, BarChart2, Globe, Eye, Search, Home, LineChart,
+  Briefcase
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -46,6 +47,7 @@ const MainSidebar = ({
         { icon: Trophy, label: "Writing Contests", path: "/contests" },
         { icon: BookOpenCheck, label: "Reading Clubs", path: "/reading-clubs" },
         { icon: Video, label: "Watch Streams", path: "/watch-streams" },
+        { icon: Briefcase, label: "Job Opportunities", path: "/jobs", badge: "New" },
       ]
     },
     {
@@ -130,6 +132,12 @@ const MainSidebar = ({
                         
                         {!collapsed && item.label === "Writing Contests" && (
                           <Badge variant="outline" className="ml-auto py-0 px-1.5 h-5 bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800/30">
+                            New
+                          </Badge>
+                        )}
+                        
+                        {!collapsed && item.badge === "New" && (
+                          <Badge variant="outline" className="ml-auto py-0 px-1.5 h-5 bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800/30">
                             New
                           </Badge>
                         )}

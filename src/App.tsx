@@ -36,6 +36,8 @@ import MarketplaceCheckout from "./pages/MarketplaceCheckout";
 import MarketplaceSuccess from "./pages/MarketplaceSuccess";
 import Dashboard from "./pages/Dashboard";
 import Messages from "./pages/Messages";
+import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
 import MainSidebar from "./components/MainSidebar";
 
 import "./App.css";
@@ -101,6 +103,8 @@ function App() {
         <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
         <Route path="/messages" element={<AppLayout><Messages /></AppLayout>} />
         <Route path="/messages/:conversationId" element={<AppLayout><Messages /></AppLayout>} />
+        <Route path="/jobs" element={<AppLayout><Jobs /></AppLayout>} />
+        <Route path="/jobs/:jobId" element={<AppLayout><JobDetails /></AppLayout>} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/challenges" element={<AppLayout><Challenges /></AppLayout>} />
