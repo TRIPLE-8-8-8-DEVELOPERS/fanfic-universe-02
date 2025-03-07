@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -278,6 +277,7 @@ const Marketplace = () => {
       rating: 4.9,
       reviews: 124,
       category: "Editing Services",
+      image: "https://images.unsplash.com/photo-1546074177-ffdda98d214f?w=500&h=350&fit=crop"
     },
     {
       id: 7,
@@ -287,6 +287,7 @@ const Marketplace = () => {
       rating: 4.7,
       reviews: 215,
       category: "Design Services",
+      image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&h=350&fit=crop"
     },
     {
       id: 8,
@@ -296,6 +297,7 @@ const Marketplace = () => {
       rating: 4.6,
       reviews: 83,
       category: "Marketing Services",
+      image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=500&h=350&fit=crop"
     },
   ];
 

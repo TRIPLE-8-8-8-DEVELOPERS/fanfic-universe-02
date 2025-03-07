@@ -15,4 +15,5 @@ export interface JobType {
   logo: string;
   featured?: boolean;
   tags?: string[];
+  image?: string; // Added optional image property
 }
