@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { mockJobs } from "@/data/mockJobsData";
 import { JobType } from "@/types/job";
+import { Link } from "react-router-dom";
 
 const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,13 +63,14 @@ const Jobs = () => {
                   <SelectValue placeholder="Job Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all-categories">All Categories</SelectItem>
                   <SelectItem value="writing">Writing</SelectItem>
                   <SelectItem value="editing">Editing</SelectItem>
                   <SelectItem value="marketing">Marketing</SelectItem>
                   <SelectItem value="design">Design</SelectItem>
                   <SelectItem value="development">Development</SelectItem>
                   <SelectItem value="community">Community</SelectItem>
+                  <SelectItem value="content">Content</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
@@ -79,7 +81,7 @@ const Jobs = () => {
                   <SelectValue placeholder="Job Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Types</SelectItem>
+                  <SelectItem value="all-types">All Types</SelectItem>
                   <SelectItem value="full-time">Full-time</SelectItem>
                   <SelectItem value="part-time">Part-time</SelectItem>
                   <SelectItem value="contract">Contract</SelectItem>
@@ -162,7 +164,9 @@ const FeaturedJobCard = ({ job }: { job: JobType }) => (
       </div>
     </CardContent>
     <CardFooter className="p-4 pt-0 flex justify-end">
-      <Button size="sm" variant="secondary">View Details</Button>
+      <Button size="sm" variant="secondary" asChild>
+        <Link to={`/jobs/${job.id}`}>View Details</Link>
+      </Button>
     </CardFooter>
   </Card>
 );
@@ -216,7 +220,9 @@ const JobCard = ({ job }: { job: JobType }) => (
     </CardContent>
     <CardFooter className="p-6 pt-0 flex justify-between items-center">
       <span className="text-sm text-muted-foreground">Posted {job.posted}</span>
-      <Button>View Details</Button>
+      <Button asChild>
+        <Link to={`/jobs/${job.id}`}>View Details</Link>
+      </Button>
     </CardFooter>
   </Card>
 );
