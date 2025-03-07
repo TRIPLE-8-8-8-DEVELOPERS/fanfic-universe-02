@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Briefcase, Search, MapPin, Calendar, Filter, Star, Clock } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { mockJobs } from "@/data/mockJobsData";
 import { JobType } from "@/types/job";
 import { Link } from "react-router-dom";
+import { SeedDataButton } from "@/scripts/seedData";
 
 const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,10 +36,14 @@ const Jobs = () => {
           <h1 className="text-3xl font-bold mb-2">Creative Opportunities</h1>
           <p className="text-muted-foreground">Discover exciting job opportunities in the FanVerse community</p>
         </div>
-        <Button>
-          <Briefcase className="mr-2 h-4 w-4" />
-          Post a Job
-        </Button>
+        <div className="flex items-center">
+          <Button>
+            <Briefcase className="mr-2 h-4 w-4" />
+            Post a Job
+          </Button>
+          {/* Admin functionality - only in development */}
+          {process.env.NODE_ENV !== "production" && <SeedDataButton />}
+        </div>
       </div>
       
       {/* Search and filter section */}

@@ -1,9 +1,9 @@
 
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   Briefcase, MapPin, Calendar, Clock, Building, CheckCircle2, 
-  ArrowLeft, Share2, Bookmark, DollarSign, Globe
+  ArrowLeft, Share2, Bookmark, DollarSign, Globe, AlertCircle
 } from "lucide-react";
 import { 
   Card, CardContent, CardDescription, 
@@ -15,31 +15,74 @@ import { Separator } from "@/components/ui/separator";
 import { mockJobs } from "@/data/mockJobsData";
 import RelatedJobs from "@/components/jobs/RelatedJobs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
+import { getJobById, getRelatedJobs } from "@/services/jobService";
+import { toast } from "sonner";
 
 const JobDetails = () => {
   const { jobId } = useParams<{ jobId: string }>();
-  const job = mockJobs.find((j) => j.id === jobId);
+  const navigate = useNavigate();
+  
+  // Fetch job details
+  const { data: job, isLoading, error } = useQuery({
+    queryKey: ['job', jobId],
+    queryFn: () => jobId ? getJobById(jobId) : null,
+    enabled: !!jobId,
+  });
 
-  if (!job) {
+  // Fetch related jobs based on category
+  const { data: relatedJobs = [] } = useQuery({
+    queryKey: ['relatedJobs', job?.category, jobId],
+    queryFn: () => job && jobId ? getRelatedJobs(jobId, job.category) : Promise.resolve([]),
+    enabled: !!job && !!jobId,
+  });
+  
+  // Handle errors - use mock data as fallback
+  React.useEffect(() => {
+    if (error) {
+      toast.error("Failed to fetch job details. Using mock data instead.");
+    }
+  }, [error]);
+
+  // If still loading, show loading state
+  if (isLoading) {
     return (
       <div className="container mx-auto py-16 px-4 text-center">
-        <h1 className="text-2xl font-bold mb-4">Job not found</h1>
-        <p className="text-muted-foreground mb-8">The job you're looking for doesn't exist or has been removed.</p>
-        <Button asChild>
-          <Link to="/jobs">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Jobs
-          </Link>
-        </Button>
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+        <p className="text-muted-foreground">Loading job details...</p>
       </div>
     );
   }
 
-  // Get related jobs based on category
-  const relatedJobs = mockJobs
-    .filter((j) => j.id !== job.id && j.category === job.category)
-    .slice(0, 3);
+  // If job not found, show error and option to go back
+  if (!job && !isLoading) {
+    const mockJob = jobId ? mockJobs.find(j => j.id === jobId) : null;
+    
+    if (!mockJob) {
+      return (
+        <div className="container mx-auto py-16 px-4 text-center">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-4">Job not found</h1>
+          <p className="text-muted-foreground mb-8">The job you're looking for doesn't exist or has been removed.</p>
+          <Button asChild>
+            <Link to="/jobs">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Jobs
+            </Link>
+          </Button>
+        </div>
+      );
+    }
+    
+    // Use mock job as fallback if the real job wasn't found
+    return <JobDetailsContent job={mockJob} relatedJobs={mockJobs.filter(j => j.id !== mockJob.id && j.category === mockJob.category).slice(0, 3)} />;
+  }
 
+  return <JobDetailsContent job={job!} relatedJobs={relatedJobs} />;
+};
+
+// Extracted Job Details Content component
+const JobDetailsContent = ({ job, relatedJobs }: { job: NonNullable<ReturnType<typeof getJobById> extends Promise<infer T> ? T : never>, relatedJobs: ReturnType<typeof getRelatedJobs> extends Promise<infer T> ? T : never }) => {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="mb-8">
@@ -101,7 +144,7 @@ const JobDetails = () => {
                 )}
                 <Badge variant="outline" className="px-3 py-1">
                   <Calendar className="h-3.5 w-3.5 mr-1.5" />
-                  Deadline: {job.deadline}
+                  Deadline: {typeof job.deadline === 'string' ? job.deadline : new Date(job.deadline).toLocaleDateString()}
                 </Badge>
               </div>
               
@@ -141,7 +184,9 @@ const JobDetails = () => {
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between w-full">
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Posted {job.posted}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Posted {typeof job.posted === 'string' ? job.posted : new Date(job.posted).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="flex gap-3">
                   <Button variant="outline">
