@@ -3,7 +3,7 @@ import { supabase } from "../integrations/supabase/client";
 import { mockJobs } from "../data/mockJobsData";
 
 const seedJobs = async () => {
-  // Convert string dates to proper timestamp objects
+  // Convert JavaScript Date objects to ISO strings for Supabase
   const processedJobs = mockJobs.map(job => {
     // For demo purposes, set deadlines in the future
     const deadline = new Date();
@@ -11,8 +11,8 @@ const seedJobs = async () => {
     
     return {
       ...job,
-      deadline,
-      posted: new Date(), // Current timestamp
+      deadline: deadline.toISOString(), // Convert Date to ISO string
+      posted: new Date().toISOString(), // Convert Date to ISO string
     };
   });
 

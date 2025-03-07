@@ -13,7 +13,12 @@ export const getJobs = async (): Promise<JobType[]> => {
     throw error;
   }
   
-  return data || [];
+  // Cast data to JobType array with proper type casting
+  return (data || []).map(job => ({
+    ...job,
+    type: job.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
+    category: job.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"
+  }));
 };
 
 export const getFeaturedJobs = async (): Promise<JobType[]> => {
@@ -28,7 +33,12 @@ export const getFeaturedJobs = async (): Promise<JobType[]> => {
     throw error;
   }
   
-  return data || [];
+  // Cast data to JobType array with proper type casting
+  return (data || []).map(job => ({
+    ...job,
+    type: job.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
+    category: job.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"
+  }));
 };
 
 export const getJobById = async (id: string): Promise<JobType | null> => {
@@ -47,7 +57,12 @@ export const getJobById = async (id: string): Promise<JobType | null> => {
     throw error;
   }
   
-  return data;
+  // Cast data to JobType with proper type casting
+  return data ? {
+    ...data,
+    type: data.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
+    category: data.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"
+  } : null;
 };
 
 export const getRelatedJobs = async (jobId: string, category: string, limit = 3): Promise<JobType[]> => {
@@ -63,5 +78,10 @@ export const getRelatedJobs = async (jobId: string, category: string, limit = 3)
     throw error;
   }
   
-  return data || [];
+  // Cast data to JobType array with proper type casting
+  return (data || []).map(job => ({
+    ...job,
+    type: job.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
+    category: job.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"
+  }));
 };
