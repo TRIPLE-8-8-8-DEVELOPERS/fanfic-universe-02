@@ -5,7 +5,7 @@ export interface JobType {
   company: string;
   location: string;
   type: "full-time" | "part-time" | "contract" | "freelance" | "remote";
-  category: "writing" | "editing" | "marketing" | "design" | "development" | "community" | "other";
+  category: "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other";
   description: string;
   requirements: string[];
   responsibilities: string[];

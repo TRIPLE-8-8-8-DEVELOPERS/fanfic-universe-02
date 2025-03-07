@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Upload, File, X } from "lucide-react";
+import { Briefcase, Upload, X, File as FileIcon } from "lucide-react";
 import { JobType } from "@/types/job";
 
 interface JobApplyFormProps {
@@ -197,7 +197,7 @@ const JobApplyForm = ({ job, onClose }: JobApplyFormProps) => {
                       </label>
                       {value && (
                         <div className="mt-4 flex items-center gap-2 p-2 rounded-md bg-secondary/20 w-full">
-                          <File className="h-4 w-4" />
+                          <FileIcon className="h-4 w-4" />
                           <span className="text-sm">{(value as File).name}</span>
                           <Button
                             type="button"
