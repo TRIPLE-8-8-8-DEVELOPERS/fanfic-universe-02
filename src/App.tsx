@@ -23,9 +23,9 @@ function App() {
     <Router>
       <AuthProvider>
         <SidebarProvider>
-          <div className="min-h-screen flex w-full">
+          <div className="min-h-screen flex w-full bg-background">
             <MainSidebar />
-            <main className="flex-1">
+            <main className="flex-1 w-full max-w-full overflow-x-hidden">
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />

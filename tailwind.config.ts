@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -17,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			screens: {
+				'xs': '480px',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -112,6 +116,10 @@ export default {
 					from: { backgroundPosition: "0 0" },
 					to: { backgroundPosition: "-200% 0" },
 				},
+				"float": {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-5px)" },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -124,9 +132,14 @@ export default {
 				"slide-out": "slide-out 0.3s ease-out",
 				"slide-up": "slide-up 0.5s ease-out",
 				"text-shimmer": "text-shimmer 2.5s ease-out infinite",
+				"float": "float 3s ease-in-out infinite",
 			},
 			transitionTimingFunction: {
 				"ease-spring": "cubic-bezier(0.37, 0, 0.63, 1)",
+			},
+			spacing: {
+				'header': '4rem',
+				'sidebar': '16rem',
 			},
 		},
 	},

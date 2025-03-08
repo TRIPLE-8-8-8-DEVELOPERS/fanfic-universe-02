@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { 
   BookOpen, ChevronRight, BookText, Users, Award, 
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MainSidebarProps {
   currentPath?: string;
@@ -20,6 +22,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
   const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Navigation categories and items
   const navigationItems = [
@@ -58,11 +61,17 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
     }
   ];
 
+  // Hide sidebar on mobile by default
+  if (isMobile && state !== "collapsed" && location.pathname !== "/") {
+    toggleSidebar();
+  }
+
   return (
     <div 
       className={cn(
         "h-screen border-r bg-background transition-all duration-300 flex flex-col relative flex-shrink-0",
-        collapsed ? "w-16" : "w-72"
+        collapsed ? "w-0 md:w-16 opacity-0 md:opacity-100" : "w-72",
+        isMobile && !collapsed ? "fixed z-50 shadow-xl" : ""
       )}
     >
       <div className="h-14 border-b flex items-center justify-between p-4">
@@ -114,6 +123,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
                         collapsed && "justify-center p-2"
                       )}
                       asChild
+                      onClick={() => isMobile && toggleSidebar()}
                     >
                       <Link to={item.path}>
                         <item.icon className={cn("h-4 w-4", collapsed ? "mr-0" : "mr-2")} />
@@ -179,6 +189,14 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
             <a href="/terms" className="hover:underline">Terms</a>
           </div>
         </div>
+      )}
+
+      {/* Mobile overlay to close sidebar when opened */}
+      {isMobile && !collapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={toggleSidebar}
+        />
       )}
     </div>
   );

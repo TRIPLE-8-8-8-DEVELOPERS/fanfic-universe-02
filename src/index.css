@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 
 @tailwind base;
@@ -49,6 +50,7 @@
   html, body {
     width: 100%;
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
   
   body {
@@ -59,6 +61,11 @@
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif tracking-tight;
+  }
+
+  /* Adjustments for main content */
+  main {
+    @apply pt-14;
   }
 }
 
@@ -80,7 +87,7 @@
   }
   
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-10 md:py-16 lg:py-24;
   }
   
   .fade-in {
@@ -185,5 +192,53 @@
   /* Audio player styling */
   .audio-player {
     @apply p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-between;
+  }
+  
+  /* Responsive padding utilities */
+  .px-responsive {
+    @apply px-4 sm:px-6 md:px-8 lg:px-12;
+  }
+  
+  .py-responsive {
+    @apply py-6 sm:py-8 md:py-12 lg:py-16;
+  }
+  
+  /* Container with sidebar awareness */
+  .container-with-sidebar {
+    @apply w-full transition-all duration-300;
+    padding-left: var(--sidebar-width, 0);
+  }
+  
+  /* Mobile-friendly containers */
+  .mobile-container {
+    @apply px-4 md:px-6 w-full mx-auto;
+  }
+  
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Responsive grid layouts */
+  .responsive-grid-2 {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+  }
+  
+  .responsive-grid-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+  
+  .responsive-grid-4 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+  
+  /* Floating animation */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
   }
 }
