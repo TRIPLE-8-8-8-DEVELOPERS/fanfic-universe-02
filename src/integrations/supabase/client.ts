@@ -414,14 +414,14 @@ export async function getUserRating(userId: string, storyId: string) {
 }
 
 export async function getStoryAverageRating(storyId: string) {
-  // Fix the error by using the correct type assertion
-  const { data, error } = await supabase
-    .rpc('get_story_average_rating', { story_id: storyId } as any);
-  
-  if (error) {
+  try {
+    const { data, error } = await supabase
+      .rpc('get_story_average_rating', { story_id: storyId } as any);
+      
+    if (error) throw error;
+    return data;
+  } catch (error) {
     console.error('Error getting story average rating:', error);
-    return { average: 0, count: 0 };
+    throw error;
   }
-  
-  return data || { average: 0, count: 0 };
 }
