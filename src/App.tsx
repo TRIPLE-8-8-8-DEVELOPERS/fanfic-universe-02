@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
 import SignIn from "@/pages/SignIn";
@@ -14,9 +14,47 @@ import Jobs from "@/pages/Jobs";
 import Profile from "@/pages/Profile";
 import ReadingLists from "@/pages/ReadingLists";
 import Explore from "@/pages/Explore";
-import { AuthProvider } from "@/contexts/AuthContext";
+import JobDetails from "@/pages/JobDetails";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import MainSidebar from "@/components/MainSidebar";
+import { useEffect, lazy, Suspense } from "react";
+import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
+
+// Add lazy-loaded components to improve initial load time
+const Story = lazy(() => import("@/pages/Story"));
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const Settings = lazy(() => import("@/pages/Settings"));
+const Messages = lazy(() => import("@/pages/Messages"));
+const MarketplaceProduct = lazy(() => import("@/pages/MarketplaceProduct"));
+const Marketplace = lazy(() => import("@/pages/Marketplace"));
+
+// Create a Private Route component to protect authenticated routes
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <Spinner size="lg" />
+    </div>;
+  }
+  
+  if (!isAuthenticated) {
+    toast.error("You must be logged in to access this page");
+    return <Navigate to="/sign-in" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
+// Fallback loading component for lazy-loaded routes
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <Spinner size="lg" />
+  </div>
+);
 
 function App() {
   return (
@@ -25,24 +63,52 @@ function App() {
         <SidebarProvider>
           <div className="min-h-screen flex w-full bg-background">
             <MainSidebar />
-            <main className="flex-1 w-full max-w-full overflow-x-hidden">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/sign-in" element={<SignIn />} />
-                <Route path="/sign-up" element={<SignUp />} />
-                <Route path="/write" element={<Write />} />
-                <Route path="/browse" element={<Browse />} />
-                <Route path="/popular" element={<Popular />} />
-                <Route path="/communities" element={<Communities />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/reading-lists" element={<ReadingLists />} />
-                <Route path="/explore" element={<Explore />} />
-                {/* Add all your other routes here */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
+            <ScrollArea className="flex-1 h-screen w-full">
+              <main className="flex-1 w-full max-w-full overflow-x-hidden pt-14 pb-16">
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    {/* Public routes */}
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/sign-in" element={<SignIn />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/browse" element={<Browse />} />
+                    <Route path="/popular" element={<Popular />} />
+                    <Route path="/communities" element={<Communities />} />
+                    <Route path="/jobs" element={<Jobs />} />
+                    <Route path="/jobs/:id" element={<JobDetails />} />
+                    <Route path="/explore" element={<Explore />} />
+                    <Route path="/story/:id" element={<Story />} />
+                    <Route path="/marketplace" element={<Marketplace />} />
+                    <Route path="/marketplace/product/:id" element={<MarketplaceProduct />} />
+                    
+                    {/* Protected routes */}
+                    <Route path="/write" element={
+                      <PrivateRoute><Write /></PrivateRoute>
+                    } />
+                    <Route path="/profile" element={
+                      <PrivateRoute><Profile /></PrivateRoute>
+                    } />
+                    <Route path="/profile/:username" element={<Profile />} />
+                    <Route path="/dashboard" element={
+                      <PrivateRoute><Dashboard /></PrivateRoute>
+                    } />
+                    <Route path="/settings" element={
+                      <PrivateRoute><Settings /></PrivateRoute>
+                    } />
+                    <Route path="/messages" element={
+                      <PrivateRoute><Messages /></PrivateRoute>
+                    } />
+                    <Route path="/reading-lists" element={
+                      <PrivateRoute><ReadingLists /></PrivateRoute>
+                    } />
+                    
+                    {/* Fallback route */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </main>
+            </ScrollArea>
           </div>
           <Toaster />
         </SidebarProvider>
