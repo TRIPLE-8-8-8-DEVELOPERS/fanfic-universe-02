@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
@@ -415,8 +414,9 @@ export async function getUserRating(userId: string, storyId: string) {
 }
 
 export async function getStoryAverageRating(storyId: string) {
+  // Fix the error by using the correct type assertion
   const { data, error } = await supabase
-    .rpc('get_story_average_rating', { story_id: storyId });
+    .rpc('get_story_average_rating', { story_id: storyId } as any);
   
   if (error) {
     console.error('Error getting story average rating:', error);
