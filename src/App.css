@@ -87,6 +87,7 @@ header.sticky {
 main {
   width: 100%;
   max-width: 100%;
+  padding-top: 4rem; /* Add padding to account for fixed header */
 }
 
 /* Global text contrast improvements */

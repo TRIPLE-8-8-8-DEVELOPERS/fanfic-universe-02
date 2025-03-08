@@ -30,6 +30,18 @@ const Settings = lazy(() => import("@/pages/Settings"));
 const Messages = lazy(() => import("@/pages/Messages"));
 const MarketplaceProduct = lazy(() => import("@/pages/MarketplaceProduct"));
 const Marketplace = lazy(() => import("@/pages/Marketplace"));
+const Fandoms = lazy(() => import("@/pages/Fandoms"));
+const Trending = lazy(() => import("@/pages/Trending"));
+const Authors = lazy(() => import("@/pages/Authors"));
+const Forums = lazy(() => import("@/pages/Forums"));
+const Contests = lazy(() => import("@/pages/Contests"));
+const ReadingClubs = lazy(() => import("@/pages/ReadingClubs"));
+const WatchStreams = lazy(() => import("@/pages/WatchStreams"));
+const Updates = lazy(() => import("@/pages/Updates"));
+const About = lazy(() => import("@/pages/AboutUs"));
+const Support = lazy(() => import("@/pages/Support"));
+const Privacy = lazy(() => import("@/pages/PrivacyPolicy"));
+const Terms = lazy(() => import("@/pages/TermsOfService"));
 
 // Create a Private Route component to protect authenticated routes
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -81,6 +93,18 @@ function App() {
                     <Route path="/story/:id" element={<Story />} />
                     <Route path="/marketplace" element={<Marketplace />} />
                     <Route path="/marketplace/product/:id" element={<MarketplaceProduct />} />
+                    <Route path="/fandoms" element={<Fandoms />} />
+                    <Route path="/trending" element={<Trending />} />
+                    <Route path="/authors" element={<Authors />} />
+                    <Route path="/forums" element={<Forums />} />
+                    <Route path="/contests" element={<Contests />} />
+                    <Route path="/reading-clubs" element={<ReadingClubs />} />
+                    <Route path="/watch-streams" element={<WatchStreams />} />
+                    <Route path="/updates" element={<Updates />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/terms" element={<Terms />} />
                     
                     {/* Protected routes */}
                     <Route path="/write" element={

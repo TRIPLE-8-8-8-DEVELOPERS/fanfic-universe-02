@@ -24,7 +24,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
   const location = useLocation();
   const isMobile = useIsMobile();
   
-  // Navigation categories and items
+  // Navigation categories and items with corrected paths
   const navigationItems = [
     {
       category: "Discover",
@@ -183,10 +183,10 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
       {!collapsed && (
         <div className="border-t p-3">
           <div className="flex items-center justify-center space-x-3 text-xs text-muted-foreground">
-            <a href="/about" className="hover:underline">About</a>
-            <a href="/support" className="hover:underline">Support</a>
-            <a href="/privacy" className="hover:underline">Privacy</a>
-            <a href="/terms" className="hover:underline">Terms</a>
+            <Link to="/about" className="hover:underline">About</Link>
+            <Link to="/support" className="hover:underline">Support</Link>
+            <Link to="/privacy" className="hover:underline">Privacy</Link>
+            <Link to="/terms" className="hover:underline">Terms</Link>
           </div>
         </div>
       )}
