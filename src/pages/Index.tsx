@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -192,7 +191,6 @@ const recommendedStories = [
   },
 ];
 
-// Top authors
 const topAuthors = [
   { 
     id: "author1", 
@@ -236,7 +234,6 @@ const topAuthors = [
   }
 ];
 
-// Writing prompts
 const writingPrompts = [
   "A character discovers a hidden door in their home that wasn't there before...",
   "Two strangers keep meeting in their dreams, but have never met in real life...",
@@ -245,7 +242,6 @@ const writingPrompts = [
   "In a society where emotions are regulated by law..."
 ];
 
-// Upcoming events
 const upcomingEvents = [
   {
     id: "event1",
@@ -276,7 +272,6 @@ const Index = () => {
   const [activePrompt, setActivePrompt] = useState(0);
   const controls = useAnimation();
 
-  // Rotate through writing prompts
   useEffect(() => {
     const interval = setInterval(() => {
       setActivePrompt((prev) => (prev + 1) % writingPrompts.length);
@@ -284,7 +279,6 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Animate the prompt when it changes
   useEffect(() => {
     controls.start({
       y: [20, 0],
@@ -312,7 +306,6 @@ const Index = () => {
       <Header />
       
       <main className="flex-grow">
-        {/* Hero Section - Enhanced with more modern UI elements */}
         <section className="relative py-20 md:py-32 overflow-hidden hero-pattern">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-100 dark:from-gray-900 dark:via-purple-950/30 dark:to-indigo-950/20 z-0"></div>
           <div className="absolute inset-0 opacity-20 dark:opacity-10">
@@ -350,7 +343,7 @@ const Index = () => {
                   </Button>
                   
                   <Button size="lg" variant="outline" className="rounded-full px-8 border-gray-300 dark:border-gray-700 hover-lift" asChild>
-                    <Link to="/explore">
+                    <Link to="/browse">
                       <BookOpen className="mr-2 h-5 w-5" />
                       Explore Stories
                     </Link>
@@ -369,7 +362,6 @@ const Index = () => {
                   )}
                 </div>
                 
-                {/* Daily writing prompt */}
                 <div className="mt-10 max-w-lg">
                   <div className="flex items-center mb-3">
                     <Lightbulb className="h-5 w-5 text-amber-500 mr-2" />
@@ -408,7 +400,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Stats section - New! */}
         <section className="py-10 bg-white dark:bg-gray-800">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -436,7 +427,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Featured Story section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <motion.div
@@ -457,7 +447,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Top Authors - New! */}
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <motion.div
@@ -514,7 +503,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Platform Features section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <motion.div
@@ -624,7 +612,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Upcoming Events - New! */}
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-4">
             <motion.div
@@ -672,7 +659,6 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Discover Stories Tabs section */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
           <div className="container mx-auto px-4">
             <Tabs defaultValue="trending" className="mb-12">
@@ -728,7 +714,7 @@ const Index = () => {
             
             <div className="text-center mt-10">
               <Button size="lg" variant="outline" className="rounded-full px-8" asChild>
-                <Link to="/explore">
+                <Link to="/browse">
                   <Eye className="mr-2 h-5 w-5" />
                   Browse All Stories
                 </Link>
@@ -737,14 +723,12 @@ const Index = () => {
           </div>
         </section>
         
-        {/* Premium Features section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <PremiumFeatureShowcase onSubscribe={openSubscriptionModal} />
           </div>
         </section>
         
-        {/* CTA Section */}
         <section className="py-20 bg-gradient-to-r from-purple-600 to-indigo-600">
           <div className="container mx-auto px-4 text-center">
             <motion.div
@@ -790,7 +774,6 @@ const CheckItem = ({ text }: { text: string }) => (
   </>
 );
 
-// Adding Calendar icon since it's used in the Upcoming Events section
 const Calendar = ({ className }: { className?: string }) => {
   return (
     <svg

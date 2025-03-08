@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, Search, Bell, User, BookOpen, PenTool, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,11 +15,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { signOut } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, profile, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   const toggleMenu = () => {
@@ -63,6 +65,9 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
+            <div className="md:hidden mr-2">
+              <SidebarTrigger />
+            </div>
             <Link to="/" className="text-xl font-bold mr-8">
               FanVerse
             </Link>
