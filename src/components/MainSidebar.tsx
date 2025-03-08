@@ -1,6 +1,4 @@
-
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { 
   BookOpen, ChevronRight, BookText, Users, Award, 
   TrendingUp, Layout, MessageCircle, Trophy, BookOpenCheck,
@@ -12,18 +10,16 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { useSidebar } from "@/components/ui/sidebar";
 
 interface MainSidebarProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
   currentPath?: string;
 }
 
-const MainSidebar = ({ 
-  collapsed, 
-  setCollapsed,
-  currentPath = '/'
-}: MainSidebarProps) => {
+const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
+  const { state, toggleSidebar } = useSidebar();
+  const collapsed = state === "collapsed";
+  const location = useLocation();
   
   // Navigation categories and items
   const navigationItems = [
@@ -85,7 +81,7 @@ const MainSidebar = ({
             "h-8 w-8", 
             collapsed && "ml-auto"
           )} 
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleSidebar}
         >
           <ChevronRight 
             className={cn(
@@ -107,7 +103,7 @@ const MainSidebar = ({
               )}
               <div className="space-y-1">
                 {category.items.map((item, itemIndex) => {
-                  const isActive = currentPath === item.path;
+                  const isActive = location.pathname === item.path;
                   
                   return (
                     <Button
