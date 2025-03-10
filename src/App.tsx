@@ -56,7 +56,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (!isAuthenticated) {
     toast.error("You must be logged in to access this page");
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to="/auth" replace />;
   }
   
   return <>{children}</>;

@@ -1,10 +1,10 @@
 
-import { useState } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { signIn, signUp } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
@@ -45,12 +45,23 @@ const signupSchema = z.object({
 });
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'signup' ? 'signup' : 'login';
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    // Update active tab if URL param changes
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'signup') {
+      setActiveTab('signup');
+    } else if (tabParam === 'login') {
+      setActiveTab('login');
+    }
+  }, [searchParams]);
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -77,28 +88,20 @@ const Auth = () => {
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     try {
       setIsSubmitting(true);
+      console.log("Attempting login with:", values.email);
       const { error } = await signIn(values.email, values.password);
       
       if (error) {
-        toast({
-          title: "Login failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error("Login error:", error);
+        toast.error(error.message || "Invalid email or password");
         return;
       }
       
-      toast({
-        title: "Login successful",
-        description: "Welcome back to FanVerse!",
-      });
+      toast.success("Login successful");
       navigate("/");
     } catch (error: any) {
-      toast({
-        title: "Login failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
+      console.error("Login exception:", error);
+      toast.error(error.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -107,32 +110,24 @@ const Auth = () => {
   const handleSignup = async (values: z.infer<typeof signupSchema>) => {
     try {
       setIsSubmitting(true);
+      console.log("Attempting signup with:", values.email, values.username);
       const { error } = await signUp(values.email, values.password, {
         username: values.username,
       });
       
       if (error) {
-        toast({
-          title: "Signup failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error("Signup error:", error);
+        toast.error(error.message || "Signup failed");
         return;
       }
       
-      toast({
-        title: "Signup successful",
-        description: "Please check your email to confirm your account",
-      });
+      toast.success("Signup successful! Please check your email to confirm your account.");
       
       // Switch to login tab after successful signup
       setActiveTab("login");
     } catch (error: any) {
-      toast({
-        title: "Signup failed",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
-      });
+      console.error("Signup exception:", error);
+      toast.error(error.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -150,7 +145,7 @@ const Auth = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
 
-      <div className="flex-grow flex items-center justify-center bg-secondary p-4">
+      <div className="flex-grow flex items-center justify-center bg-secondary p-4 pt-20">
         <div className="w-full max-w-md bg-background rounded-xl shadow-lg p-8">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -328,10 +323,10 @@ const Auth = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Google
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Twitter
             </Button>
           </div>

@@ -16,7 +16,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { signIn } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -25,8 +27,15 @@ const formSchema = z.object({
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate("/");
+    return null;
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,17 +45,29 @@ const SignIn = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Sign in successful",
-      description: "Welcome back to FanVerse!",
-    });
-    navigate("/profile");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsSubmitting(true);
+      const { error } = await signIn(values.email, values.password);
+      
+      if (error) {
+        console.error('Sign in error:', error);
+        toast.error(error.message || "Invalid email or password");
+        return;
+      }
+      
+      toast.success("Signed in successfully");
+      navigate("/");
+    } catch (err: any) {
+      console.error('Sign in exception:', err);
+      toast.error(err?.message || "An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary p-4">
+    <div className="min-h-screen flex items-center justify-center bg-secondary p-4 pt-16">
       <div className="w-full max-w-md bg-background rounded-xl shadow-lg p-8">
         <div className="mb-6">
           <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-6">
@@ -111,8 +132,8 @@ const SignIn = () => {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full rounded-full">
-              Sign In
+            <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </Button>
           </form>
         </Form>
@@ -130,10 +151,10 @@ const SignIn = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Google
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Twitter
             </Button>
           </div>

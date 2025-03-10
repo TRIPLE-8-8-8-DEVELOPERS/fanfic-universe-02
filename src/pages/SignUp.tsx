@@ -16,7 +16,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { signUp } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -37,8 +39,15 @@ const formSchema = z.object({
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    navigate("/");
+    return null;
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,17 +67,32 @@ const SignUp = () => {
     number: /[0-9]/.test(password),
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast({
-      title: "Account created!",
-      description: "Welcome to FanFic Universe!",
-    });
-    navigate("/profile");
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsSubmitting(true);
+      const { error } = await signUp(values.email, values.password, {
+        username: values.username,
+        name: values.name,
+      });
+      
+      if (error) {
+        console.error('Signup error:', error);
+        toast.error(error.message || "Failed to create account");
+        return;
+      }
+      
+      toast.success("Account created successfully! Please check your email to confirm your account.");
+      navigate("/auth");
+    } catch (err: any) {
+      console.error('Signup exception:', err);
+      toast.error(err?.message || "An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary p-4">
+    <div className="min-h-screen flex items-center justify-center bg-secondary p-4 pt-16">
       <div className="w-full max-w-md bg-background rounded-xl shadow-lg p-8">
         <div className="mb-6">
           <Link to="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-6">
@@ -171,8 +195,8 @@ const SignUp = () => {
             />
 
             <div className="pt-2">
-              <Button type="submit" className="w-full rounded-full">
-                Create Account
+              <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
+                {isSubmitting ? "Creating Account..." : "Create Account"}
               </Button>
             </div>
           </form>
@@ -191,10 +215,10 @@ const SignUp = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Google
             </Button>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" disabled>
               Twitter
             </Button>
           </div>
