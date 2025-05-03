@@ -31,6 +31,20 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
+// Define story card component props type to fix type errors
+type ReadingListStory = {
+  id: string;
+  title: string;
+  excerpt: string;
+  cover: string | null;
+  author: string;
+  authorId: string;
+  genre?: string;
+  rating?: number;
+  likes?: number;
+  reads?: number;
+};
+
 const StoryPlaceholder = () => (
   <div className="border border-border rounded-lg overflow-hidden">
     <div className="aspect-[3/2] bg-muted w-full"></div>
@@ -47,17 +61,17 @@ const StoryPlaceholder = () => (
 );
 
 const Profile = () => {
-  const { username } = useParams();
+  const { username: usernameParam } = useParams();
   const navigate = useNavigate();
   const { user, profile: currentUserProfile, isAuthenticated, isLoading: authLoading } = useAuth();
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   
   // If no username is provided in the URL, use the current user's profile
-  const isOwnProfile = !username;
+  const isOwnProfile = !usernameParam;
   
   // Fetch profile data of the user whose profile we're viewing
   const { data: profileData, isLoading: profileLoading, error: profileError } = useQuery({
-    queryKey: ['profile', username || currentUserProfile?.username],
+    queryKey: ['profile', usernameParam || currentUserProfile?.username],
     queryFn: async () => {
       if (isOwnProfile) {
         return currentUserProfile;
@@ -67,7 +81,7 @@ const Profile = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('username', username)
+        .eq('username', usernameParam)
         .single();
         
       if (error) {
@@ -76,7 +90,7 @@ const Profile = () => {
       
       return data;
     },
-    enabled: !authLoading && (isOwnProfile ? !!currentUserProfile : !!username),
+    enabled: !authLoading && (isOwnProfile ? !!currentUserProfile : !!usernameParam),
   });
   
   // Fetch user's stories
@@ -144,7 +158,7 @@ const Profile = () => {
         return [];
       }
       
-      // Transform the nested data
+      // Transform the nested data to include required StoryCard props
       return items.map(item => ({
         id: item.story_id,
         title: item.stories.title,
@@ -152,7 +166,11 @@ const Profile = () => {
         cover: item.stories.cover_image,
         author: item.stories.profiles.display_name,
         authorId: item.stories.author_id,
-      })) || [];
+        genre: "",
+        rating: 0,
+        likes: 0,
+        reads: 0
+      } as ReadingListStory)) || [];
     },
     enabled: !!profileData?.id,
   });
@@ -168,7 +186,7 @@ const Profile = () => {
   useEffect(() => {
     // Scroll to top when page loads or profile changes
     window.scrollTo(0, 0);
-  }, [username]);
+  }, [usernameParam]);
   
   useEffect(() => {
     // If trying to access own profile but not authenticated, redirect to auth
@@ -245,7 +263,7 @@ const Profile = () => {
   
   // Extract profile info for display
   const displayName = profileData?.display_name || profileData?.username || 'Anonymous';
-  const username = profileData?.username || '';
+  const userUsername = profileData?.username || '';
   const bio = profileData?.bio || 'No bio provided yet.';
   const website = profileData?.website;
   const avatarUrl = profileData?.avatar_url;
@@ -299,7 +317,7 @@ const Profile = () => {
                     ) : (
                       <>
                         <Button className="rounded-full px-6">Follow</Button>
-                        <Link to={`/messages/${username}`}>
+                        <Link to={`/messages/${userUsername}`}>
                           <Button variant="outline" className="rounded-full" size="icon">
                             <MessageCircle size={18} />
                           </Button>
@@ -328,7 +346,7 @@ const Profile = () => {
                 className="flex-1"
               >
                 <h1 className="text-3xl font-bold mb-1">{displayName}</h1>
-                <p className="text-muted-foreground mb-4">@{username}</p>
+                <p className="text-muted-foreground mb-4">@{userUsername}</p>
                 <p className="mb-4">{bio}</p>
 
                 <div className="flex flex-wrap gap-y-2 gap-x-4 text-sm text-muted-foreground mb-6">
