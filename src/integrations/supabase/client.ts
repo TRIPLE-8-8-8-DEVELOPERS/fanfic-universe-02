@@ -415,9 +415,9 @@ export async function getUserRating(userId: string, storyId: string) {
 
 export async function getStoryAverageRating(storyId: string) {
   try {
-    // Fix: Use the correct type for the RPC call parameters
+    // Fix: Use type assertion to properly handle the RPC parameter type
     const { data, error } = await supabase
-      .rpc('get_story_average_rating', { story_id: storyId });
+      .rpc('get_story_average_rating', { story_id: storyId } as any);
       
     if (error) throw error;
     return data;
