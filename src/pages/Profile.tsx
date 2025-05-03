@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -31,7 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
-// Define story card component props type to fix type errors
+// Define story card component props type to match StoryCard requirements
 type ReadingListStory = {
   id: string;
   title: string;
@@ -39,10 +38,10 @@ type ReadingListStory = {
   cover: string | null;
   author: string;
   authorId: string;
-  genre?: string;
-  rating?: number;
-  likes?: number;
-  reads?: number;
+  genre: string; // Make genre required, not optional
+  rating: number;
+  likes: number;
+  reads: number;
 };
 
 const StoryPlaceholder = () => (
@@ -166,11 +165,11 @@ const Profile = () => {
         cover: item.stories.cover_image,
         author: item.stories.profiles.display_name,
         authorId: item.stories.author_id,
-        genre: "",
+        genre: "Fiction", // Provide a default non-optional value for genre
         rating: 0,
         likes: 0,
         reads: 0
-      } as ReadingListStory)) || [];
+      })) || [];
     },
     enabled: !!profileData?.id,
   });

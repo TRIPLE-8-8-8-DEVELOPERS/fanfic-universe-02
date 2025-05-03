@@ -36,10 +36,12 @@ export async function deleteRating(ratingId: string) {
 }
 
 export async function getStoryAverageRating(storyId: string) {
+  // Using type assertion to bypass TypeScript error since the RPC function
+  // may not have proper type definitions in the generated types
   return supabase
     .rpc('get_story_average_rating', {
       story_id: storyId
-    } as any); // Type assertion to bypass TypeScript error
+    } as any);
 }
 
 export async function getStoryRatingsCount(storyId: string) {
