@@ -1,149 +1,268 @@
 
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Heart, MessageSquare, BookOpen, PenTool, Award, Star, Users, MessageCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  Calendar, 
+  Heart, 
+  MessageSquare, 
+  BookOpen, 
+  PenTool, 
+  Award, 
+  Users, 
+  MessageCircle, 
+  Edit, 
+  AlertCircle,
+  User,
+  ExternalLink
+} from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoryCard from "@/components/StoryCard";
+import EditProfileForm from "@/components/profile/EditProfileForm";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { toast } from "sonner";
 
-// Mock user data
-const user = {
-  id: "user1",
-  name: "Alex Morgan",
-  username: "@alexmorgan",
-  avatar: "https://i.pravatar.cc/150?img=11",
-  bio: "Fantasy and sci-fi enthusiast. Writer by day, reader by night. Currently working on my epic space opera series.",
-  location: "Seattle, WA",
-  joined: "March 2021",
-  followers: 1243,
-  following: 356,
-  stats: {
-    stories: 12,
-    likes: 3452,
-    comments: 872,
-    reads: 68432,
-  },
-  badges: [
-    { name: "Prolific Writer", description: "Published 10+ stories" },
-    { name: "Rising Star", description: "Gained 1000+ followers" },
-    { name: "Storyteller", description: "5 stories with 10k+ reads" },
-  ],
-};
-
-// Mock user's stories
-const userStories = [
-  {
-    id: "101",
-    title: "The Last Starfighter",
-    author: user.name,
-    authorId: user.id,
-    cover: "https://images.unsplash.com/photo-1581822261290-991b38693d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    genre: "Sci-Fi",
-    excerpt: "When teenager Kyle Richards discovers an arcade game is actually a recruitment tool for an interstellar defense force, he must become the hero he was born to be.",
-    rating: 4.7,
-    likes: 2184,
-    reads: 24590,
-  },
-  {
-    id: "102",
-    title: "Whispers in the Void",
-    author: user.name,
-    authorId: user.id,
-    cover: "https://images.unsplash.com/photo-1505506874110-6a7a69069a08?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80",
-    genre: "Horror",
-    excerpt: "Something ancient and malevolent has awakened in the small town of Maplewood, and only librarian Sarah Hayes knows the truth buried in forgotten texts.",
-    rating: 4.9,
-    likes: 3421,
-    reads: 31290,
-  },
-  {
-    id: "103",
-    title: "Chronicles of the Fae Court",
-    author: user.name,
-    authorId: user.id,
-    cover: "https://images.unsplash.com/photo-1520034475321-cbe63696469a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    genre: "Fantasy",
-    excerpt: "When Ivy discovers her true heritage as half-fae, she is thrust into the dangerous politics of the Faerie Court where beauty hides treachery and power comes at a terrible price.",
-    rating: 4.6,
-    likes: 1865,
-    reads: 19752,
-  },
-  {
-    id: "104",
-    title: "The Memory Collector",
-    author: user.name,
-    authorId: user.id,
-    cover: "https://images.unsplash.com/photo-1543005472-1b1d37fa4eae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1769&q=80",
-    genre: "Thriller",
-    excerpt: "Neuroscientist Dr. Maya Rivera develops technology to extract and store human memories, but when a high-profile client is murdered, she becomes the prime suspect.",
-    rating: 4.8,
-    likes: 2754,
-    reads: 28431,
-  },
-];
-
-// Mock reading list
-const readingList = [
-  {
-    id: "201",
-    title: "Echoes of Eternity",
-    author: "Marcus Reed",
-    authorId: "marcus",
-    cover: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
-    genre: "Fantasy",
-    excerpt: "When immortal beings start dying mysteriously, the balance between realms begins to crumble, and only one forgotten god holds the key to salvation.",
-    rating: 4.9,
-    likes: 14302,
-    reads: 93754,
-  },
-  {
-    id: "202",
-    title: "Cybernetic Heart",
-    author: "Leo Zhang",
-    authorId: "leo",
-    cover: "https://images.unsplash.com/photo-1601574465779-76d6dbb88557?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80",
-    genre: "Sci-Fi",
-    excerpt: "In a world where human emotions are considered obsolete, engineer Maya creates an AI that can feel - with consequences she never imagined.",
-    rating: 4.6,
-    likes: 8532,
-    reads: 61298,
-  },
-  {
-    id: "203",
-    title: "Midnight in Paris",
-    author: "Sofia Garcia",
-    authorId: "sofia",
-    cover: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1746&q=80",
-    genre: "Romance",
-    excerpt: "When aspiring writer Claire visits Paris, a mysterious encounter sends her back in time to the 1920s, where she meets her literary heroes and an unexpected love.",
-    rating: 4.7,
-    likes: 10982,
-    reads: 72543,
-  },
-  {
-    id: "204",
-    title: "The Silent Detective",
-    author: "James Holden",
-    authorId: "james",
-    cover: "https://images.unsplash.com/photo-1509475826633-fed577a2c71b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1771&q=80",
-    genre: "Mystery",
-    excerpt: "Detective Sarah Morgan has never failed to solve a case, but when a series of impossible crimes strikes the city, she faces her most challenging mystery yet.",
-    rating: 4.5,
-    likes: 7632,
-    reads: 59842,
-  },
-];
+const StoryPlaceholder = () => (
+  <div className="border border-border rounded-lg overflow-hidden">
+    <div className="aspect-[3/2] bg-muted w-full"></div>
+    <div className="p-4 space-y-2">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-4 w-full" />
+      <div className="flex justify-between items-center pt-2">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-4 w-12" />
+      </div>
+    </div>
+  </div>
+);
 
 const Profile = () => {
+  const { username } = useParams();
+  const navigate = useNavigate();
+  const { user, profile: currentUserProfile, isAuthenticated, isLoading: authLoading } = useAuth();
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  
+  // If no username is provided in the URL, use the current user's profile
+  const isOwnProfile = !username;
+  
+  // Fetch profile data of the user whose profile we're viewing
+  const { data: profileData, isLoading: profileLoading, error: profileError } = useQuery({
+    queryKey: ['profile', username || currentUserProfile?.username],
+    queryFn: async () => {
+      if (isOwnProfile) {
+        return currentUserProfile;
+      }
+      
+      // Fetch profile by username
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('username', username)
+        .single();
+        
+      if (error) {
+        throw error;
+      }
+      
+      return data;
+    },
+    enabled: !authLoading && (isOwnProfile ? !!currentUserProfile : !!username),
+  });
+  
+  // Fetch user's stories
+  const { data: userStories, isLoading: storiesLoading } = useQuery({
+    queryKey: ['userStories', profileData?.id],
+    queryFn: async () => {
+      if (!profileData?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('stories')
+        .select('*')
+        .eq('author_id', profileData.id)
+        .order('created_at', { ascending: false });
+        
+      if (error) {
+        console.error('Error fetching stories:', error);
+        return [];
+      }
+      
+      return data || [];
+    },
+    enabled: !!profileData?.id,
+  });
+  
+  // Fetch user's reading list
+  const { data: readingList, isLoading: readingListLoading } = useQuery({
+    queryKey: ['readingList', profileData?.id],
+    queryFn: async () => {
+      if (!profileData?.id) return [];
+      
+      // Get the user's reading lists
+      const { data: lists, error: listsError } = await supabase
+        .from('reading_lists')
+        .select('*')
+        .eq('user_id', profileData.id)
+        .eq('name', 'Reading List') // Default reading list
+        .single();
+        
+      if (listsError) {
+        console.error('Error fetching reading lists:', listsError);
+        return [];
+      }
+      
+      if (!lists) return [];
+      
+      // Get the items in the reading list
+      const { data: items, error: itemsError } = await supabase
+        .from('reading_list_items')
+        .select(`
+          id,
+          story_id,
+          stories (
+            id, 
+            title, 
+            summary,
+            cover_image,
+            author_id,
+            profiles:author_id (username, display_name)
+          )
+        `)
+        .eq('reading_list_id', lists.id);
+        
+      if (itemsError) {
+        console.error('Error fetching reading list items:', itemsError);
+        return [];
+      }
+      
+      // Transform the nested data
+      return items.map(item => ({
+        id: item.story_id,
+        title: item.stories.title,
+        excerpt: item.stories.summary,
+        cover: item.stories.cover_image,
+        author: item.stories.profiles.display_name,
+        authorId: item.stories.author_id,
+      })) || [];
+    },
+    enabled: !!profileData?.id,
+  });
+  
+  // Calculate user stats
+  const userStats = {
+    stories: userStories?.length || 0,
+    likes: 0, // This would need a query to count likes
+    comments: 0, // This would need a query to count comments
+    reads: 0, // This would need a query to count reads
+  };
+  
   useEffect(() => {
-    // Scroll to top when page loads
+    // Scroll to top when page loads or profile changes
     window.scrollTo(0, 0);
-  }, []);
+  }, [username]);
+  
+  useEffect(() => {
+    // If trying to access own profile but not authenticated, redirect to auth
+    if (isOwnProfile && !authLoading && !isAuthenticated) {
+      toast.error("You must be logged in to view your profile");
+      navigate("/auth", { replace: true });
+    }
+  }, [isOwnProfile, authLoading, isAuthenticated, navigate]);
+  
+  // Handle profile not found
+  if (profileError) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-grow flex items-center justify-center p-4">
+          <div className="text-center max-w-md">
+            <AlertCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">Profile not found</h2>
+            <p className="text-muted-foreground mb-6">
+              The profile you're looking for doesn't seem to exist or has been removed.
+            </p>
+            <Link to="/">
+              <Button>Return to Homepage</Button>
+            </Link>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show loading state
+  if ((isOwnProfile && authLoading) || profileLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-grow pt-24">
+          <section className="bg-secondary py-12">
+            <div className="container">
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="md:sticky md:top-32">
+                  <div className="flex flex-col items-center">
+                    <Skeleton className="h-32 w-32 rounded-full" />
+                    <div className="flex gap-2 mt-4">
+                      <Skeleton className="h-10 w-24" />
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <Skeleton className="h-8 w-1/3 mb-2" />
+                  <Skeleton className="h-5 w-1/4 mb-4" />
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-3/4 mb-4" />
+                  <div className="flex gap-4 mb-6">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-5 w-32" />
+                  </div>
+                  <div className="grid grid-cols-4 gap-4 mb-6">
+                    <Skeleton className="h-24 rounded-lg" />
+                    <Skeleton className="h-24 rounded-lg" />
+                    <Skeleton className="h-24 rounded-lg" />
+                    <Skeleton className="h-24 rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+  
+  // Extract profile info for display
+  const displayName = profileData?.display_name || profileData?.username || 'Anonymous';
+  const username = profileData?.username || '';
+  const bio = profileData?.bio || 'No bio provided yet.';
+  const website = profileData?.website;
+  const avatarUrl = profileData?.avatar_url;
+  const createdAt = profileData?.created_at ? format(new Date(profileData.created_at), 'MMMM yyyy') : '';
+  
+  // For now, these are placeholder badges
+  const badges = [
+    { name: "New Member", description: "Joined the platform" },
+  ];
+  
+  if (userStats.stories >= 5) {
+    badges.push({ name: "Writer", description: "Published 5+ stories" });
+  }
+  
+  if (userStats.stories >= 10) {
+    badges.push({ name: "Prolific Writer", description: "Published 10+ stories" });
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -163,29 +282,38 @@ const Profile = () => {
               >
                 <div className="flex flex-col items-center">
                   <Avatar className="h-28 w-28 md:h-32 md:w-32 mb-4">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                    <AvatarImage src={avatarUrl} alt={displayName} />
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {displayName?.charAt(0) || <User />}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex gap-2 mb-4">
-                    <Button className="rounded-full px-6">Follow</Button>
-                    <Link to="/messages/conv1">
-                      <Button variant="outline" className="rounded-full" size="icon">
-                        <MessageCircle size={18} />
+                    {isOwnProfile ? (
+                      <Button 
+                        className="rounded-full px-6" 
+                        onClick={() => setEditProfileOpen(true)}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Profile
                       </Button>
-                    </Link>
+                    ) : (
+                      <>
+                        <Button className="rounded-full px-6">Follow</Button>
+                        <Link to={`/messages/${username}`}>
+                          <Button variant="outline" className="rounded-full" size="icon">
+                            <MessageCircle size={18} />
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </div>
                   <div className="flex items-center gap-4 text-sm text-center">
                     <div>
-                      <div className="font-bold">{user.followers}</div>
+                      <div className="font-bold">0</div>
                       <div className="text-muted-foreground">Followers</div>
                     </div>
                     <div>
-                      <div className="font-bold">{user.following}</div>
+                      <div className="font-bold">0</div>
                       <div className="text-muted-foreground">Following</div>
                     </div>
                   </div>
@@ -199,46 +327,50 @@ const Profile = () => {
                 transition={{ duration: 0.5 }}
                 className="flex-1"
               >
-                <h1 className="text-3xl font-bold mb-1">{user.name}</h1>
-                <p className="text-muted-foreground mb-4">{user.username}</p>
-                <p className="mb-4">{user.bio}</p>
+                <h1 className="text-3xl font-bold mb-1">{displayName}</h1>
+                <p className="text-muted-foreground mb-4">@{username}</p>
+                <p className="mb-4">{bio}</p>
 
                 <div className="flex flex-wrap gap-y-2 gap-x-4 text-sm text-muted-foreground mb-6">
-                  {user.location && (
+                  {website && (
+                    <a 
+                      href={website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 hover:text-primary transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      {website.replace(/^https?:\/\/(www\.)?/, '')}
+                    </a>
+                  )}
+                  {createdAt && (
                     <div className="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                        <circle cx="12" cy="10" r="3" />
-                      </svg>
-                      {user.location}
+                      <Calendar className="h-4 w-4" />
+                      Joined {createdAt}
                     </div>
                   )}
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    Joined {user.joined}
-                  </div>
                 </div>
 
                 {/* Author Stats */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                   <div className="bg-background rounded-lg p-4 text-center">
                     <PenTool className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{user.stats.stories}</div>
+                    <div className="text-2xl font-bold">{userStats.stories}</div>
                     <div className="text-xs text-muted-foreground">Stories</div>
                   </div>
                   <div className="bg-background rounded-lg p-4 text-center">
                     <Heart className="h-5 w-5 mx-auto mb-1 text-red-400" />
-                    <div className="text-2xl font-bold">{user.stats.likes.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{userStats.likes.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Likes</div>
                   </div>
                   <div className="bg-background rounded-lg p-4 text-center">
                     <MessageSquare className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{user.stats.comments.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{userStats.comments.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Comments</div>
                   </div>
                   <div className="bg-background rounded-lg p-4 text-center">
                     <BookOpen className="h-5 w-5 mx-auto mb-1 text-primary" />
-                    <div className="text-2xl font-bold">{user.stats.reads.toLocaleString()}</div>
+                    <div className="text-2xl font-bold">{userStats.reads.toLocaleString()}</div>
                     <div className="text-xs text-muted-foreground">Reads</div>
                   </div>
                 </div>
@@ -247,7 +379,7 @@ const Profile = () => {
                 <div className="mb-6">
                   <h3 className="text-lg font-medium mb-3">Badges</h3>
                   <div className="flex flex-wrap gap-2">
-                    {user.badges.map((badge) => (
+                    {badges.map((badge) => (
                       <div
                         key={badge.name}
                         className="group relative inline-block"
@@ -274,7 +406,7 @@ const Profile = () => {
             <Tabs defaultValue="stories" className="w-full">
               <TabsList className="w-full justify-start mb-8 rounded-full">
                 <TabsTrigger value="stories" className="rounded-full">
-                  My Stories
+                  {isOwnProfile ? "My Stories" : "Stories"}
                 </TabsTrigger>
                 <TabsTrigger value="reading-list" className="rounded-full">
                   Reading List
@@ -288,33 +420,92 @@ const Profile = () => {
               </TabsList>
 
               <TabsContent value="stories" className="mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {userStories.map((story, index) => (
-                    <motion.div
-                      key={story.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <StoryCard {...story} />
-                    </motion.div>
-                  ))}
-                </div>
+                {storiesLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[...Array(4)].map((_, index) => (
+                      <StoryPlaceholder key={index} />
+                    ))}
+                  </div>
+                ) : userStories?.length ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {userStories.map((story, index) => (
+                      <motion.div
+                        key={story.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                      >
+                        <StoryCard 
+                          id={story.id}
+                          title={story.title}
+                          author={displayName}
+                          authorId={story.author_id}
+                          cover={story.cover_image}
+                          genre=""
+                          excerpt={story.summary}
+                          rating={0}
+                          likes={0}
+                          reads={0}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-12 text-center bg-muted rounded-lg">
+                    <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-background flex items-center justify-center">
+                      <PenTool className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">No stories yet</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                      {isOwnProfile 
+                        ? "You haven't written any stories yet. Start writing your first story now!"
+                        : "This user hasn't written any stories yet."}
+                    </p>
+                    {isOwnProfile && (
+                      <Link to="/write">
+                        <Button className="rounded-full px-8">Start Writing</Button>
+                      </Link>
+                    )}
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="reading-list" className="mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {readingList.map((story, index) => (
-                    <motion.div
-                      key={story.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <StoryCard {...story} />
-                    </motion.div>
-                  ))}
-                </div>
+                {readingListLoading ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[...Array(4)].map((_, index) => (
+                      <StoryPlaceholder key={index} />
+                    ))}
+                  </div>
+                ) : readingList?.length ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {readingList.map((story, index) => (
+                      <motion.div
+                        key={story.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.1 }}
+                      >
+                        <StoryCard {...story} />
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-12 text-center bg-muted rounded-lg">
+                    <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-background flex items-center justify-center">
+                      <BookOpen className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-xl font-bold mb-2">Reading list is empty</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto mb-6">
+                      {isOwnProfile 
+                        ? "You haven't added any stories to your reading list yet."
+                        : "This user hasn't added any stories to their reading list yet."}
+                    </p>
+                    <Link to="/browse">
+                      <Button className="rounded-full px-8">Browse Stories</Button>
+                    </Link>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="favorites" className="mt-0">
@@ -324,7 +515,9 @@ const Profile = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2">No favorites yet</h3>
                   <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                    When you find stories you love, heart them to add them to your favorites collection.
+                    {isOwnProfile 
+                      ? "When you find stories you love, heart them to add them to your favorites collection."
+                      : "This user hasn't added any stories to their favorites yet."}
                   </p>
                   <Link to="/browse">
                     <Button className="rounded-full px-8">Browse Stories</Button>
@@ -339,7 +532,9 @@ const Profile = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2">No recent activity</h3>
                   <p className="text-muted-foreground max-w-md mx-auto mb-6">
-                    Your activity feed shows your interactions with stories and other writers in the community.
+                    {isOwnProfile
+                      ? "Your activity feed shows your interactions with stories and other writers in the community."
+                      : "This user hasn't had any recent activity."}
                   </p>
                   <Link to="/community">
                     <Button className="rounded-full px-8">Explore Community</Button>
@@ -350,6 +545,14 @@ const Profile = () => {
           </div>
         </section>
       </main>
+
+      {/* Edit Profile Modal */}
+      {isOwnProfile && (
+        <EditProfileForm 
+          open={editProfileOpen} 
+          onOpenChange={setEditProfileOpen} 
+        />
+      )}
 
       <Footer />
     </div>
