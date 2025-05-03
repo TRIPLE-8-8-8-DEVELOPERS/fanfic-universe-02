@@ -35,12 +35,16 @@ export async function deleteRating(ratingId: string) {
     .eq('id', ratingId);
 }
 
+// Define the parameter type for the get_story_average_rating function
+type GetStoryAverageRatingParams = {
+  story_id: string;
+};
+
 export async function getStoryAverageRating(storyId: string) {
-  // We need to properly type the RPC function
   return supabase
-    .rpc('get_story_average_rating', { 
+    .rpc<number>('get_story_average_rating', { 
       story_id: storyId 
-    }) as unknown as Promise<{ data: number | null }>;
+    } as GetStoryAverageRatingParams);
 }
 
 export async function getStoryRatingsCount(storyId: string) {
