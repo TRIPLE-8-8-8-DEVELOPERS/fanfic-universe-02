@@ -53,6 +53,24 @@ const Auth = () => {
   const navigate = useNavigate();
   const { isAuthenticated, refreshSession, isLoading } = useAuth();
 
+  // Initialize both forms outside of any conditional logic
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const signupForm = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
+
   useEffect(() => {
     // Update active tab if URL param changes
     const tabParam = searchParams.get('tab');
@@ -77,23 +95,6 @@ const Auth = () => {
   if (isAuthenticated) {
     return <Navigate to="/" />;
   }
-
-  const loginForm = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  const signupForm = useForm<z.infer<typeof signupSchema>>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-    },
-  });
 
   const handleLogin = async (values: z.infer<typeof loginSchema>) => {
     try {
@@ -148,6 +149,7 @@ const Auth = () => {
     }
   };
 
+  // Always access password outside of any conditional rendering
   const password = signupForm.watch("password");
   const passwordStrength = {
     length: password.length >= 8,
