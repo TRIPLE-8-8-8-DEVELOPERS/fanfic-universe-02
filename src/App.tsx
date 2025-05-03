@@ -49,9 +49,11 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <Spinner size="lg" />
-    </div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
   }
   
   if (!isAuthenticated) {
@@ -108,6 +110,7 @@ function App() {
                       <Route path="/support" element={<Support />} />
                       <Route path="/privacy" element={<Privacy />} />
                       <Route path="/terms" element={<Terms />} />
+                      <Route path="/profile/:username" element={<Profile />} />
                       
                       {/* Protected routes */}
                       <Route path="/write" element={
@@ -116,7 +119,6 @@ function App() {
                       <Route path="/profile" element={
                         <PrivateRoute><Profile /></PrivateRoute>
                       } />
-                      <Route path="/profile/:username" element={<Profile />} />
                       <Route path="/dashboard" element={
                         <PrivateRoute><Dashboard /></PrivateRoute>
                       } />

@@ -115,21 +115,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    refreshSession();
-
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log('Auth state changed:', event, currentSession?.user?.id);
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
+        // Use setTimeout to prevent Supabase auth system callback deadlock
         if (currentSession?.user) {
-          await refreshProfile();
+          setTimeout(async () => {
+            await refreshProfile();
+            setIsLoading(false);
+          }, 0);
         } else {
           setProfile(null);
+          setIsLoading(false);
         }
-        
-        setIsLoading(false);
         
         if (event === 'SIGNED_IN') {
           toast.success('Signed in successfully');
@@ -138,6 +140,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     );
+
+    // THEN check for existing session
+    refreshSession();
 
     return () => {
       subscription.unsubscribe();

@@ -4,7 +4,7 @@ import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -51,7 +51,7 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, refreshSession, isLoading } = useAuth();
 
   useEffect(() => {
     // Update active tab if URL param changes
@@ -63,6 +63,16 @@ const Auth = () => {
     }
   }, [searchParams]);
 
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Checking authentication...</p>
+      </div>
+    );
+  }
+  
   // Redirect if already authenticated
   if (isAuthenticated) {
     return <Navigate to="/" />;
@@ -98,6 +108,11 @@ const Auth = () => {
       }
       
       toast.success("Login successful");
+      
+      // Manually refresh session to ensure we get latest auth state
+      await refreshSession();
+      
+      // Navigate to home page
       navigate("/");
     } catch (error: any) {
       console.error("Login exception:", error);
@@ -213,8 +228,19 @@ const Auth = () => {
                     </a>
                   </div>
 
-                  <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Signing In..." : "Sign In"}
+                  <Button 
+                    type="submit" 
+                    className="w-full rounded-full" 
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                 </form>
               </Form>
@@ -303,8 +329,19 @@ const Auth = () => {
                     )}
                   />
 
-                  <Button type="submit" className="w-full rounded-full" disabled={isSubmitting}>
-                    {isSubmitting ? "Creating Account..." : "Create Account"}
+                  <Button 
+                    type="submit" 
+                    className="w-full rounded-full" 
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      "Create Account"
+                    )}
                   </Button>
                 </form>
               </Form>

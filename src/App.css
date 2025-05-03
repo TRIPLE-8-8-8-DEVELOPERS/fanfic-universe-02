@@ -1,3 +1,4 @@
+
 #root {
   max-width: 100%;
   width: 100%;
@@ -82,12 +83,16 @@ header.sticky {
   z-index: 50;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 main {
   width: 100%;
   max-width: 100%;
-  padding-top: 5rem; /* Increased padding to account for fixed header */
+  padding-top: 5rem; /* Adjusted padding for fixed header */
 }
 
 /* Global text contrast improvements */

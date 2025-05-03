@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -41,13 +41,14 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, refreshSession } = useAuth();
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,13 +83,24 @@ const SignUp = () => {
       }
       
       toast.success("Account created successfully! Please check your email to confirm your account.");
-      navigate("/auth");
+      
+      // Manually refresh the session to ensure we get the latest auth state
+      await refreshSession();
+      
+      // Redirect to auth page after a brief delay to allow the toast to be seen
+      setTimeout(() => {
+        navigate("/auth");
+      }, 1500);
     } catch (err: any) {
       console.error('Signup exception:', err);
       toast.error(err?.message || "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (isAuthenticated) {
+    return null; // Don't render anything if already authenticated
   }
 
   return (

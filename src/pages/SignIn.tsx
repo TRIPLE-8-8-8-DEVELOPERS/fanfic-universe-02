@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,13 +29,14 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, refreshSession } = useAuth();
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,6 +58,11 @@ const SignIn = () => {
       }
       
       toast.success("Signed in successfully");
+      
+      // Manually refresh session to ensure we get latest auth state
+      await refreshSession();
+      
+      // Navigate to home page
       navigate("/");
     } catch (err: any) {
       console.error('Sign in exception:', err);
@@ -64,6 +70,10 @@ const SignIn = () => {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  if (isAuthenticated) {
+    return null; // Don't render anything if already authenticated
   }
 
   return (
