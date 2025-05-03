@@ -4,10 +4,12 @@ import { Session, User } from '@supabase/supabase-js';
 import { 
   supabase, 
   getSession, 
-  getCurrentUser, 
+  getCurrentUser 
+} from '@/integrations/supabase/client';
+import { 
   getProfile as fetchProfile,
   updateProfile as updateUserProfile 
-} from '@/integrations/supabase/services/auth';
+} from '@/integrations/supabase/services/profiles';
 import { toast } from 'sonner';
 
 type Profile = {
