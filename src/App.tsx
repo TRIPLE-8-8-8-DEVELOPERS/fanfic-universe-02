@@ -23,6 +23,10 @@ import { useEffect, lazy, Suspense } from "react";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
 
 // Add lazy-loaded components to improve initial load time
 const Story = lazy(() => import("@/pages/Story"));
@@ -73,77 +77,79 @@ const PageLoader = () => (
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full bg-background">
-            <MainSidebar />
-            <div className="flex-1 h-screen w-full flex flex-col">
-              <Header />
-              <ScrollArea className="flex-1 h-full w-full">
-                <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16">
-                  <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      {/* Public routes */}
-                      <Route path="/" element={<Index />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/sign-in" element={<SignIn />} />
-                      <Route path="/sign-up" element={<SignUp />} />
-                      <Route path="/browse" element={<Browse />} />
-                      <Route path="/popular" element={<Popular />} />
-                      <Route path="/communities" element={<Communities />} />
-                      <Route path="/jobs" element={<Jobs />} />
-                      <Route path="/jobs/:id" element={<JobDetails />} />
-                      <Route path="/explore" element={<Explore />} />
-                      <Route path="/story/:id" element={<Story />} />
-                      <Route path="/marketplace" element={<Marketplace />} />
-                      <Route path="/marketplace/product/:id" element={<MarketplaceProduct />} />
-                      <Route path="/fandoms" element={<Fandoms />} />
-                      <Route path="/trending" element={<Trending />} />
-                      <Route path="/authors" element={<Authors />} />
-                      <Route path="/forums" element={<Forums />} />
-                      <Route path="/contests" element={<Contests />} />
-                      <Route path="/reading-clubs" element={<ReadingClubs />} />
-                      <Route path="/watch-streams" element={<WatchStreams />} />
-                      <Route path="/updates" element={<Updates />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/support" element={<Support />} />
-                      <Route path="/privacy" element={<Privacy />} />
-                      <Route path="/terms" element={<Terms />} />
-                      <Route path="/profile/:username" element={<Profile />} />
-                      
-                      {/* Protected routes */}
-                      <Route path="/write" element={
-                        <PrivateRoute><Write /></PrivateRoute>
-                      } />
-                      <Route path="/profile" element={
-                        <PrivateRoute><Profile /></PrivateRoute>
-                      } />
-                      <Route path="/dashboard" element={
-                        <PrivateRoute><Dashboard /></PrivateRoute>
-                      } />
-                      <Route path="/settings" element={
-                        <PrivateRoute><Settings /></PrivateRoute>
-                      } />
-                      <Route path="/messages" element={
-                        <PrivateRoute><Messages /></PrivateRoute>
-                      } />
-                      <Route path="/reading-lists" element={
-                        <PrivateRoute><ReadingLists /></PrivateRoute>
-                      } />
-                      
-                      {/* Fallback route */}
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </main>
-              </ScrollArea>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <AuthProvider>
+          <SidebarProvider>
+            <div className="min-h-screen flex w-full bg-background">
+              <MainSidebar />
+              <div className="flex-1 h-screen w-full flex flex-col">
+                <Header />
+                <ScrollArea className="flex-1 h-full w-full">
+                  <main className="flex-1 w-full max-w-full overflow-x-hidden pb-16">
+                    <Suspense fallback={<PageLoader />}>
+                      <Routes>
+                        {/* Public routes */}
+                        <Route path="/" element={<Index />} />
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/sign-in" element={<SignIn />} />
+                        <Route path="/sign-up" element={<SignUp />} />
+                        <Route path="/browse" element={<Browse />} />
+                        <Route path="/popular" element={<Popular />} />
+                        <Route path="/communities" element={<Communities />} />
+                        <Route path="/jobs" element={<Jobs />} />
+                        <Route path="/jobs/:id" element={<JobDetails />} />
+                        <Route path="/explore" element={<Explore />} />
+                        <Route path="/story/:id" element={<Story />} />
+                        <Route path="/marketplace" element={<Marketplace />} />
+                        <Route path="/marketplace/product/:id" element={<MarketplaceProduct />} />
+                        <Route path="/fandoms" element={<Fandoms />} />
+                        <Route path="/trending" element={<Trending />} />
+                        <Route path="/authors" element={<Authors />} />
+                        <Route path="/forums" element={<Forums />} />
+                        <Route path="/contests" element={<Contests />} />
+                        <Route path="/reading-clubs" element={<ReadingClubs />} />
+                        <Route path="/watch-streams" element={<WatchStreams />} />
+                        <Route path="/updates" element={<Updates />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/support" element={<Support />} />
+                        <Route path="/privacy" element={<Privacy />} />
+                        <Route path="/terms" element={<Terms />} />
+                        <Route path="/profile/:username" element={<Profile />} />
+                        
+                        {/* Protected routes */}
+                        <Route path="/write" element={
+                          <PrivateRoute><Write /></PrivateRoute>
+                        } />
+                        <Route path="/profile" element={
+                          <PrivateRoute><Profile /></PrivateRoute>
+                        } />
+                        <Route path="/dashboard" element={
+                          <PrivateRoute><Dashboard /></PrivateRoute>
+                        } />
+                        <Route path="/settings" element={
+                          <PrivateRoute><Settings /></PrivateRoute>
+                        } />
+                        <Route path="/messages" element={
+                          <PrivateRoute><Messages /></PrivateRoute>
+                        } />
+                        <Route path="/reading-lists" element={
+                          <PrivateRoute><ReadingLists /></PrivateRoute>
+                        } />
+                        
+                        {/* Fallback route */}
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
+                </ScrollArea>
+              </div>
             </div>
-          </div>
-          <Toaster />
-        </SidebarProvider>
-      </AuthProvider>
-    </Router>
+            <Toaster />
+          </SidebarProvider>
+        </AuthProvider>
+      </Router>
+    </QueryClientProvider>
   );
 }
 
