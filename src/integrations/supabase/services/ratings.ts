@@ -11,20 +11,20 @@ export async function getRating(userId: string, storyId: string) {
     .single();
 }
 
-export async function addRating(userId: string, storyId: string, value: number) {
+export async function addRating(userId: string, storyId: string, rating: number) {
   return supabase
     .from('ratings')
     .insert({
       user_id: userId,
       story_id: storyId,
-      value
+      rating
     });
 }
 
-export async function updateRating(ratingId: string, value: number) {
+export async function updateRating(ratingId: string, rating: number) {
   return supabase
     .from('ratings')
-    .update({ value })
+    .update({ rating })
     .eq('id', ratingId);
 }
 
@@ -39,7 +39,7 @@ export async function getStoryAverageRating(storyId: string) {
   return supabase
     .rpc('get_story_average_rating', { 
       story_id: storyId 
-    });
+    } as { story_id: string });
 }
 
 export async function getStoryRatingsCount(storyId: string) {
