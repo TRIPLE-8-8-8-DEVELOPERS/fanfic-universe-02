@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { signUp } from "@/integrations/supabase/client";
+import { signUp } from "@/integrations/supabase/services/auth";
 import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({

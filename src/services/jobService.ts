@@ -1,12 +1,9 @@
 
-import { supabase } from "@/integrations/supabase/client";
+import { getJobs as fetchJobs, getJobById as fetchJobById } from "@/integrations/supabase/services/jobs";
 import { JobType } from "@/types/job";
 
 export const getJobs = async (): Promise<JobType[]> => {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select('*')
-    .order('posted', { ascending: false });
+  const { data, error } = await fetchJobs();
   
   if (error) {
     console.error('Error fetching jobs:', error);
@@ -22,19 +19,18 @@ export const getJobs = async (): Promise<JobType[]> => {
 };
 
 export const getFeaturedJobs = async (): Promise<JobType[]> => {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select('*')
-    .eq('featured', true)
-    .order('posted', { ascending: false });
+  const { data, error } = await fetchJobs();
   
   if (error) {
     console.error('Error fetching featured jobs:', error);
     throw error;
   }
   
+  // Filter for featured jobs client-side
+  const featuredJobs = (data || []).filter(job => job.featured);
+  
   // Cast data to JobType array with proper type casting
-  return (data || []).map(job => ({
+  return featuredJobs.map(job => ({
     ...job,
     type: job.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
     category: job.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"
@@ -42,11 +38,7 @@ export const getFeaturedJobs = async (): Promise<JobType[]> => {
 };
 
 export const getJobById = async (id: string): Promise<JobType | null> => {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data, error } = await fetchJobById(id);
   
   if (error) {
     console.error('Error fetching job by id:', error);
@@ -66,20 +58,20 @@ export const getJobById = async (id: string): Promise<JobType | null> => {
 };
 
 export const getRelatedJobs = async (jobId: string, category: string, limit = 3): Promise<JobType[]> => {
-  const { data, error } = await supabase
-    .from('jobs')
-    .select('*')
-    .eq('category', category)
-    .neq('id', jobId)
-    .limit(limit);
+  const { data, error } = await fetchJobs();
   
   if (error) {
     console.error('Error fetching related jobs:', error);
     throw error;
   }
   
+  // Filter client-side for related jobs
+  const relatedJobs = (data || [])
+    .filter(job => job.category === category && job.id !== jobId)
+    .slice(0, limit);
+  
   // Cast data to JobType array with proper type casting
-  return (data || []).map(job => ({
+  return relatedJobs.map(job => ({
     ...job,
     type: job.type as "full-time" | "part-time" | "contract" | "freelance" | "remote",
     category: job.category as "writing" | "editing" | "marketing" | "design" | "development" | "community" | "content" | "other"

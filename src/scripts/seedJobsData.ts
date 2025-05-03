@@ -1,5 +1,5 @@
 
-import { supabase } from "../integrations/supabase/client";
+import { createJob } from "../integrations/supabase/services/jobs";
 import { mockJobs } from "../data/mockJobsData";
 
 const seedJobs = async () => {
@@ -17,13 +17,15 @@ const seedJobs = async () => {
   });
 
   // Insert the jobs into the database
-  const { data, error } = await supabase.from('jobs').insert(processedJobs);
-  
-  if (error) {
-    console.error('Error seeding jobs:', error);
-  } else {
-    console.log('Successfully seeded jobs data!');
+  for (const job of processedJobs) {
+    const { error } = await createJob(job);
+    if (error) {
+      console.error('Error seeding job:', error, job);
+      throw error;
+    }
   }
+  
+  console.log('Successfully seeded jobs data!');
 };
 
 // Uncomment this line to run the seeding function

@@ -7,7 +7,7 @@ import {
   getCurrentUser, 
   getProfile as fetchProfile,
   updateProfile as updateUserProfile 
-} from '@/integrations/supabase/client';
+} from '@/integrations/supabase/services/auth';
 import { toast } from 'sonner';
 
 type Profile = {
