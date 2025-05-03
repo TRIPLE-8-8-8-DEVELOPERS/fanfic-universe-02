@@ -42,9 +42,9 @@ export async function getStoryAverageRating(storyId: string) {
   };
   
   return supabase
-    .rpc<number>('get_story_average_rating', { 
+    .rpc<number, GetAverageRatingParams>('get_story_average_rating', { 
       story_id: storyId 
-    } as GetAverageRatingParams);
+    });
 }
 
 export async function getStoryRatingsCount(storyId: string) {
