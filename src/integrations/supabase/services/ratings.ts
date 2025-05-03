@@ -41,10 +41,11 @@ type GetStoryAverageRatingParams = {
 };
 
 export async function getStoryAverageRating(storyId: string) {
+  // Use a generic type parameter to specify the RPC function name directly as a string literal
   return supabase
     .rpc('get_story_average_rating', { 
       story_id: storyId 
-    } as GetStoryAverageRatingParams);
+    });
 }
 
 export async function getStoryRatingsCount(storyId: string) {
