@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import WritingEditor from "../components/writing/WritingEditor";
 import AiAssistantPanel from "../components/writing/AiAssistantPanel";
+import SimpleAiAssistant from "../components/writing/SimpleAiAssistant"; // Import the new component
 import WritingSettings from "../components/writing/WritingSettings";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
 import SubscriptionBanner from "../components/writing/SubscriptionBanner";
@@ -420,17 +420,76 @@ const Write = () => {
                       </ScrollArea>
                     </CardContent>
                   </Card>
+                  
+                  {/* Add SimpleAiAssistant component here */}
+                  <div className="mt-4">
+                    <SimpleAiAssistant 
+                      currentText={content}
+                      onSuggestionApply={handleApplyAiSuggestion}
+                    />
+                  </div>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="ai-assist">
-              <AiAssistantPanel
-                currentText={content}
-                onSuggestionApply={handleApplyAiSuggestion}
-                isPremium={isPremium}
-                onUpgradeRequest={() => setIsSubscriptionModalOpen(true)}
-              />
+              {isPremium ? (
+                <AiAssistantPanel
+                  currentText={content}
+                  onSuggestionApply={handleApplyAiSuggestion}
+                  isPremium={isPremium}
+                  onUpgradeRequest={() => setIsSubscriptionModalOpen(true)}
+                />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="col-span-1">
+                    <SimpleAiAssistant 
+                      currentText={content}
+                      onSuggestionApply={handleApplyAiSuggestion}
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <Card className="h-full flex flex-col">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Crown className="h-5 w-5 text-amber-500" />
+                          Premium AI Features
+                        </CardTitle>
+                        <CardDescription>Upgrade to access advanced AI tools</CardDescription>
+                      </CardHeader>
+                      <CardContent className="flex-grow">
+                        <ul className="space-y-2">
+                          <li className="flex items-start gap-2 text-sm">
+                            <Sparkles className="h-4 w-4 text-amber-500 mt-0.5" />
+                            <span>Advanced writing style customization</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-sm">
+                            <Sparkles className="h-4 w-4 text-amber-500 mt-0.5" />
+                            <span>Character and plot development tools</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-sm">
+                            <Sparkles className="h-4 w-4 text-amber-500 mt-0.5" />
+                            <span>Genre-specific writing assistance</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-sm">
+                            <Sparkles className="h-4 w-4 text-amber-500 mt-0.5" />
+                            <span>Unlimited AI generations</span>
+                          </li>
+                        </ul>
+                      </CardContent>
+                      <CardFooter>
+                        <Button 
+                          className="w-full gap-2" 
+                          onClick={() => setIsSubscriptionModalOpen(true)}
+                        >
+                          <Zap className="h-4 w-4" />
+                          Upgrade to Premium
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  </div>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="settings">

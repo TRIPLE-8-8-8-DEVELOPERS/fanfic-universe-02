@@ -36,9 +36,9 @@ export async function deleteRating(ratingId: string) {
 }
 
 export async function getStoryAverageRating(storyId: string) {
-  // Using a more specific type assertion for the RPC function parameters
+  // Using an explicit type parameter for the function call
   return supabase
-    .rpc('get_story_average_rating', {
+    .rpc<number>('get_story_average_rating', {
       story_id: storyId
     } as { story_id: string });
 }
