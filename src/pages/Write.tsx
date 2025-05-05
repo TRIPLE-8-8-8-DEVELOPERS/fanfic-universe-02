@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -28,6 +29,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { createStory, updateStory, getStoryById } from "@/integrations/supabase/services/stories";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const Write = () => {
   const [title, setTitle] = useState("");
@@ -39,6 +47,10 @@ const Write = () => {
   const [characterCount, setCharacterCount] = useState(0);
   const [readingTime, setReadingTime] = useState(0);
   const [savedStatus, setSavedStatus] = useState("saved"); // "saved", "saving", "unsaved"
+  const [isPublishDialogOpen, setIsPublishDialogOpen] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [coverImage, setCoverImage] = useState("");
+  const [currentStoryId, setCurrentStoryId] = useState<string | null>(null);
   
   const [chapters, setChapters] = useState([
     { id: 1, title: "Introduction", wordCount: 1250, status: "published" },
@@ -47,6 +59,43 @@ const Write = () => {
     { id: 4, title: "Conflict", wordCount: 0, status: "outline" },
   ]);
   const [activeChapter, setActiveChapter] = useState(1);
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check for story ID in URL query params
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const storyId = queryParams.get('id');
+    
+    if (storyId) {
+      setCurrentStoryId(storyId);
+      loadStory(storyId);
+    }
+  }, [location.search]);
+
+  // Load story data if editing an existing story
+  const loadStory = async (storyId: string) => {
+    try {
+      const { data, error } = await getStoryById(storyId);
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        setTitle(data.title || "");
+        setContent(data.summary || "");
+        setSummary(data.summary || "");
+        setCoverImage(data.cover_image || "");
+        toast.success("Story loaded successfully");
+      }
+    } catch (error) {
+      console.error("Error loading story:", error);
+      toast.error("Failed to load story");
+    }
+  };
 
   useEffect(() => {
     const words = content.trim().split(/\s+/).filter(Boolean).length;
@@ -78,12 +127,99 @@ const Write = () => {
     setSavedStatus("unsaved");
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!user) {
+      toast.error("You must be logged in to save your story");
+      return;
+    }
+
     setSavedStatus("saving");
-    setTimeout(() => {
+    
+    try {
+      const storyData = {
+        title: title || "Untitled Story",
+        summary: summary,
+        cover_image: coverImage,
+        author_id: user.id,
+        word_count: wordCount
+      };
+
+      let result;
+      
+      if (currentStoryId) {
+        // Update existing story
+        result = await updateStory(currentStoryId, storyData);
+      } else {
+        // Create new story
+        result = await createStory(storyData);
+        
+        if (result.data && result.data[0]) {
+          setCurrentStoryId(result.data[0].id);
+        }
+      }
+
+      if (result.error) {
+        throw result.error;
+      }
+
       setSavedStatus("saved");
       toast.success("Your story has been saved");
-    }, 800);
+    } catch (error) {
+      console.error("Error saving story:", error);
+      setSavedStatus("unsaved");
+      toast.error("Failed to save your story");
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!user) {
+      toast.error("You must be logged in to publish your story");
+      return;
+    }
+
+    if (!title) {
+      toast.error("Please add a title to your story before publishing");
+      return;
+    }
+
+    if (!summary) {
+      toast.error("Please add a summary to your story before publishing");
+      return;
+    }
+
+    try {
+      await handleSave(); // Save first
+      
+      const publishData = {
+        is_published: true,
+        published_at: new Date().toISOString()
+      };
+      
+      let result;
+      
+      if (currentStoryId) {
+        result = await updateStory(currentStoryId, publishData);
+      } else {
+        toast.error("Please save your story first before publishing");
+        return;
+      }
+      
+      if (result.error) {
+        throw result.error;
+      }
+      
+      toast.success("Your story has been published successfully!");
+      setIsPublishDialogOpen(false);
+      
+      // Redirect to the published story
+      setTimeout(() => {
+        navigate(`/story/${currentStoryId}`);
+      }, 1500);
+      
+    } catch (error) {
+      console.error("Error publishing story:", error);
+      toast.error("Failed to publish your story");
+    }
   };
 
   const handleShare = () => {
@@ -169,12 +305,12 @@ const Write = () => {
                 Save
               </Button>
               <Button
-                onClick={handleShare}
-                variant="outline"
+                onClick={() => setIsPublishDialogOpen(true)}
+                variant="default"
                 size="sm"
               >
                 <Share2 className="h-4 w-4 mr-2" />
-                Share
+                Publish
               </Button>
             </div>
           </div>
@@ -314,6 +450,66 @@ const Write = () => {
         onClose={() => setIsSubscriptionModalOpen(false)}
         onSubscribe={handleSubscribe}
       />
+
+      {/* Publish Dialog */}
+      <Dialog open={isPublishDialogOpen} onOpenChange={setIsPublishDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Publish Your Story</DialogTitle>
+            <DialogDescription>
+              Add some details to help readers discover your story.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="text-right">
+                Title
+              </Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="summary" className="text-right">
+                Summary
+              </Label>
+              <Textarea
+                id="summary"
+                placeholder="A brief summary of your story"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="col-span-3"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="cover" className="text-right">
+                Cover URL
+              </Label>
+              <Input
+                id="cover"
+                placeholder="https://example.com/image.jpg"
+                value={coverImage}
+                onChange={(e) => setCoverImage(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsPublishDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handlePublish}>Publish Story</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

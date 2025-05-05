@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   BarChart3, 
   BookOpen, 
@@ -9,15 +9,29 @@ import {
   BookText, 
   Heart, 
   MessagesSquare, 
-  Eye
+  Eye,
+  Search,
+  Pencil,
+  Filter
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { getUserStories } from "@/integrations/supabase/services/stories";
+import { useQuery } from "@tanstack/react-query";
+import StoryCard from "@/components/StoryCard";
+import { Spinner } from "@/components/ui/spinner";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const stats = [
     { 
@@ -74,6 +88,32 @@ const Dashboard = () => {
     "from-pink-500 to-rose-500"
   ];
 
+  // Fetch user stories
+  const { data: userStories, isLoading, error } = useQuery({
+    queryKey: ['userStories', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await getUserStories(user.id);
+      if (error) {
+        console.error("Error fetching user stories:", error);
+        toast.error("Failed to load your stories");
+        return [];
+      }
+      return data || [];
+    },
+    enabled: !!user
+  });
+
+  // Filter stories based on search term
+  const filteredStories = userStories ? userStories.filter(story => 
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
+
+  // Navigate to write page
+  const handleNewStory = () => {
+    navigate('/write');
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Dashboard Header */}
@@ -107,8 +147,8 @@ const Dashboard = () => {
               <Button variant="outline" size="sm">
                 Export Data
               </Button>
-              <Button size="sm">
-                New Story
+              <Button size="sm" onClick={handleNewStory}>
+                <Pencil className="h-4 w-4 mr-2" /> New Story
               </Button>
             </div>
           </div>
@@ -136,6 +176,91 @@ const Dashboard = () => {
                 </Card>
               ))}
             </div>
+
+            {/* Search Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Search className="h-5 w-5 mr-2" />
+                  Search Your Stories
+                </CardTitle>
+                <CardDescription>
+                  Find stories by title, content, or tags
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex gap-2 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="search"
+                      placeholder="Search your stories..."
+                      className="pl-10"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  <Button variant="outline" size="sm">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filters
+                  </Button>
+                </div>
+
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Spinner size="lg" />
+                  </div>
+                ) : error ? (
+                  <div className="py-8 text-center">
+                    <p className="text-destructive">Failed to load stories. Please try again later.</p>
+                  </div>
+                ) : filteredStories.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <p className="text-muted-foreground">
+                      {searchTerm ? "No stories match your search" : "You haven't created any stories yet"}
+                    </p>
+                    <Button 
+                      className="mt-4"
+                      onClick={handleNewStory}
+                    >
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Create Your First Story
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {filteredStories.slice(0, 4).map((story) => (
+                      <div key={story.id} className="border rounded p-3 flex flex-col space-y-2">
+                        <div className="flex justify-between">
+                          <h4 className="font-medium">{story.title}</h4>
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${story.is_published ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                            {story.is_published ? 'Published' : 'Draft'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {story.summary || "No summary provided"}
+                        </p>
+                        <div className="flex justify-between items-center mt-2">
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(story.created_at).toLocaleDateString()}
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => navigate(`/write?id=${story.id}`)}>
+                            Edit
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+              {filteredStories.length > 4 && (
+                <CardFooter>
+                  <Button variant="ghost" size="sm" className="w-full" onClick={() => setActiveTab("stories")}>
+                    View All Stories
+                  </Button>
+                </CardFooter>
+              )}
+            </Card>
 
             {/* Engagement Summary & Top Stories */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -216,7 +341,7 @@ const Dashboard = () => {
                   <p className="text-sm text-muted-foreground mb-4">You have 3 stories in draft mode ready to be published.</p>
                 </CardContent>
                 <CardFooter>
-                  <Button size="sm" variant="outline" className="w-full">Continue Writing</Button>
+                  <Button size="sm" variant="outline" className="w-full" onClick={handleNewStory}>Continue Writing</Button>
                 </CardFooter>
               </Card>
               <Card className="dashboard-card">
@@ -252,12 +377,97 @@ const Dashboard = () => {
 
           <TabsContent value="stories" className="space-y-8">
             <Card>
-              <CardHeader>
-                <CardTitle>Stories Management</CardTitle>
-                <CardDescription>Manage your published and draft stories</CardDescription>
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+                <div>
+                  <CardTitle>Stories Management</CardTitle>
+                  <CardDescription>Manage your published and draft stories</CardDescription>
+                </div>
+                <Button onClick={handleNewStory}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  New Story
+                </Button>
               </CardHeader>
               <CardContent>
-                <p>Stories content will be displayed here</p>
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Spinner size="lg" />
+                  </div>
+                ) : error ? (
+                  <div className="py-8 text-center">
+                    <p className="text-destructive">Failed to load stories. Please try again later.</p>
+                  </div>
+                ) : filteredStories.length === 0 ? (
+                  <div className="py-8 text-center">
+                    <p className="text-muted-foreground mb-4">
+                      {searchTerm ? "No stories match your search" : "You haven't created any stories yet"}
+                    </p>
+                    {!searchTerm && (
+                      <Button onClick={handleNewStory}>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Create Your First Story
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex gap-2 mb-4">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          type="search"
+                          placeholder="Search your stories..."
+                          className="pl-10"
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {filteredStories.map((story) => (
+                        <div key={story.id} className="border rounded overflow-hidden group">
+                          <div className="aspect-video bg-muted relative">
+                            {story.cover_image ? (
+                              <img 
+                                src={story.cover_image} 
+                                alt={story.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                <BookText className="h-10 w-10" />
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center p-4">
+                              <div className="flex space-x-2">
+                                <Button variant="secondary" size="sm" onClick={() => navigate(`/write?id=${story.id}`)}>
+                                  Edit
+                                </Button>
+                                <Button variant="secondary" size="sm" onClick={() => navigate(`/story/${story.id}`)}>
+                                  Preview
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-3">
+                            <div className="flex justify-between items-start mb-1">
+                              <h4 className="font-medium">{story.title}</h4>
+                              <span className={`px-2 py-0.5 rounded-full text-xs ${story.is_published ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                                {story.is_published ? 'Published' : 'Draft'}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                              {story.summary || "No summary provided"}
+                            </p>
+                            <div className="text-xs text-muted-foreground mt-2">
+                              {new Date(story.created_at).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
