@@ -30,7 +30,22 @@ export interface FriendRequestType {
   senderId: string;
   senderName: string;
   senderAvatar: string;
+  senderUsername: string;
   receiverId: string;
   status: 'pending' | 'accepted' | 'rejected';
+  createdAt: string;
+}
+
+// Define notification type
+export interface NotificationType {
+  id: string;
+  userId: string;
+  actorId?: string;
+  actorName?: string;
+  actorAvatar?: string;
+  type: string;
+  content: string;
+  relatedId?: string;
+  read: boolean;
   createdAt: string;
 }

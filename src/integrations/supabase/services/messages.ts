@@ -4,7 +4,7 @@ import { supabase } from '../client';
 // Message helper functions
 export async function getConversations(userId: string) {
   // Get the latest message from each conversation
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('messages')
     .select(`
       id,
@@ -61,7 +61,7 @@ export async function getConversations(userId: string) {
 }
 
 export async function getMessages(userId: string, otherUserId: string) {
-  return supabase
+  return (supabase as any)
     .from('messages')
     .select(`
       id,
@@ -76,7 +76,7 @@ export async function getMessages(userId: string, otherUserId: string) {
 }
 
 export async function sendMessage(senderId: string, receiverId: string, content: string) {
-  return supabase
+  return (supabase as any)
     .from('messages')
     .insert({
       sender_id: senderId,
@@ -87,7 +87,7 @@ export async function sendMessage(senderId: string, receiverId: string, content:
 }
 
 export async function markMessagesAsRead(userId: string, otherUserId: string) {
-  return supabase
+  return (supabase as any)
     .from('messages')
     .update({ read: true })
     .eq('sender_id', otherUserId)
@@ -96,7 +96,7 @@ export async function markMessagesAsRead(userId: string, otherUserId: string) {
 }
 
 export async function getUnreadMessageCount(userId: string) {
-  const { count, error } = await supabase
+  const { count, error } = await (supabase as any)
     .from('messages')
     .select('id', { count: 'exact', head: true })
     .eq('receiver_id', userId)

@@ -4,7 +4,9 @@ import { FriendRequestType } from '@/types/messaging';
 
 // Friend request helper functions
 export async function sendFriendRequest(senderId: string, receiverId: string) {
-  return supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  // since the friend_requests table is not in the generated types yet
+  return (supabase as any)
     .from('friend_requests')
     .insert({
       sender_id: senderId,
@@ -14,7 +16,8 @@ export async function sendFriendRequest(senderId: string, receiverId: string) {
 }
 
 export async function getFriendRequests(userId: string) {
-  return supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  return (supabase as any)
     .from('friend_requests')
     .select(`
       id,
@@ -29,7 +32,8 @@ export async function getFriendRequests(userId: string) {
 }
 
 export async function getSentFriendRequests(userId: string) {
-  return supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  return (supabase as any)
     .from('friend_requests')
     .select(`
       id,
@@ -43,14 +47,16 @@ export async function getSentFriendRequests(userId: string) {
 }
 
 export async function acceptFriendRequest(requestId: string) {
-  return supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  return (supabase as any)
     .from('friend_requests')
     .update({ status: 'accepted' })
     .eq('id', requestId);
 }
 
 export async function rejectFriendRequest(requestId: string) {
-  return supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  return (supabase as any)
     .from('friend_requests')
     .update({ status: 'rejected' })
     .eq('id', requestId);
@@ -58,7 +64,8 @@ export async function rejectFriendRequest(requestId: string) {
 
 export async function getFriends(userId: string) {
   // Get all accepted friend requests where user is either sender or receiver
-  const { data: sentRequests, error: sentError } = await supabase
+  // Using explicit type cast to any to bypass TypeScript restrictions
+  const { data: sentRequests, error: sentError } = await (supabase as any)
     .from('friend_requests')
     .select(`
       id,
@@ -68,7 +75,7 @@ export async function getFriends(userId: string) {
     .eq('sender_id', userId)
     .eq('status', 'accepted');
     
-  const { data: receivedRequests, error: receivedError } = await supabase
+  const { data: receivedRequests, error: receivedError } = await (supabase as any)
     .from('friend_requests')
     .select(`
       id,

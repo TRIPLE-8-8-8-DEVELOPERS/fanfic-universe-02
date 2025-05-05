@@ -10,7 +10,7 @@ import {
   rejectFriendRequest,
   sendFriendRequest 
 } from "@/integrations/supabase/services/friends";
-import { createFriendAcceptedNotification } from "@/integrations/supabase/services/notifications";
+import { createFriendAcceptedNotification, createFriendRequestNotification } from "@/integrations/supabase/services/notifications";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface FriendItemProps {
@@ -87,6 +87,9 @@ const FriendItem = ({
     try {
       const { error } = await sendFriendRequest(user.id, userId);
       if (error) throw error;
+      
+      // Create notification for the receiver
+      await createFriendRequestNotification(userId, user.id);
       
       toast.success("Friend request sent");
     } catch (error) {
