@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,10 +15,16 @@ import ConversationHeader from "@/components/messaging/ConversationHeader";
 import EmptyConversation from "@/components/messaging/EmptyConversation";
 import { useToast } from "@/hooks/use-toast";
 import { mockConversations, findConversationById } from "@/data/mockMessagingData";
+import { useAuth } from "@/contexts/AuthContext";
+import { ConversationType } from "@/types/messaging";
+import { getConversations, sendMessage, markMessagesAsRead } from "@/integrations/supabase/services/messages";
 
 const Messages = () => {
   const { conversationId } = useParams();
-  const [activeConversation, setActiveConversation] = useState(
+  const { user, profile, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const [conversations, setConversations] = useState<ConversationType[]>([]);
+  const [activeConversation, setActiveConversation] = useState<ConversationType | null>(
     conversationId ? findConversationById(conversationId) : null
   );
   const [messageText, setMessageText] = useState("");
@@ -27,8 +33,52 @@ const Messages = () => {
   const [showConversation, setShowConversation] = useState(!!conversationId);
   const { toast } = useToast();
 
+  // Handle authentication
+  useEffect(() => {
+    if (isLoading) return;
+    
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "You need to sign in to access messages",
+      });
+      navigate("/auth");
+    }
+  }, [isAuthenticated, isLoading, navigate, toast]);
+
+  // Load real conversations from Supabase
+  useEffect(() => {
+    const loadConversations = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await getConversations(user.id);
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setConversations(data);
+        } else {
+          // Fallback to mock data if no real conversations exist
+          setConversations(mockConversations);
+        }
+      } catch (error) {
+        console.error("Error loading conversations:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load conversations",
+        });
+        // Fallback to mock data
+        setConversations(mockConversations);
+      }
+    };
+    
+    if (user) {
+      loadConversations();
+    }
+  }, [user, toast]);
+
   // Filter conversations based on search query
-  const filteredConversations = mockConversations.filter(
+  const filteredConversations = conversations.filter(
     (conversation) =>
       conversation.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       conversation.lastMessage.toLowerCase().includes(searchQuery.toLowerCase())
@@ -46,23 +96,91 @@ const Messages = () => {
   // Update active conversation when URL param changes
   useEffect(() => {
     if (conversationId) {
-      const conversation = findConversationById(conversationId);
+      // First try to find in real conversations
+      let conversation = conversations.find(c => c.id === conversationId);
+      
+      // If not found, try mock data
+      if (!conversation) {
+        conversation = findConversationById(conversationId);
+      }
+      
       setActiveConversation(conversation);
       setShowConversation(true);
+      
+      // Mark messages as read
+      if (user && conversation) {
+        markMessagesAsRead(user.id, conversationId);
+      }
     } else {
       setShowConversation(false);
     }
-  }, [conversationId]);
+  }, [conversationId, conversations, user]);
 
   // Handle sending a new message
-  const handleSendMessage = () => {
-    if (!messageText.trim()) return;
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !user || !activeConversation) return;
     
-    // In a real app, this would send the message to an API
-    toast({
-      title: "Message sent",
-      description: "Your message has been sent successfully.",
-    });
+    // In a real app with Supabase
+    if (user) {
+      try {
+        const { error } = await sendMessage(user.id, activeConversation.id, messageText);
+        if (error) throw error;
+        
+        // Update the conversation list
+        const updatedConversations = conversations.map(conv => {
+          if (conv.id === activeConversation.id) {
+            return {
+              ...conv,
+              lastMessage: messageText,
+              time: new Date().toLocaleString(),
+              messages: [
+                ...conv.messages,
+                {
+                  id: Date.now().toString(),
+                  content: messageText,
+                  timestamp: new Date().toISOString(),
+                  isSelf: true,
+                  read: false
+                }
+              ]
+            };
+          }
+          return conv;
+        });
+        
+        setConversations(updatedConversations);
+        setActiveConversation(prevConv => {
+          if (!prevConv) return null;
+          
+          return {
+            ...prevConv,
+            lastMessage: messageText,
+            time: new Date().toLocaleString(),
+            messages: [
+              ...prevConv.messages,
+              {
+                id: Date.now().toString(),
+                content: messageText,
+                timestamp: new Date().toISOString(),
+                isSelf: true,
+                read: false
+              }
+            ]
+          };
+        });
+        
+        toast({
+          title: "Message sent",
+          description: "Your message has been sent successfully.",
+        });
+      } catch (error) {
+        console.error("Error sending message:", error);
+        toast({
+          title: "Error",
+          description: "Failed to send message",
+        });
+      }
+    }
     
     setMessageText("");
   };
@@ -81,7 +199,26 @@ const Messages = () => {
 
       <main className="flex-grow pt-20">
         <div className="container max-w-7xl mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-6">Messages</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Messages</h1>
+            {profile && (
+              <div className="flex items-center gap-3">
+                <span className="text-muted-foreground">Logged in as:</span>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={profile.avatar_url} alt={profile.display_name || profile.username} />
+                  <AvatarFallback>
+                    {(profile.display_name || profile.username || "")
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{profile.display_name || profile.username}</p>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="flex flex-col md:flex-row gap-6 bg-card rounded-xl shadow-sm overflow-hidden border">
             {/* Conversations sidebar - hidden on mobile when a conversation is open */}

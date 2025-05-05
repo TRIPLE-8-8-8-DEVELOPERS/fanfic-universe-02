@@ -33,6 +33,8 @@ const Story = lazy(() => import("@/pages/Story"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Settings = lazy(() => import("@/pages/Settings"));
 const Messages = lazy(() => import("@/pages/Messages"));
+const Notifications = lazy(() => import("@/pages/Notifications"));
+const Friends = lazy(() => import("@/pages/Friends"));
 const MarketplaceProduct = lazy(() => import("@/pages/MarketplaceProduct"));
 const Marketplace = lazy(() => import("@/pages/Marketplace"));
 const Fandoms = lazy(() => import("@/pages/Fandoms"));
@@ -132,6 +134,15 @@ function App() {
                         } />
                         <Route path="/messages" element={
                           <PrivateRoute><Messages /></PrivateRoute>
+                        } />
+                        <Route path="/messages/:conversationId" element={
+                          <PrivateRoute><Messages /></PrivateRoute>
+                        } />
+                        <Route path="/notifications" element={
+                          <PrivateRoute><Notifications /></PrivateRoute>
+                        } />
+                        <Route path="/friends" element={
+                          <PrivateRoute><Friends /></PrivateRoute>
                         } />
                         <Route path="/reading-lists" element={
                           <PrivateRoute><ReadingLists /></PrivateRoute>

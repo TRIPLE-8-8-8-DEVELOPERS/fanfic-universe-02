@@ -24,3 +24,13 @@ export interface ConversationType {
   time: string;
   unread: boolean;
 }
+
+export interface FriendRequestType {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar: string;
+  receiverId: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: string;
+}
