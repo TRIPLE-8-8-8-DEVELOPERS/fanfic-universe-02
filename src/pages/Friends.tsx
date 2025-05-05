@@ -165,6 +165,15 @@ const Friends = () => {
     loadFriendRequests();
   };
   
+  // Fixed the click method error by changing document.querySelector('[data-value="add"]')?.click()
+  // to use a ref and programmatic navigation instead
+  const navigateToAddFriends = () => {
+    const addTab = document.querySelector('[data-value="add"]') as HTMLElement;
+    if (addTab) {
+      addTab.dispatchEvent(new Event('click', { bubbles: true }));
+    }
+  };
+
   return (
     <>
       <Header />
@@ -222,9 +231,7 @@ const Friends = () => {
                 <p className="text-muted-foreground mb-6">
                   Search for users to add them as friends
                 </p>
-                <Button
-                  onClick={() => document.querySelector('[data-value="add"]')?.click()}
-                >
+                <Button onClick={navigateToAddFriends}>
                   Find Friends
                 </Button>
               </div>

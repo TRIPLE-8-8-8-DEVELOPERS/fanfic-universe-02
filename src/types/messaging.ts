@@ -36,7 +36,6 @@ export interface FriendRequestType {
   createdAt: string;
 }
 
-// Define notification type
 export interface NotificationType {
   id: string;
   userId: string;

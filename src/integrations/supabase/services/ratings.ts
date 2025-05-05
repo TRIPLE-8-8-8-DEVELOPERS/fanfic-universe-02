@@ -1,51 +1,52 @@
 
 import { supabase } from '../client';
 
-// Ratings helper functions
+// Get a user's rating for a story
 export async function getRating(userId: string, storyId: string) {
   return supabase
     .from('ratings')
-    .select('*')
+    .select('rating')
     .eq('user_id', userId)
     .eq('story_id', storyId)
     .single();
 }
 
-export async function addRating(userId: string, storyId: string, rating: number) {
+// Add or update a rating
+export async function upsertRating(userId: string, storyId: string, rating: number) {
   return supabase
     .from('ratings')
-    .insert({
+    .upsert({
       user_id: userId,
       story_id: storyId,
-      rating
+      rating,
+      updated_at: new Date().toISOString()
+    }, {
+      onConflict: 'user_id,story_id'
     });
 }
 
-export async function updateRating(ratingId: string, rating: number) {
-  return supabase
-    .from('ratings')
-    .update({ rating })
-    .eq('id', ratingId);
+// Get the average rating for a story
+export async function getAverageRating(storyId: string) {
+  // Using raw SQL for this calculation - ensure the query is properly sanitized
+  const { data, error } = await supabase
+    .rpc('get_average_rating', { story_id_param: storyId });
+  
+  return { data, error };
 }
 
-export async function deleteRating(ratingId: string) {
+// Get popular stories based on ratings
+export async function getPopularStories(limit = 10) {
   return supabase
-    .from('ratings')
-    .delete()
-    .eq('id', ratingId);
-}
-
-export async function getStoryAverageRating(storyId: string) {
-  // Using explicit type parameters for the function call - specifying both input and output types
-  return supabase
-    .rpc('get_story_average_rating', {
-      story_id: storyId
-    });
-}
-
-export async function getStoryRatingsCount(storyId: string) {
-  return supabase
-    .from('ratings')
-    .select('id', { count: 'exact', head: true })
-    .eq('story_id', storyId);
+    .from('stories')
+    .select(`
+      id,
+      title,
+      summary,
+      cover_image,
+      author:profiles!author_id (username, display_name, avatar_url),
+      average_rating:ratings(rating)
+    `)
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+    .limit(limit);
 }
