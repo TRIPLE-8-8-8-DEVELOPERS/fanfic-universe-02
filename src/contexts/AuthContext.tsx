@@ -29,6 +29,7 @@ type AuthContextType = {
   profile: Profile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
   getProfile: () => Promise<Profile | null>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
@@ -41,6 +42,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   isLoading: true,
   isAuthenticated: false,
+  signOut: async () => {},
   refreshSession: async () => {},
   getProfile: async () => null,
   updateProfile: async () => {},
@@ -72,6 +74,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.error('Failed to refresh authentication session');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      toast.success('Signed out successfully');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast.error('Failed to sign out');
     }
   };
 
@@ -158,6 +173,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     profile,
     isLoading,
     isAuthenticated: !!user,
+    signOut,
     refreshSession,
     getProfile,
     updateProfile,

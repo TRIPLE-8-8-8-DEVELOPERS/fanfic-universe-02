@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -127,7 +126,7 @@ const Header: React.FC = () => {
         <div className="flex items-center gap-4 md:gap-6">
           <Link to="/" className="flex items-center gap-2">
             <BookOpen className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl hidden md:block">StoryVerse</span>
+            <span className="font-bold text-xl hidden md:block">FANVERSE</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
