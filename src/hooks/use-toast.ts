@@ -1,31 +1,30 @@
 
-import { toast as sonnerToast, Toast, useToast as useSonnerToast } from "sonner";
+import { toast as sonnerToast } from "sonner";
 
 // Create a wrapped version of sonner toast
 export const toast = {
   ...sonnerToast,
-  success: (message: string) => 
+  success: (message: string | React.ReactNode) => 
     sonnerToast.success(message, { 
       className: "bg-background text-foreground border-border",
       descriptionClassName: "text-muted-foreground" 
     }),
-  error: (message: string) => 
+  error: (message: string | React.ReactNode) => 
     sonnerToast.error(message, { 
       className: "bg-background text-destructive border-destructive/20",
       descriptionClassName: "text-muted-foreground" 
     }),
-  info: (message: string) => 
+  info: (message: string | React.ReactNode) => 
     sonnerToast.info(message, { 
       className: "bg-background text-foreground border-border",
       descriptionClassName: "text-muted-foreground" 
     }),
-  warning: (message: string) => 
+  warning: (message: string | React.ReactNode) => 
     sonnerToast.warning(message, { 
       className: "bg-background text-amber-600 border-amber-200",
       descriptionClassName: "text-muted-foreground" 
     })
 };
 
-export const useToast = useSonnerToast;
-
-export type { Toast };
+// Export the original toast function for direct usage
+export { toast as useToast };

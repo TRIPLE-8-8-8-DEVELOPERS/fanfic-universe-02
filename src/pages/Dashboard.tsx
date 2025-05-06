@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { 
   BarChart3, 
@@ -12,7 +11,13 @@ import {
   Eye,
   Search,
   Pencil,
-  Filter
+  Filter,
+  Clock,
+  PenSquare,
+  BookMarked,
+  BookOpenCheck,
+  Sparkles,
+  BellRing
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,11 +26,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { getUserStories } from "@/integrations/supabase/services/stories";
 import { useQuery } from "@tanstack/react-query";
 import StoryCard from "@/components/StoryCard";
 import { Spinner } from "@/components/ui/spinner";
+import { showReadingProgressNotification } from "@/components/reading/ReadingProgressNotification";
+import { useReadingTimer } from "@/hooks/use-reading-time";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -33,59 +40,53 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Simulate a reading milestone achieved (for demonstration)
+  useEffect(() => {
+    if (user) {
+      const timer = setTimeout(() => {
+        showReadingProgressNotification({
+          type: 'milestone',
+          storyTitle: 'The Last Guardian',
+          progressValue: 50
+        });
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   const stats = [
     { 
       title: "Total Stories", 
       value: "23", 
       change: "+5", 
       icon: BookText,
-      description: "You have 23 stories published"
+      description: "You have 23 stories published",
+      color: "blue"
     },
     { 
       title: "Total Readers", 
       value: "14.5k", 
       change: "+12%", 
       icon: Eye,
-      description: "14,532 people read your stories"
+      description: "14,532 people read your stories",
+      color: "green"
     },
     { 
       title: "Favorites", 
       value: "2.3k", 
       change: "+18%", 
       icon: Heart,
-      description: "2,342 favorites across all stories"
+      description: "2,342 favorites across all stories",
+      color: "red"
     },
     { 
-      title: "Comments", 
-      value: "768", 
+      title: "Reading Time", 
+      value: "768h", 
       change: "+7%", 
-      icon: MessagesSquare,
-      description: "768 comments on your publications"
+      icon: Clock,
+      description: "Total time readers spent on your stories",
+      color: "amber"
     }
-  ];
-
-  const topStories = [
-    { title: "The Last Guardian", reads: "5.2k", likes: "1.2k", genre: "Fantasy" },
-    { title: "Beyond the Stars", reads: "3.8k", likes: "890", genre: "Sci-Fi" },
-    { title: "Whispers in the Dark", reads: "2.9k", likes: "756", genre: "Horror" },
-    { title: "Hearts Entwined", reads: "2.1k", likes: "620", genre: "Romance" },
-    { title: "The Secret Society", reads: "1.8k", likes: "512", genre: "Mystery" }
-  ];
-
-  const recentActivity = [
-    { action: "New comment on 'The Last Guardian'", time: "10 minutes ago" },
-    { action: "Story 'Beyond the Stars' reached 3.8k reads", time: "2 hours ago" },
-    { action: "New follower: Sarah Williams", time: "4 hours ago" },
-    { action: "Your story was featured in 'Weekly Picks'", time: "Yesterday" },
-    { action: "New rating on 'Whispers in the Dark'", time: "2 days ago" }
-  ];
-
-  const randomGradients = [
-    "from-indigo-500 to-purple-500",
-    "from-blue-500 to-cyan-500", 
-    "from-emerald-500 to-green-500",
-    "from-orange-500 to-amber-500",
-    "from-pink-500 to-rose-500"
   ];
 
   // Fetch user stories
@@ -96,7 +97,7 @@ const Dashboard = () => {
       const { data, error } = await getUserStories(user.id);
       if (error) {
         console.error("Error fetching user stories:", error);
-        toast.error("Failed to load your stories");
+        toast("Failed to load your stories");
         return [];
       }
       return data || [];
@@ -113,6 +114,9 @@ const Dashboard = () => {
   const handleNewStory = () => {
     navigate('/write');
   };
+
+  // Demo reading features
+  const { startTracking, stopTracking } = useReadingTimer("demo-story-id", 60);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -136,6 +140,46 @@ const Dashboard = () => {
               <Pencil className="h-5 w-5 mr-2" />
               Start Writing Now
             </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured "Write" Button Section */}
+      <div className="container mt-6">
+        <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-xl p-6 shadow-sm">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold mb-2">Ready to Write Your Next Masterpiece?</h2>
+              <p className="text-muted-foreground mb-4">
+                Start creating your next story, continue working on drafts, or get AI assistance with your writing.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button 
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                  size="lg"
+                  onClick={handleNewStory}
+                >
+                  <PenSquare className="h-5 w-5 mr-2" />
+                  Create New Story
+                </Button>
+                <Button variant="outline" size="lg" onClick={() => navigate('/write')}>
+                  <BookText className="h-5 w-5 mr-2" />
+                  Continue Draft
+                </Button>
+                <Button variant="secondary" size="lg" onClick={() => navigate('/write')}>
+                  <Sparkles className="h-5 w-5 mr-2" />
+                  Get AI Assistance
+                </Button>
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="relative">
+                <div className="absolute -top-6 -right-6">
+                  <Sparkles className="h-12 w-12 text-indigo-500 opacity-40" />
+                </div>
+                <Pencil className="h-32 w-32 text-indigo-500/50" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -170,12 +214,12 @@ const Dashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat, index) => (
-                <Card key={index} className="dashboard-card overflow-hidden">
+                <Card key={index} className="dashboard-card overflow-hidden hover:border-primary/50 transition-colors">
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-lg">{stat.title}</CardTitle>
-                      <div className="p-1.5 rounded-full bg-muted">
-                        <stat.icon className="h-4 w-4 text-muted-foreground" />
+                      <div className={`p-1.5 rounded-full bg-${stat.color}-500/10`}>
+                        <stat.icon className={`h-4 w-4 text-${stat.color}-500`} />
                       </div>
                     </div>
                     <CardDescription>{stat.description}</CardDescription>
@@ -189,6 +233,77 @@ const Dashboard = () => {
                 </Card>
               ))}
             </div>
+
+            {/* Reading Tracking Demo */}
+            <Card className="border-2 border-indigo-500/20 shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <BookOpenCheck className="h-5 w-5 mr-2 text-indigo-500" />
+                  Reading Progress Features
+                </CardTitle>
+                <CardDescription>
+                  Track reader engagement with your stories using our new reading progress features
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <BookMarked className="h-5 w-5 mr-2 text-indigo-500" />
+                      <h3 className="font-medium">Reading Progress Tracking</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Track how far readers have progressed in your stories
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <Clock className="h-5 w-5 mr-2 text-indigo-500" />
+                      <h3 className="font-medium">Reading Time Analytics</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Measure how much time readers spend on each chapter
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 bg-muted rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <BellRing className="h-5 w-5 mr-2 text-indigo-500" />
+                      <h3 className="font-medium">Progress Notifications</h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Celebrate milestones with custom notifications
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-center space-x-4 pt-2">
+                  <Button variant="outline" onClick={() => {
+                    startTracking();
+                    toast("Started tracking reading time");
+                  }}>
+                    Start Demo
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    stopTracking();
+                    showReadingProgressNotification({
+                      type: 'chapter_complete',
+                      storyTitle: 'Demo Story'
+                    });
+                  }}>
+                    Complete Chapter
+                  </Button>
+                  <Button variant="outline" onClick={() => {
+                    showReadingProgressNotification({
+                      type: 'book_complete',
+                      storyTitle: 'Demo Story'
+                    });
+                  }}>
+                    Complete Book
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Search Section */}
             <Card>
@@ -515,3 +630,26 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+const topStories = [
+  { title: "The Last Guardian", reads: "5.2k", likes: "1.2k", genre: "Fantasy" },
+  { title: "Beyond the Stars", reads: "3.8k", likes: "890", genre: "Sci-Fi" },
+  { title: "Whispers in the Dark", reads: "2.9k", likes: "756", genre: "Horror" },
+  { title: "Hearts Entwined", reads: "2.1k", likes: "620", genre: "Romance" },
+  { title: "The Secret Society", reads: "1.8k", likes: "512", genre: "Mystery" }
+];
+
+const recentActivity = [
+  { action: "New comment on 'The Last Guardian'", time: "10 minutes ago" },
+  { action: "Story 'Beyond the Stars' reached 3.8k reads", time: "2 hours ago" },
+  { action: "New follower: Sarah Williams", time: "4 hours ago" },
+  { action: "Your story was featured in 'Weekly Picks'", time: "Yesterday" },
+  { action: "New rating on 'Whispers in the Dark'", time: "2 days ago" }
+];
+
+const randomGradients = [
+  "from-indigo-500 to-purple-500",
+  "from-blue-500 to-cyan-500", 
+  "from-emerald-500 to-green-500",
+  "from-orange-500 to-amber-500",
+  "from-pink-500 to-rose-500"
+];

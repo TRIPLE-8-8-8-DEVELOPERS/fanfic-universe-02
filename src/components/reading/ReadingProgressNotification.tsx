@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookmarkCheck, Bookmark, Award, Badge } from 'lucide-react';
+import { BookmarkCheck, Bookmark, Award } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface ReadingProgressNotificationProps {
@@ -48,7 +48,7 @@ export const showReadingProgressNotification = ({
       break;
     
     case 'book_complete':
-      toast(
+      toast.success(
         <div className="flex items-center">
           <div className="bg-amber-500/20 p-2 rounded-full mr-3">
             <Award className="h-5 w-5 text-amber-500" />
