@@ -1,103 +1,103 @@
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { updateReadingTime } from '@/integrations/supabase/services/reading-progress';
 import { useAuth } from '@/contexts/AuthContext';
-import { trackReadingTime } from '@/integrations/supabase/services/reading-progress';
 
-export function useReadingTime(storyId: string) {
-  const { user, isAuthenticated } = useAuth();
-  const [isReading, setIsReading] = useState(false);
-  const [totalSeconds, setTotalSeconds] = useState(0);
-  const intervalRef = useRef<number | null>(null);
-  const lastSyncRef = useRef<number>(0);
+// Default update interval in seconds
+const DEFAULT_INTERVAL = 30;
 
-  // Start tracking reading time
+export function useReadingTimer(storyId: string, updateInterval = DEFAULT_INTERVAL) {
+  const [isTracking, setIsTracking] = useState(false);
+  const { user } = useAuth();
+  const timerRef = useRef<number>(0);
+  const lastUpdateRef = useRef<number>(0);
+
+  // Start tracking time spent reading
   const startTracking = () => {
-    if (!isAuthenticated) return;
-    setIsReading(true);
+    if (!user || !storyId || isTracking) return;
+    
+    // Initialize timer and update refs
+    timerRef.current = 0;
+    lastUpdateRef.current = Date.now();
+    setIsTracking(true);
   };
 
-  // Stop tracking reading time
+  // Stop tracking time spent reading
   const stopTracking = async () => {
-    if (!isAuthenticated) return;
+    if (!isTracking) return;
     
-    setIsReading(false);
-    
-    // Sync remaining time to server if needed
-    if (totalSeconds > lastSyncRef.current) {
-      await syncToServer();
-    }
+    // Update one last time before stopping
+    await updateTimeSpent();
+    setIsTracking(false);
   };
 
-  // Sync reading time to server
-  const syncToServer = async () => {
+  // Update time spent in database
+  const updateTimeSpent = async () => {
     if (!user || !storyId) return;
     
-    const secondsToSync = totalSeconds - lastSyncRef.current;
+    const now = Date.now();
+    const elapsedSeconds = Math.floor((now - lastUpdateRef.current) / 1000);
     
-    if (secondsToSync > 0) {
-      try {
-        await trackReadingTime(user.id, storyId, secondsToSync);
-        lastSyncRef.current = totalSeconds;
-      } catch (error) {
-        console.error('Error syncing reading time:', error);
-      }
-    }
-  };
-
-  // Reset tracking
-  const resetTracking = () => {
-    setIsReading(false);
-    setTotalSeconds(0);
-    lastSyncRef.current = 0;
-  };
-
-  useEffect(() => {
-    // Set up timer when reading starts
-    if (isReading && !intervalRef.current) {
-      intervalRef.current = window.setInterval(() => {
-        setTotalSeconds(prev => prev + 1);
-      }, 1000);
-    }
-    
-    // Clear timer when reading stops
-    if (!isReading && intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isReading]);
-
-  // Sync time to server every minute
-  useEffect(() => {
-    if (totalSeconds > 0 && totalSeconds % 60 === 0) {
-      syncToServer();
-    }
-  }, [totalSeconds, storyId, user]);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+    if (elapsedSeconds > 0) {
+      // Update database
+      await updateReadingTime(user.id, storyId, elapsedSeconds);
       
-      // Final sync on unmount
-      if (totalSeconds > lastSyncRef.current) {
-        syncToServer();
+      // Update refs
+      timerRef.current += elapsedSeconds;
+      lastUpdateRef.current = now;
+    }
+  };
+
+  // Effect for periodic updates while tracking
+  useEffect(() => {
+    if (!isTracking || !user) return;
+    
+    // Set up interval to update time spent
+    const intervalId = setInterval(async () => {
+      await updateTimeSpent();
+    }, updateInterval * 1000);
+    
+    // Cleanup function for unmounting
+    return () => {
+      clearInterval(intervalId);
+      updateTimeSpent();
+    };
+  }, [isTracking, user, storyId, updateInterval]);
+
+  // Effect for page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Page is hidden, stop counting
+        updateTimeSpent();
+      } else {
+        // Page is visible again, resume counting
+        if (isTracking) {
+          lastUpdateRef.current = Date.now();
+        }
       }
     };
-  }, []);
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isTracking]);
+
+  // Auto cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (isTracking) {
+        updateTimeSpent();
+      }
+    };
+  }, [isTracking]);
 
   return {
-    isReading,
-    totalSeconds,
+    isTracking,
     startTracking,
     stopTracking,
-    resetTracking
+    timeSpent: timerRef.current
   };
 }

@@ -120,10 +120,23 @@ const Dashboard = () => {
       <div className="relative overflow-hidden border-b">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-indigo-900/20 hero-pattern"></div>
         <div className="container relative z-10 py-8 md:py-12">
-          <h1 className="text-3xl md:text-4xl font-bold font-serif mb-2">Author Dashboard</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Track your writing performance, manage your stories, and connect with your readers.
-          </p>
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold font-serif mb-2">Author Dashboard</h1>
+              <p className="text-muted-foreground max-w-2xl">
+                Track your writing performance, manage your stories, and connect with your readers.
+              </p>
+            </div>
+            
+            <Button 
+              size="lg" 
+              className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md hover-lift"
+              onClick={handleNewStory}
+            >
+              <Pencil className="h-5 w-5 mr-2" />
+              Start Writing Now
+            </Button>
+          </div>
         </div>
       </div>
 
