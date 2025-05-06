@@ -50,7 +50,7 @@ const ReadingHistory: React.FC<ReadingHistoryProps> = ({
         
         if (error) throw error;
         if (data) {
-          setHistory(data as ReadingHistoryItem[]);
+          setHistory(data as unknown as ReadingHistoryItem[]);
         }
       } catch (error) {
         console.error('Error fetching reading history:', error);

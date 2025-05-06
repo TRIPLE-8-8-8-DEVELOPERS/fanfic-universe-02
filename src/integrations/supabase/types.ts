@@ -446,6 +446,60 @@ export type Database = {
           },
         ]
       }
+      reading_progress: {
+        Row: {
+          chapters_read: number
+          created_at: string | null
+          id: string
+          last_read_chapter_id: string | null
+          last_read_position: number | null
+          progress_percentage: number
+          story_id: string
+          time_spent_seconds: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chapters_read?: number
+          created_at?: string | null
+          id?: string
+          last_read_chapter_id?: string | null
+          last_read_position?: number | null
+          progress_percentage?: number
+          story_id: string
+          time_spent_seconds?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chapters_read?: number
+          created_at?: string | null
+          id?: string
+          last_read_chapter_id?: string | null
+          last_read_position?: number | null
+          progress_percentage?: number
+          story_id?: string
+          time_spent_seconds?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_progress_last_read_chapter_id_fkey"
+            columns: ["last_read_chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_progress_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stories: {
         Row: {
           author_id: string

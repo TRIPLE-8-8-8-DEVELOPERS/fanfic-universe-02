@@ -4,12 +4,25 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { getReadingProgress } from "@/integrations/supabase/services/reading-progress";
 
 interface ReadingProgressTrackerProps {
   storyId: string;
   totalWords: number;
   totalChapters: number;
+}
+
+interface ReadingProgressData {
+  id: string;
+  user_id: string;
+  story_id: string;
+  progress_percentage: number;
+  chapters_read: number;
+  time_spent_seconds: number;
+  last_read_chapter_id?: string;
+  last_read_position?: number;
+  created_at: string;
+  updated_at: string;
 }
 
 const ReadingProgressTracker: React.FC<ReadingProgressTrackerProps> = ({
@@ -28,17 +41,13 @@ const ReadingProgressTracker: React.FC<ReadingProgressTrackerProps> = ({
 
     // Fetch reading progress from database
     const fetchReadingProgress = async () => {
-      const { data, error } = await supabase
-        .from('reading_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('story_id', storyId)
-        .single();
+      const { data, error } = await getReadingProgress(user.id, storyId);
 
       if (data) {
-        setProgress(data.progress_percentage || 0);
-        setChaptersRead(data.chapters_read || 0);
-        setTimeSpent(data.time_spent_seconds || 0);
+        const progressData = data as ReadingProgressData;
+        setProgress(progressData.progress_percentage || 0);
+        setChaptersRead(progressData.chapters_read || 0);
+        setTimeSpent(progressData.time_spent_seconds || 0);
       }
     };
 
