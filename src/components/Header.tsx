@@ -1,281 +1,469 @@
 
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Search, Bell, User, BookOpen, PenTool, LogOut, MessageSquare, Bookmark } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Bell,
+  BookOpen,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Search,
+  Settings,
+  User,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
-import { signOut } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { getUnreadNotificationCount } from "@/integrations/supabase/services/notifications";
+import { getUnreadMessageCount } from "@/integrations/supabase/services/messages";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const { user, profile, isAuthenticated } = useAuth();
+const Header: React.FC = () => {
+  const { user, profile, isAuthenticated, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (!user) return;
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+    // Get notification count
+    const fetchNotificationCount = async () => {
+      try {
+        const { count, error } = await getUnreadNotificationCount(user.id);
+        if (!error && count !== null) {
+          setUnreadNotifications(count);
+        }
+      } catch (error) {
+        console.error("Error fetching notification count:", error);
+      }
+    };
+
+    // Get message count
+    const fetchMessageCount = async () => {
+      try {
+        const { count, error } = await getUnreadMessageCount(user.id);
+        if (!error && count !== null) {
+          setUnreadMessages(count);
+        }
+      } catch (error) {
+        console.error("Error fetching message count:", error);
+      }
+    };
+
+    fetchNotificationCount();
+    fetchMessageCount();
+
+    // Set up realtime subscriptions
+    const notificationsChannel = supabase
+      .channel('notifications-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications'
+        },
+        (payload) => {
+          fetchNotificationCount();
+        }
+      )
+      .subscribe();
+
+    const messagesChannel = supabase
+      .channel('messages-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload) => {
+          fetchMessageCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(notificationsChannel);
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [user]);
 
   const handleSignOut = async () => {
-    try {
-      await signOut();
-      toast.success("Signed out successfully");
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast.error("Error signing out");
-    }
+    await signOut();
+    navigate("/");
   };
 
-  const getInitials = () => {
-    if (profile?.display_name) {
-      return profile.display_name.split(" ")
-        .map((n: string) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    
-    if (user?.email) {
-      return user.email.substring(0, 2).toUpperCase();
-    }
-    
-    return "U";
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   return (
-    <header 
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 border-b",
-        isScrolled 
-          ? "bg-background/90 backdrop-blur-md shadow-sm h-14" 
-          : "bg-background/80 backdrop-blur-sm h-16"
-      )}
-    >
-      <div className="container h-full mx-auto px-3 md:px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="md:hidden">
-            <SidebarTrigger 
-              className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-secondary/80"
-            />
-          </div>
-          
+    <header className="fixed top-0 left-0 w-full bg-background border-b z-50">
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-4 md:gap-6">
           <Link to="/" className="flex items-center gap-2">
-            <div className="rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 p-1.5 flex items-center justify-center">
-              <BookOpen className="h-3.5 w-3.5 text-white" />
-            </div>
-            <span className="text-gradient text-xl font-bold font-serif hidden xs:inline">FanVerse</span>
+            <BookOpen className="h-6 w-6 text-primary" />
+            <span className="font-bold text-xl hidden md:block">StoryVerse</span>
           </Link>
-          
-          <nav className="hidden md:flex items-center ml-6 space-x-1">
-            <Link to="/browse">
-              <Button variant="ghost" size="sm" className="text-sm font-medium hover:bg-secondary/80">
-                Browse
-              </Button>
+
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/" className="text-base font-medium hover:text-primary">
+              Home
             </Link>
-            <Link to="/popular">
-              <Button variant="ghost" size="sm" className="text-sm font-medium hover:bg-secondary/80">
-                Popular
-              </Button>
+            <Link to="/explore" className="text-base font-medium hover:text-primary">
+              Explore
             </Link>
-            <Link to="/communities">
-              <Button variant="ghost" size="sm" className="text-sm font-medium hover:bg-secondary/80">
-                Communities
-              </Button>
+            <Link to="/trending" className="text-base font-medium hover:text-primary">
+              Trending
             </Link>
-            <Link to="/jobs">
-              <Button variant="ghost" size="sm" className="text-sm font-medium hover:bg-secondary/80">
-                Jobs
-              </Button>
+            <Link to="/communities" className="text-base font-medium hover:text-primary">
+              Communities
             </Link>
           </nav>
         </div>
 
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hidden sm:flex">
-            <Search className="h-4 w-4" />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSearchOpen(true)}
+            className="hidden md:flex"
+            aria-label="Search"
+          >
+            <Search className="h-[1.2rem] w-[1.2rem]" />
           </Button>
-          
+
           {isAuthenticated ? (
             <>
-              <Link to="/messages">
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hidden sm:flex relative">
-                  <MessageSquare className="h-4 w-4" />
-                  <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-                </Button>
-              </Link>
-              
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hidden sm:flex relative">
-                <Bell className="h-4 w-4" />
-                <span className="absolute top-0 right-0 h-2 w-2 bg-primary rounded-full"></span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex relative"
+                asChild
+                aria-label="Messages"
+              >
+                <Link to="/messages">
+                  <MessageSquare className="h-[1.2rem] w-[1.2rem]" />
+                  {unreadMessages > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-xs"
+                    >
+                      {unreadMessages > 9 ? '9+' : unreadMessages}
+                    </Badge>
+                  )}
+                </Link>
               </Button>
-              
-              <Link to="/write">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="hidden sm:flex h-8 hover:bg-secondary/80"
-                >
-                  <PenTool className="h-4 w-4 mr-1.5" />
-                  <span>Write</span>
-                </Button>
-              </Link>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex relative"
+                asChild
+                aria-label="Notifications"
+              >
+                <Link to="/notifications">
+                  <Bell className="h-[1.2rem] w-[1.2rem]" />
+                  {unreadNotifications > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-xs"
+                    >
+                      {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                    </Badge>
+                  )}
+                </Link>
+              </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="h-8 w-8 p-0 rounded-full overflow-hidden border border-muted hover:border-primary transition-colors"
-                  >
-                    <Avatar className="h-full w-full">
-                      <AvatarImage src={profile?.avatar_url} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
-                        {getInitials()}
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={profile?.avatar_url}
+                        alt={profile?.username || "User"}
+                      />
+                      <AvatarFallback>
+                        {profile?.username?.[0]?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 animate-fade-in dropdown-menu">
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
-                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className="dropdown-item">
+                <DropdownMenuContent align="end" className="w-56">
+                  {profile && (
+                    <>
+                      <div className="flex items-center justify-start gap-2 p-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage 
+                            src={profile.avatar_url} 
+                            alt={profile.username} 
+                          />
+                          <AvatarFallback>
+                            {profile.username?.[0]?.toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col space-y-1 leading-none">
+                          <p className="font-medium">
+                            {profile.display_name || profile.username}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            @{profile.username}
+                          </p>
+                        </div>
+                      </div>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
-                      Profile
+                      <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="dropdown-item">
-                    <Link to="/reading-lists" className="cursor-pointer">
-                      <Bookmark className="mr-2 h-4 w-4" />
-                      Reading Lists
+                  <DropdownMenuItem asChild>
+                    <Link to="/friends" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Friends</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="dropdown-item">
+                  <DropdownMenuItem asChild>
                     <Link to="/write" className="cursor-pointer">
-                      <PenTool className="mr-2 h-4 w-4" />
-                      Write
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <span>Write</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="cursor-pointer">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="dropdown-item cursor-pointer text-red-500 focus:text-red-500">
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
-                    Sign Out
+                    <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
-            <>
-              <Link to="/auth" className="hidden sm:block">
-                <Button variant="ghost" size="sm" className="h-8 font-medium">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/auth?tab=signup" className="hidden sm:block">
-                <Button 
-                  size="sm" 
-                  className="h-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium"
-                >
-                  Sign Up
-                </Button>
-              </Link>
-            </>
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" asChild>
+                <Link to="/auth?mode=login">Sign in</Link>
+              </Button>
+              <Button asChild>
+                <Link to="/auth?mode=register">Get Started</Link>
+              </Button>
+            </div>
           )}
-          
-          <Button variant="ghost" size="icon" className="sm:hidden h-8 w-8 rounded-md" onClick={toggleMenu}>
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleMobileMenu}
+            className="md:hidden"
+            aria-label="Toggle Menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </Button>
         </div>
       </div>
-      
-      {isMenuOpen && (
-        <div className="sm:hidden px-4 py-3 border-t bg-background/95 backdrop-blur-md animate-fade-in">
-          <nav className="flex flex-col space-y-2">
-            <Link to="/browse" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-              Browse
+
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t px-4 py-4 bg-background">
+          <nav className="flex flex-col space-y-4">
+            <Link
+              to="/"
+              className="px-4 py-2 hover:bg-muted rounded-md"
+              onClick={toggleMobileMenu}
+            >
+              Home
             </Link>
-            <Link to="/popular" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-              Popular
+            <Link
+              to="/explore"
+              className="px-4 py-2 hover:bg-muted rounded-md"
+              onClick={toggleMobileMenu}
+            >
+              Explore
             </Link>
-            <Link to="/communities" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
+            <Link
+              to="/trending"
+              className="px-4 py-2 hover:bg-muted rounded-md"
+              onClick={toggleMobileMenu}
+            >
+              Trending
+            </Link>
+            <Link
+              to="/communities"
+              className="px-4 py-2 hover:bg-muted rounded-md"
+              onClick={toggleMobileMenu}
+            >
               Communities
             </Link>
-            <Link to="/jobs" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-              Jobs
-            </Link>
-            
             {isAuthenticated ? (
               <>
-                <Link to="/write" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-                  <PenTool className="mr-2 h-4 w-4" />
-                  Write
-                </Link>
-                <Link to="/reading-lists" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-                  <Bookmark className="mr-2 h-4 w-4" />
-                  Reading Lists
-                </Link>
-                <Link to="/profile" className="flex items-center py-2 hover:text-primary" onClick={toggleMenu}>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </Link>
-                <button 
-                  onClick={() => { handleSignOut(); toggleMenu(); }}
-                  className="flex items-center py-2 text-red-500 hover:text-red-400 w-full text-left"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </button>
+                <div className="pt-2 border-t">
+                  <Link
+                    to="/messages"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Messages
+                    {unreadMessages > 0 && (
+                      <Badge variant="destructive" className="ml-2">
+                        {unreadMessages}
+                      </Badge>
+                    )}
+                  </Link>
+                  <Link
+                    to="/notifications"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <Bell className="h-4 w-4 mr-2" />
+                    Notifications
+                    {unreadNotifications > 0 && (
+                      <Badge variant="destructive" className="ml-2">
+                        {unreadNotifications}
+                      </Badge>
+                    )}
+                  </Link>
+                  <Link
+                    to="/friends"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Friends
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
+                  <Link
+                    to="/write"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Write
+                  </Link>
+                  <Link
+                    to="/settings"
+                    className="flex items-center px-4 py-2 hover:bg-muted rounded-md"
+                    onClick={toggleMobileMenu}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      toggleMobileMenu();
+                    }}
+                    className="flex w-full items-center px-4 py-2 hover:bg-muted rounded-md"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Log out
+                  </button>
+                </div>
               </>
             ) : (
-              <div className="flex flex-col space-y-2 pt-2">
-                <Link 
-                  to="/auth" 
-                  className="w-full flex justify-center py-2 px-4 border border-muted rounded-md hover:bg-secondary/80 transition-colors"
-                  onClick={toggleMenu}
-                >
-                  Sign In
-                </Link>
-                <Link 
-                  to="/auth?tab=signup" 
-                  className="w-full flex justify-center py-2 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-md hover:from-purple-700 hover:to-indigo-700 transition-colors"
-                  onClick={toggleMenu}
-                >
-                  Sign Up
-                </Link>
+              <div className="pt-2 border-t space-y-2">
+                <Button asChild className="w-full">
+                  <Link to="/auth?mode=login" onClick={toggleMobileMenu}>
+                    Sign in
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary" className="w-full">
+                  <Link to="/auth?mode=register" onClick={toggleMobileMenu}>
+                    Get Started
+                  </Link>
+                </Button>
               </div>
             )}
           </nav>
         </div>
       )}
+
+      {/* Command menu for search */}
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <Command>
+          <CommandInput placeholder="Search for stories, authors..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Suggestions">
+              <CommandItem onSelect={() => {
+                navigate("/explore");
+                setSearchOpen(false);
+              }}>
+                <Search className="mr-2 h-4 w-4" />
+                <span>Search all stories</span>
+              </CommandItem>
+            </CommandGroup>
+            <CommandGroup heading="Categories">
+              <CommandItem onSelect={() => {
+                navigate("/explore?category=fantasy");
+                setSearchOpen(false);
+              }}>
+                Fantasy
+              </CommandItem>
+              <CommandItem onSelect={() => {
+                navigate("/explore?category=sci-fi");
+                setSearchOpen(false);
+              }}>
+                Science Fiction
+              </CommandItem>
+              <CommandItem onSelect={() => {
+                navigate("/explore?category=romance");
+                setSearchOpen(false);
+              }}>
+                Romance
+              </CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </CommandDialog>
     </header>
   );
 };

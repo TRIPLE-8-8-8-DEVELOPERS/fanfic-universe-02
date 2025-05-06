@@ -27,11 +27,21 @@ export async function upsertRating(userId: string, storyId: string, rating: numb
 
 // Get the average rating for a story
 export async function getAverageRating(storyId: string) {
-  // Using raw SQL for this calculation - ensure the query is properly sanitized
+  // Calculate average rating directly from the ratings table
   const { data, error } = await supabase
-    .rpc('get_average_rating', { story_id_param: storyId });
+    .from('ratings')
+    .select('rating')
+    .eq('story_id', storyId);
+    
+  if (error || !data || data.length === 0) {
+    return { data: 0, error };
+  }
   
-  return { data, error };
+  // Calculate the average
+  const sum = data.reduce((acc, curr) => acc + curr.rating, 0);
+  const average = sum / data.length;
+  
+  return { data: average, error: null };
 }
 
 // Get popular stories based on ratings
