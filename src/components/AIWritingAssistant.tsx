@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { 
   Sparkles, Brain, Wand, MessageSquare, ThumbsUp, RefreshCw, Zap, 
   ArrowRight, CheckCircle2, Lightbulb, Crown, Rocket, Star
