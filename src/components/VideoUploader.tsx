@@ -1,7 +1,8 @@
+
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import { Upload, X, Play, CheckCircle, AlertCircle } from "lucide-react";
 
 interface VideoUploaderProps {
@@ -16,6 +17,7 @@ const VideoUploader = ({ onVideoUploaded }: VideoUploaderProps) => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const { toast: showToast } = useToast();
   
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -87,7 +89,7 @@ const VideoUploader = ({ onVideoUploaded }: VideoUploaderProps) => {
             onVideoUploaded(videoPreview);
           }
           
-          toast({
+          showToast({
             title: "Video uploaded successfully",
             description: `${videoFile.name} has been uploaded.`,
           });

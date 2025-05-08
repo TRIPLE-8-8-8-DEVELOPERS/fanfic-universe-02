@@ -27,7 +27,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import { 
   Sparkles, Brain, Wand, MessageSquare, ThumbsUp, RefreshCw, Zap, 
   ArrowRight, CheckCircle2, Lightbulb, Crown, Rocket, Star
@@ -49,7 +49,7 @@ export const AIWritingAssistant = ({
   const [aiSuggestion, setAiSuggestion] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState("");
-  const { toast } = useToast();
+  const { toast: showToast } = useToast();
   
   // Predefined writing prompts
   const writingPrompts = [
@@ -112,7 +112,7 @@ export const AIWritingAssistant = ({
   
   const handleApplySuggestion = () => {
     onSuggestionApply(aiSuggestion);
-    toast({
+    showToast({
       title: "AI suggestion applied",
       description: "The generated content has been added to your story.",
     });
