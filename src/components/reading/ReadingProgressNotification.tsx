@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { BookmarkCheck, Bookmark, Award } from 'lucide-react';
-import { toast, useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 interface ReadingProgressNotificationProps {
   type: 'milestone' | 'chapter_complete' | 'book_complete';
