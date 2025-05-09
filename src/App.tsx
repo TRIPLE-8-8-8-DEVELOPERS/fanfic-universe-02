@@ -28,6 +28,15 @@ import Friends from "./pages/Friends";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import Jobs from "./pages/Jobs";
+import AboutUs from "./pages/AboutUs";
+import Blog from "./pages/Blog";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Authors from "./pages/Authors";
+import Fandoms from "./pages/Fandoms";
+import Updates from "./pages/Updates";
+import Forums from "./pages/Forums";
+import WatchStreams from "./pages/WatchStreams";
 import { AuthProvider } from "./contexts/AuthContext";
 
 // Create a client for React Query
@@ -74,6 +83,15 @@ function App() {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/jobs/:jobId" element={<Story />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/authors" element={<Authors />} />
+                <Route path="/fandoms" element={<Fandoms />} />
+                <Route path="/updates" element={<Updates />} />
+                <Route path="/forums" element={<Forums />} />
+                <Route path="/watch-streams" element={<WatchStreams />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <SonnerToaster richColors position="bottom-right" />
