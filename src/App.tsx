@@ -4,6 +4,7 @@ import "./App.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; 
+import { SidebarProvider } from "@/components/ui/sidebar";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
@@ -35,36 +36,40 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/write" element={<Write />} />
-            <Route path="/story/:storyId" element={<Story />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/:username" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/trending" element={<Trending />} />
-            <Route path="/popular" element={<Popular />} />
-            <Route path="/communities" element={<Communities />} />
-            <Route path="/community/:communityId" element={<Community />} />
-            <Route path="/challenges" element={<Challenges />} />
-            <Route path="/contests" element={<Contests />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/reading-lists" element={<ReadingLists />} />
-            <Route path="/reading-clubs" element={<ReadingClubs />} />
-            <Route path="/friends" element={<Friends />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/messages/:conversationId" element={<Messages />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <SonnerToaster richColors position="bottom-right" />
-          <Toaster />
-        </Router>
+        <SidebarProvider>
+          <Router>
+            <div className="app-container w-full min-h-screen">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/browse" element={<Browse />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/write" element={<Write />} />
+                <Route path="/story/:storyId" element={<Story />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/:username" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/trending" element={<Trending />} />
+                <Route path="/popular" element={<Popular />} />
+                <Route path="/communities" element={<Communities />} />
+                <Route path="/community/:communityId" element={<Community />} />
+                <Route path="/challenges" element={<Challenges />} />
+                <Route path="/contests" element={<Contests />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/reading-lists" element={<ReadingLists />} />
+                <Route path="/reading-clubs" element={<ReadingClubs />} />
+                <Route path="/friends" element={<Friends />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/messages/:conversationId" element={<Messages />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <SonnerToaster richColors position="bottom-right" />
+              <Toaster />
+            </div>
+          </Router>
+        </SidebarProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
