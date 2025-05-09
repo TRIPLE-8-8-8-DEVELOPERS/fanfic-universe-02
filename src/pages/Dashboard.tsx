@@ -95,13 +95,25 @@ const Dashboard = () => {
     queryKey: ['userStories', user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await getUserStories(user.id);
-      if (error) {
-        console.error("Error fetching user stories:", error);
-        toast("Failed to load your stories");
+      try {
+        const { data, error } = await getUserStories(user.id);
+        if (error) {
+          console.error("Error fetching user stories:", error);
+          toast({
+            title: "Failed to load stories",
+            variant: "destructive"
+          });
+          return [];
+        }
+        return data || [];
+      } catch (err) {
+        console.error("Error fetching user stories:", err);
+        toast({
+          title: "Failed to load stories",
+          variant: "destructive"
+        });
         return [];
       }
-      return data || [];
     },
     enabled: !!user
   });
@@ -634,6 +646,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 const topStories = [
   { title: "The Last Guardian", reads: "5.2k", likes: "1.2k", genre: "Fantasy" },
   { title: "Beyond the Stars", reads: "3.8k", likes: "890", genre: "Sci-Fi" },

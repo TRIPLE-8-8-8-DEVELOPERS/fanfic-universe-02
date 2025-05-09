@@ -40,15 +40,18 @@ function addToast(toast: ToastProps) {
   emitChange();
   
   // Also use sonner to display toast
-  if (typeof toast.description === 'string') {
-    sonnerToast(toast.title as string, {
+  if (typeof toast.description === 'string' && typeof toast.title === 'string') {
+    sonnerToast(toast.title, {
       description: toast.description,
       action: toast.action,
       className: "bg-background text-foreground border-border",
       descriptionClassName: "text-muted-foreground",
     });
+  } else if (typeof toast.title === 'string') {
+    sonnerToast(toast.title, toast);
   } else {
-    sonnerToast(toast as any);
+    // Convert non-string titles to strings to avoid rendering objects
+    sonnerToast(String(toast.title || "Notification"), toast);
   }
   
   return id;
@@ -81,52 +84,64 @@ export const toast = Object.assign(
     // Add all the sonner toast methods
     success: (message: string | ReactNode, options: Record<string, any> = {}) => {
       const toastId = addToast({
-        title: message,
+        title: typeof message === 'string' ? message : 'Success',
         variant: "success",
         ...options,
       });
-      sonnerToast.success(message, {
-        className: "bg-background text-foreground border-border",
-        descriptionClassName: "text-muted-foreground",
-        ...options,
-      });
+      sonnerToast.success(
+        typeof message === 'string' ? message : 'Success', 
+        {
+          className: "bg-background text-foreground border-border",
+          descriptionClassName: "text-muted-foreground",
+          ...options,
+        }
+      );
       return toastId;
     },
     error: (message: string | ReactNode, options: Record<string, any> = {}) => {
       const toastId = addToast({
-        title: message,
+        title: typeof message === 'string' ? message : 'Error',
         variant: "destructive",
         ...options,
       });
-      sonnerToast.error(message, {
-        className: "bg-background text-destructive border-destructive/20",
-        descriptionClassName: "text-muted-foreground",
-        ...options,
-      });
+      sonnerToast.error(
+        typeof message === 'string' ? message : 'Error', 
+        {
+          className: "bg-background text-destructive border-destructive/20",
+          descriptionClassName: "text-muted-foreground",
+          ...options,
+        }
+      );
       return toastId;
     },
     info: (message: string | ReactNode, options: Record<string, any> = {}) => {
       const toastId = addToast({
-        title: message,
+        title: typeof message === 'string' ? message : 'Info',
         ...options,
       });
-      sonnerToast.info(message, {
-        className: "bg-background text-foreground border-border",
-        descriptionClassName: "text-muted-foreground",
-        ...options,
-      });
+      sonnerToast.info(
+        typeof message === 'string' ? message : 'Info', 
+        {
+          className: "bg-background text-foreground border-border",
+          descriptionClassName: "text-muted-foreground",
+          ...options,
+        }
+      );
       return toastId;
     },
     warning: (message: string | ReactNode, options: Record<string, any> = {}) => {
       const toastId = addToast({
-        title: message,
+        title: typeof message === 'string' ? message : 'Warning',
         ...options,
       });
-      sonnerToast.warning(message, {
-        className: "bg-background text-amber-600 border-amber-200",
-        descriptionClassName: "text-muted-foreground",
-        ...options,
-      });
+      sonnerToast.warning(
+        typeof message === 'string' ? message : 'Warning', 
+        {
+          className: "bg-background text-amber-600 border-amber-200",
+          descriptionClassName: "text-muted-foreground",
+          ...options,
+        }
+      );
       return toastId;
     },
     dismiss: (toastId: string) => {

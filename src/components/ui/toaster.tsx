@@ -20,9 +20,11 @@ export function Toaster() {
         <Toast key={id} {...props} className="bg-background border-border text-foreground" 
                variant={variant === "success" ? "default" : variant}>
           <div className="grid gap-1">
-            {title && <ToastTitle>{title}</ToastTitle>}
+            {title && <ToastTitle>{typeof title === 'string' ? title : 'Notification'}</ToastTitle>}
             {description && (
-              <ToastDescription className="text-muted-foreground">{description}</ToastDescription>
+              <ToastDescription className="text-muted-foreground">
+                {typeof description === 'string' ? description : ''}
+              </ToastDescription>
             )}
           </div>
           {action}
