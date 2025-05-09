@@ -27,6 +27,7 @@ import ReadingClubs from "./pages/ReadingClubs";
 import Friends from "./pages/Friends";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
+import Jobs from "./pages/Jobs";
 import { AuthProvider } from "./contexts/AuthContext";
 
 // Create a client for React Query
@@ -71,6 +72,8 @@ function App() {
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/messages/:conversationId" element={<Messages />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/jobs/:jobId" element={<Story />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <SonnerToaster richColors position="bottom-right" />
