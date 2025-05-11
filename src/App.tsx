@@ -12,6 +12,7 @@ import Explore from "./pages/Explore";
 import Write from "./pages/Write";
 import Story from "./pages/Story";
 import Profile from "./pages/Profile";
+import Search from "./pages/Search";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import Trending from "./pages/Trending";
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/browse" element={<Browse />} />
                 <Route path="/explore" element={<Explore />} />
+                <Route path="/search" element={<Search />} />
                 <Route path="/write" element={<Write />} />
                 <Route path="/story/:storyId" element={<Story />} />
                 <Route path="/profile" element={<Profile />} />

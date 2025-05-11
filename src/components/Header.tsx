@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -20,21 +21,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { getUnreadNotificationCount } from "@/integrations/supabase/services/notifications";
 import { getUnreadMessageCount } from "@/integrations/supabase/services/messages";
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import SearchCommand from "@/components/SearchCommand";
 
 const Header: React.FC = () => {
   const { user, profile, isAuthenticated, signOut } = useAuth();
@@ -150,11 +142,28 @@ const Header: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => setSearchOpen(true)}
-            className="hidden md:flex"
+            className="relative hidden md:flex"
+            aria-label="Search"
+          >
+            <Search className="h-[1.2rem] w-[1.2rem]" />
+            <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 text-[10px] font-medium opacity-50 sm:flex">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
+
+          {/* Mobile search button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSearchOpen(true)}
+            className="md:hidden"
             aria-label="Search"
           >
             <Search className="h-[1.2rem] w-[1.2rem]" />
           </Button>
+
+          {/* Search command dialog */}
+          <SearchCommand open={searchOpen} onOpenChange={setSearchOpen} />
 
           {isAuthenticated ? (
             <>
@@ -334,6 +343,13 @@ const Header: React.FC = () => {
             >
               Communities
             </Link>
+            <Link
+              to="/search"
+              className="px-4 py-2 hover:bg-muted rounded-md"
+              onClick={toggleMobileMenu}
+            >
+              Search
+            </Link>
             {isAuthenticated ? (
               <>
                 <div className="pt-2 border-t">
@@ -424,45 +440,6 @@ const Header: React.FC = () => {
           </nav>
         </div>
       )}
-
-      {/* Command menu for search */}
-      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <Command>
-          <CommandInput placeholder="Search for stories, authors..." />
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
-              <CommandItem onSelect={() => {
-                navigate("/explore");
-                setSearchOpen(false);
-              }}>
-                <Search className="mr-2 h-4 w-4" />
-                <span>Search all stories</span>
-              </CommandItem>
-            </CommandGroup>
-            <CommandGroup heading="Categories">
-              <CommandItem onSelect={() => {
-                navigate("/explore?category=fantasy");
-                setSearchOpen(false);
-              }}>
-                Fantasy
-              </CommandItem>
-              <CommandItem onSelect={() => {
-                navigate("/explore?category=sci-fi");
-                setSearchOpen(false);
-              }}>
-                Science Fiction
-              </CommandItem>
-              <CommandItem onSelect={() => {
-                navigate("/explore?category=romance");
-                setSearchOpen(false);
-              }}>
-                Romance
-              </CommandItem>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </CommandDialog>
     </header>
   );
 };
