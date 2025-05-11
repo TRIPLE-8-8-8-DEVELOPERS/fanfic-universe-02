@@ -12,6 +12,9 @@ export interface SearchResult {
   author?: string;
   authorId?: string;
   url: string;
+  popularity?: number;
+  createdAt?: string;
+  tags?: string[];
 }
 
 export interface SearchParams {
@@ -19,9 +22,16 @@ export interface SearchParams {
   types?: SearchResultType[];
   limit?: number;
   page?: number;
+  sortBy?: 'relevance' | 'date' | 'popularity';
 }
 
-export const searchAll = async ({ query, types = ['story', 'author', 'community', 'tag'], limit = 20, page = 0 }: SearchParams): Promise<{
+export const searchAll = async ({ 
+  query, 
+  types = ['story', 'author', 'community', 'tag'], 
+  limit = 20, 
+  page = 0,
+  sortBy = 'relevance' 
+}: SearchParams): Promise<{
   results: SearchResult[];
   total: number;
 }> => {
@@ -50,9 +60,29 @@ export const searchAll = async ({ query, types = ['story', 'author', 'community'
 
   const results = await Promise.all(searchPromises);
   
-  // Combine and sort results by relevance
-  const combinedResults = results.flatMap(r => r.results);
+  // Combine and sort results
+  let combinedResults = results.flatMap(r => r.results);
   const totalCount = results.reduce((acc, result) => acc + result.total, 0);
+  
+  // Apply sorting based on the sortBy parameter
+  switch (sortBy) {
+    case 'date':
+      combinedResults = combinedResults.sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+      break;
+    case 'popularity':
+      combinedResults = combinedResults.sort((a, b) => {
+        if (typeof b.popularity !== 'number' || typeof a.popularity !== 'number') return 0;
+        return b.popularity - a.popularity;
+      });
+      break;
+    case 'relevance':
+    default:
+      // Already sorted by relevance from the database
+      break;
+  }
   
   return {
     results: combinedResults,
@@ -66,7 +96,7 @@ export const searchStories = async (query: string, limit = 10, page = 0): Promis
 }> => {
   const { data, error, count } = await supabase
     .from('stories')
-    .select('*, profiles!inner(username, display_name, avatar_url)', { count: 'exact' })
+    .select('*, profiles!inner(username, display_name, avatar_url), story_tags!left(tag_id, tags(name))', { count: 'exact' })
     .or(`title.ilike.%${query}%,summary.ilike.%${query}%`)
     .eq('is_published', true)
     .order('created_at', { ascending: false })
@@ -77,16 +107,28 @@ export const searchStories = async (query: string, limit = 10, page = 0): Promis
     return { results: [], total: 0 };
   }
 
-  const results = data?.map(story => ({
-    id: story.id,
-    type: 'story' as SearchResultType,
-    title: story.title,
-    description: story.summary,
-    imageUrl: story.cover_image,
-    author: story.profiles.display_name || story.profiles.username,
-    authorId: story.author_id,
-    url: `/story/${story.id}`
-  })) || [];
+  const results = data?.map(story => {
+    // Extract tags from the story_tags join
+    const tags = story.story_tags 
+      ? story.story_tags
+          .filter(tag => tag.tags)
+          .map(tag => tag.tags.name)
+      : [];
+          
+    return {
+      id: story.id,
+      type: 'story' as SearchResultType,
+      title: story.title,
+      description: story.summary,
+      imageUrl: story.cover_image,
+      author: story.profiles.display_name || story.profiles.username,
+      authorId: story.author_id,
+      url: `/story/${story.id}`,
+      popularity: story.views_count || story.likes_count || 0,
+      createdAt: story.created_at,
+      tags
+    };
+  }) || [];
 
   return { results, total: count || 0 };
 };
@@ -97,7 +139,7 @@ export const searchAuthors = async (query: string, limit = 10, page = 0): Promis
 }> => {
   const { data, error, count } = await supabase
     .from('profiles')
-    .select('*', { count: 'exact' })
+    .select('*, stories(count)', { count: 'exact' })
     .or(`username.ilike.%${query}%,display_name.ilike.%${query}%,bio.ilike.%${query}%`)
     .range(page * limit, (page + 1) * limit - 1);
 
@@ -112,7 +154,9 @@ export const searchAuthors = async (query: string, limit = 10, page = 0): Promis
     title: profile.display_name || profile.username,
     description: profile.bio,
     imageUrl: profile.avatar_url,
-    url: `/profile/${profile.username}`
+    url: `/profile/${profile.username}`,
+    popularity: profile.stories?.[0]?.count || 0,
+    createdAt: profile.created_at
   })) || [];
 
   return { results, total: count || 0 };
@@ -133,7 +177,7 @@ export const searchTags = async (query: string, limit = 10, page = 0): Promise<{
 }> => {
   const { data, error, count } = await supabase
     .from('tags')
-    .select('*', { count: 'exact' })
+    .select('*, story_tags!left(story_id)', { count: 'exact' })
     .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
     .range(page * limit, (page + 1) * limit - 1);
 
@@ -147,8 +191,23 @@ export const searchTags = async (query: string, limit = 10, page = 0): Promise<{
     type: 'tag' as SearchResultType,
     title: tag.name,
     description: tag.description,
-    url: `/browse?tag=${tag.name}`
+    url: `/browse?tag=${tag.name}`,
+    popularity: tag.story_tags?.length || 0,
+    createdAt: tag.created_at
   })) || [];
 
   return { results, total: count || 0 };
+};
+
+// New function to get trending search terms
+export const getTrendingSearchTerms = async (limit = 5): Promise<string[]> => {
+  // This would typically be implemented with a search_history table
+  // For now, return mock popular search terms
+  return [
+    "fantasy adventure",
+    "science fiction",
+    "romance",
+    "mystery",
+    "fan fiction"
+  ];
 };
