@@ -56,7 +56,7 @@ function App() {
       <AuthProvider>
         <SidebarProvider>
           <Router>
-            <div className="app-container w-full min-h-screen">
+            <div className="app-container w-full min-h-screen bg-background">
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />

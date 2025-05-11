@@ -51,6 +51,7 @@
     width: 100%;
     overflow-x: hidden;
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
   
   body {
@@ -65,7 +66,24 @@
 
   /* Adjustments for main content */
   main {
-    @apply pt-14;
+    @apply pt-16 md:pt-14;
+  }
+
+  /* Improve mobile link interaction */
+  a, button {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
+    touch-action: manipulation;
+  }
+  
+  /* Better mobile form controls */
+  input, select, textarea {
+    @apply appearance-none;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Fix iOS tap highlight */
+  button, a {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -140,26 +158,51 @@
     margin: 0 auto;
   }
   
-  /* Font size utilities for story reading */
+  /* Font size utilities for story reading with mobile optimization */
   .text-size-sm {
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.65;
   }
   
   .text-size-base {
-    font-size: 1.125rem;
-    line-height: 1.7;
+    font-size: 1.05rem;
+    line-height: 1.75;
   }
   
   .text-size-lg {
-    font-size: 1.25rem;
-    line-height: 1.8;
+    font-size: 1.15rem;
+    line-height: 1.85;
   }
   
-  /* Reading container styles */
+  @media (min-width: 768px) {
+    .text-size-sm {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .text-size-base {
+      font-size: 1.125rem;
+      line-height: 1.7;
+    }
+    
+    .text-size-lg {
+      font-size: 1.25rem;
+      line-height: 1.8;
+    }
+  }
+  
+  /* Reading container styles with better mobile support */
   .reading-container {
-    max-width: 70ch;
+    max-width: 100%;
+    padding: 0 1rem;
     margin: 0 auto;
+  }
+  
+  @media (min-width: 640px) {
+    .reading-container {
+      max-width: 70ch;
+      padding: 0;
+    }
   }
   
   /* Story card hover effect */
@@ -189,9 +232,9 @@
     @apply h-full bg-gradient-to-r from-primary to-purple-400;
   }
   
-  /* Audio player styling */
+  /* Audio player styling with mobile improvements */
   .audio-player {
-    @apply p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-between;
+    @apply p-3 bg-primary/10 border border-primary/20 rounded-lg flex flex-col sm:flex-row items-center gap-2 sm:gap-0 sm:justify-between;
   }
   
   /* Responsive padding utilities */
@@ -203,10 +246,14 @@
     @apply py-6 sm:py-8 md:py-12 lg:py-16;
   }
   
-  /* Container with sidebar awareness */
+  /* Container with sidebar awareness - improved for mobile */
   .container-with-sidebar {
-    @apply w-full transition-all duration-300;
-    padding-left: var(--sidebar-width, 0);
+    @apply w-full transition-all duration-300 px-4 sm:px-6;
+    padding-left: calc(var(--sidebar-width, 0) + 1rem);
+    
+    @media (max-width: 768px) {
+      padding-left: 1rem;
+    }
   }
   
   /* Mobile-friendly containers */
@@ -224,21 +271,30 @@
     display: none;
   }
   
-  /* Responsive grid layouts */
+  /* Responsive grid layouts with improved mobile support */
   .responsive-grid-2 {
-    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
   }
   
   .responsive-grid-3 {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
   }
   
   .responsive-grid-4 {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
   }
   
   /* Floating animation */
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+  
+  /* Safe area insets for mobile devices */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
   }
 }

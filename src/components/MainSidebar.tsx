@@ -87,7 +87,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
           variant="ghost" 
           size="icon" 
           className={cn(
-            "h-8 w-8", 
+            "h-8 w-8 rounded-full hover:bg-primary/10", 
             collapsed && "ml-auto"
           )} 
           onClick={toggleSidebar}
@@ -101,7 +101,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
         </Button>
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 pt-2">
         <div className="p-2">
           {navigationItems.map((category, categoryIndex) => (
             <div key={categoryIndex} className="mb-6">
@@ -120,13 +120,18 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
                       variant={isActive ? "secondary" : "ghost"}
                       className={cn(
                         "w-full justify-start",
-                        collapsed && "justify-center p-2"
+                        collapsed && "justify-center p-2",
+                        isActive && "bg-primary/10 text-primary"
                       )}
                       asChild
                       onClick={() => isMobile && toggleSidebar()}
                     >
                       <Link to={item.path}>
-                        <item.icon className={cn("h-4 w-4", collapsed ? "mr-0" : "mr-2")} />
+                        <item.icon className={cn(
+                          "h-4 w-4", 
+                          collapsed ? "mr-0" : "mr-2",
+                          isActive && "text-primary"
+                        )} />
                         {!collapsed && <span>{item.label}</span>}
                         
                         {!collapsed && item.label === "Watch Streams" && (
@@ -155,10 +160,10 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
             </div>
           ))}
           
-          {/* Featured section */}
+          {/* Featured section with improved mobile styling */}
           {!collapsed && (
             <div className="mb-6 px-3">
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 hover:shadow-md transition-shadow">
                 <div className="flex flex-col space-y-1.5">
                   <div className="flex items-center">
                     <Sparkles className="h-4 w-4 text-amber-500 mr-2" />
@@ -169,7 +174,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
                   <p className="text-xs text-muted-foreground mb-3">
                     Unlock advanced writing tools, unlimited stories, and AI assistance.
                   </p>
-                  <Button size="sm" className="w-full text-xs h-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
+                  <Button size="sm" className="w-full text-xs h-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-sm hover:shadow">
                     Upgrade Now
                   </Button>
                 </div>
@@ -179,22 +184,22 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
         </div>
       </ScrollArea>
       
-      {/* Footer links */}
+      {/* Footer links with improved styling */}
       {!collapsed && (
         <div className="border-t p-3">
-          <div className="flex items-center justify-center space-x-3 text-xs text-muted-foreground">
-            <Link to="/about" className="hover:underline">About</Link>
-            <Link to="/support" className="hover:underline">Support</Link>
-            <Link to="/privacy" className="hover:underline">Privacy</Link>
-            <Link to="/terms" className="hover:underline">Terms</Link>
+          <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground">
+            <Link to="/about" className="hover:text-primary hover:underline transition-colors">About</Link>
+            <Link to="/support" className="hover:text-primary hover:underline transition-colors">Support</Link>
+            <Link to="/privacy" className="hover:text-primary hover:underline transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-primary hover:underline transition-colors">Terms</Link>
           </div>
         </div>
       )}
 
-      {/* Mobile overlay to close sidebar when opened */}
+      {/* Mobile overlay to close sidebar when opened - improved styling */}
       {isMobile && !collapsed && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in"
           onClick={toggleSidebar}
         />
       )}
