@@ -1,7 +1,7 @@
 
 import { supabase } from '../client';
 
-export type SearchResultType = 'story' | 'author' | 'community' | 'tag';
+export type SearchResultType = 'story' | 'author' | 'community' | 'tag' | 'all';
 
 export interface SearchResult {
   id: string;
@@ -32,19 +32,19 @@ export const searchAll = async ({ query, types = ['story', 'author', 'community'
   const searchPromises = [];
   const trimmedQuery = query.trim();
 
-  if (types.includes('story')) {
+  if (types.includes('story') || types.includes('all')) {
     searchPromises.push(searchStories(trimmedQuery, limit, page));
   }
 
-  if (types.includes('author')) {
+  if (types.includes('author') || types.includes('all')) {
     searchPromises.push(searchAuthors(trimmedQuery, limit, page));
   }
 
-  if (types.includes('community')) {
+  if (types.includes('community') || types.includes('all')) {
     searchPromises.push(searchCommunities(trimmedQuery, limit, page));
   }
 
-  if (types.includes('tag')) {
+  if (types.includes('tag') || types.includes('all')) {
     searchPromises.push(searchTags(trimmedQuery, limit, page));
   }
 

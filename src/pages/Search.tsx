@@ -23,10 +23,10 @@ const Search = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const initialQuery = queryParams.get('q') || '';
-  const initialType = queryParams.get('type') as SearchResultType || 'story';
+  const initialType = (queryParams.get('type') as SearchResultType) || 'all';
   
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [searchType, setSearchType] = useState(initialType);
+  const [searchType, setSearchType] = useState<SearchResultType>(initialType);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
@@ -35,7 +35,7 @@ const Search = () => {
   const updateUrlParams = (query: string, type: SearchResultType, page: number) => {
     const params = new URLSearchParams();
     if (query) params.set('q', query);
-    if (type !== 'story') params.set('type', type);
+    if (type !== 'all') params.set('type', type);
     if (page > 0) params.set('page', page.toString());
     
     navigate({
