@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainSidebar from "../components/MainSidebar";
@@ -34,14 +33,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const Settings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [activeTab, setActiveTab] = useState("account");
   const [isLoading, setIsLoading] = useState(false);
   
-  // Account settings
-  const [username, setUsername] = useState(user?.username || "");
+  // Account settings - now using profile object instead of user
+  const [username, setUsername] = useState(profile?.username || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [bio, setBio] = useState(user?.bio || "");
+  const [bio, setBio] = useState(profile?.bio || "");
   
   // Notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);
