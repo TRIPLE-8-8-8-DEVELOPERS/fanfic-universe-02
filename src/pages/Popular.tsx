@@ -8,7 +8,7 @@ import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
 import { 
   BookOpen, Filter, TrendingUp, Clock, 
-  Calendar, Star, Sparkles, Award 
+  Calendar, Star, Sparkles, Award, User
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {

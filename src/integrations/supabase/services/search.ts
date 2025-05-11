@@ -124,7 +124,8 @@ export const searchStories = async (query: string, limit = 10, page = 0): Promis
       author: story.profiles.display_name || story.profiles.username,
       authorId: story.author_id,
       url: `/story/${story.id}`,
-      popularity: story.views_count || story.likes_count || 0,
+      // Fix: Use word_count as a measure of popularity since views_count and likes_count don't exist
+      popularity: story.word_count || 0,
       createdAt: story.created_at,
       tags
     };
