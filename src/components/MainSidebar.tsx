@@ -13,6 +13,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Separator } from "@/components/ui/separator";
+import RecommendedStories from "./RecommendedStories";
+import ActivityFeed from "./ActivityFeed";
+import WritingPrompt from "./WritingPrompt";
+import ReadingChallenge from "./ReadingChallenge";
+import SidebarWeather from "./SidebarWeather";
 
 interface MainSidebarProps {
   currentPath?: string;
@@ -160,7 +166,13 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
             </div>
           ))}
           
-          {/* Featured section with improved mobile styling */}
+          {/* Weather widget (only when sidebar is expanded) */}
+          {!collapsed && <SidebarWeather />}
+          
+          {/* Writing Prompt (only when sidebar is expanded) */}
+          {!collapsed && <WritingPrompt />}
+          
+          {/* Enhanced Premium Feature section with improved mobile styling */}
           {!collapsed && (
             <div className="mb-6 px-3">
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 hover:shadow-md transition-shadow">
@@ -181,6 +193,18 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
               </div>
             </div>
           )}
+          
+          {/* Reading Challenge (only when sidebar is expanded) */}
+          {!collapsed && <ReadingChallenge />}
+          
+          {/* Separator for visual organization */}
+          {!collapsed && <Separator className="my-4" />}
+          
+          {/* Recommended Stories (only when sidebar is expanded) */}
+          {!collapsed && <RecommendedStories />}
+          
+          {/* Activity Feed (only when sidebar is expanded) */}
+          {!collapsed && <ActivityFeed />}
         </div>
       </ScrollArea>
       

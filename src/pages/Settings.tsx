@@ -1,1037 +1,539 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import MainSidebar from "../components/MainSidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { 
-  Tabs, TabsContent, TabsList, TabsTrigger 
-} from "@/components/ui/tabs";
-import { 
-  Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
-} from "@/components/ui/card";
-import { 
-  User, Settings as SettingsIcon, Bell, Shield, CreditCard, Languages, 
-  Palette, BookOpen, LogOut, ArrowRight, Download, CheckCircle, Check
-} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+  Bell,
+  User,
+  Shield,
+  Palette,
+  Eye,
+  MessageSquare,
+  Mail,
+  FileText,
+  Trash2,
+  Globe,
+  Mail as MailIcon,
+  Bell as BellIcon,
+  Lock,
+  BookOpen
+} from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Settings = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("account");
-
-  // Save settings handler
-  const handleSaveSettings = () => {
-    toast({
-      title: "Settings saved",
-      description: "Your settings have been saved successfully",
-    });
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Account settings
+  const [username, setUsername] = useState(user?.username || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [bio, setBio] = useState(user?.bio || "");
+  
+  // Notification settings
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [pushNotifications, setPushNotifications] = useState(true);
+  const [commentNotifications, setCommentNotifications] = useState(true);
+  const [followNotifications, setFollowNotifications] = useState(true);
+  const [storyUpdates, setStoryUpdates] = useState(true);
+  const [weeklyDigest, setWeeklyDigest] = useState(true);
+  
+  // Appearance settings
+  const [theme, setTheme] = useState("system");
+  const [fontSize, setFontSize] = useState("medium");
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [highContrast, setHighContrast] = useState(false);
+  
+  // Privacy settings
+  const [profileVisibility, setProfileVisibility] = useState("public");
+  const [showReadingActivity, setShowReadingActivity] = useState(true);
+  const [allowTagging, setAllowTagging] = useState(true);
+  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
+  
+  const handleSaveAccount = () => {
+    setIsLoading(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Account settings updated",
+        description: "Your account settings have been saved successfully.",
+      });
+    }, 1000);
+  };
+  
+  const handleDeleteAccount = () => {
+    // Show confirmation dialog
+    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+      toast({
+        title: "Account deletion requested",
+        description: "We've sent an email to confirm your account deletion request.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen flex flex-col dark:bg-gray-900">
-      <Header />
-      <main className="flex-grow container mx-auto py-8 px-4">
-        <div className="flex flex-col space-y-6 md:flex-row md:space-y-0 md:space-x-8">
-          {/* Sidebar */}
-          <aside className="w-full md:w-64 shrink-0">
-            <Card>
-              <CardContent className="p-4">
-                <Tabs 
-                  value={activeTab} 
-                  onValueChange={setActiveTab}
-                  orientation="vertical" 
-                  className="w-full"
-                >
-                  <TabsList className="flex flex-col items-stretch space-y-1 bg-transparent">
-                    <TabsTrigger 
-                      value="account" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      Account
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="preferences" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <SettingsIcon className="mr-2 h-4 w-4" />
-                      Preferences
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="notifications" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <Bell className="mr-2 h-4 w-4" />
-                      Notifications
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="privacy" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <Shield className="mr-2 h-4 w-4" />
-                      Privacy & Security
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="billing" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Billing
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="language" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <Languages className="mr-2 h-4 w-4" />
-                      Language
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="appearance" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <Palette className="mr-2 h-4 w-4" />
-                      Appearance
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="reading" 
-                      className="justify-start text-left px-3 py-2"
-                    >
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Reading
-                    </TabsTrigger>
-                  </TabsList>
-                </Tabs>
-              </CardContent>
-              <CardFooter className="p-4 pt-0">
-                <Button variant="outline" className="w-full justify-start text-red-500 hover:text-red-600">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </Button>
-              </CardFooter>
-            </Card>
-          </aside>
+    <div className="flex min-h-screen bg-background">
+      <MainSidebar currentPath="/settings" />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className="flex-1 container max-w-6xl py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage your account settings and preferences
+            </p>
+          </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            <TabsContent value="account" className="mt-0">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            <TabsList className="bg-card text-card-foreground border">
+              <TabsTrigger value="account" className="data-[state=active]:bg-primary/10 gap-2">
+                <User size={16} />
+                <span className="hidden sm:inline">Account</span>
+              </TabsTrigger>
+              <TabsTrigger value="notifications" className="data-[state=active]:bg-primary/10 gap-2">
+                <Bell size={16} />
+                <span className="hidden sm:inline">Notifications</span>
+              </TabsTrigger>
+              <TabsTrigger value="appearance" className="data-[state=active]:bg-primary/10 gap-2">
+                <Palette size={16} />
+                <span className="hidden sm:inline">Appearance</span>
+              </TabsTrigger>
+              <TabsTrigger value="privacy" className="data-[state=active]:bg-primary/10 gap-2">
+                <Shield size={16} />
+                <span className="hidden sm:inline">Privacy & Security</span>
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="account" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Account Settings</CardTitle>
+                  <CardTitle>Account Information</CardTitle>
                   <CardDescription>
-                    Manage your account information and profile
+                    Update your personal information and manage your account.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Profile Information</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="display-name">Display Name</Label>
-                        <Input id="display-name" defaultValue="Jane Smith" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="username">Username</Label>
-                        <Input id="username" defaultValue="janesmith" />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" defaultValue="jane.smith@example.com" />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea 
-                          id="bio" 
-                          placeholder="Tell us about yourself"
-                          defaultValue="Writer, avid reader, and storyteller. I love creating fantasy worlds and sharing them with others."
-                          className="min-h-24"
-                        />
-                      </div>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="username">Username</Label>
+                      <Input 
+                        id="username" 
+                        value={username} 
+                        onChange={(e) => setUsername(e.target.value)} 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                      />
                     </div>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Password</h3>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="current-password">Current Password</Label>
-                        <Input id="current-password" type="password" />
-                      </div>
-                      <div></div>
-                      <div className="space-y-2">
-                        <Label htmlFor="new-password">New Password</Label>
-                        <Input id="new-password" type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirm New Password</Label>
-                        <Input id="confirm-password" type="password" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Account Management</h3>
-                    <div className="grid gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="account-type">Account Type</Label>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="py-1 px-2">
-                            Basic Account
-                          </Badge>
-                          <Button size="sm" variant="link" className="h-auto p-0">
-                            Upgrade to Premium
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="pt-2">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive">Deactivate Account</Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action will deactivate your account. You can reactivate it anytime by logging back in within 30 days. After 30 days, your account and all associated data will be permanently deleted.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                Yes, deactivate my account
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Bio</Label>
+                    <Textarea 
+                      id="bio" 
+                      placeholder="Tell us about yourself..." 
+                      className="h-24"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
+                <CardFooter className="flex justify-between">
+                  <div></div>
+                  <Button onClick={handleSaveAccount} disabled={isLoading}>
+                    {isLoading ? "Saving..." : "Save Changes"}
+                  </Button>
                 </CardFooter>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="preferences" className="mt-0">
+              
               <Card>
                 <CardHeader>
-                  <CardTitle>Preferences</CardTitle>
+                  <CardTitle className="text-destructive">Danger Zone</CardTitle>
                   <CardDescription>
-                    Customize your experience on the platform
+                    Permanent actions that cannot be undone.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Content Preferences</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="mature-content">Mature Content</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show content marked as mature
-                          </p>
-                        </div>
-                        <Switch id="mature-content" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="show-recommendations">Recommendations</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show personalized content recommendations
-                          </p>
-                        </div>
-                        <Switch id="show-recommendations" defaultChecked />
-                      </div>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Deleting your account will remove all your data, including your profile, stories, and comments.
+                    This action cannot be undone.
+                  </p>
+                  <Button 
+                    variant="destructive"
+                    onClick={handleDeleteAccount}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Account
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="notifications" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Email Notifications</CardTitle>
+                  <CardDescription>
+                    Configure how and when you receive email notifications.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Email Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive notifications via email
+                      </p>
                     </div>
+                    <Switch 
+                      checked={emailNotifications} 
+                      onCheckedChange={setEmailNotifications} 
+                    />
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Feed Settings</h3>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Default Feed View</Label>
-                        <RadioGroup defaultValue="following">
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="following" id="following" />
-                            <Label htmlFor="following">Following</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="discover" id="discover" />
-                            <Label htmlFor="discover">Discover</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="trending" id="trending" />
-                            <Label htmlFor="trending">Trending</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="default-sort">Default Sort Order</Label>
-                        <Select defaultValue="recent">
-                          <SelectTrigger id="default-sort">
-                            <SelectValue placeholder="Select a sort order" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="recent">Most Recent</SelectItem>
-                            <SelectItem value="popular">Most Popular</SelectItem>
-                            <SelectItem value="trending">Trending</SelectItem>
-                            <SelectItem value="top-rated">Top Rated</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Weekly Digest</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive a weekly summary of activity
+                      </p>
                     </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Writing Experience</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="auto-save">Auto-Save</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Automatically save drafts while writing
-                          </p>
-                        </div>
-                        <Switch id="auto-save" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="spell-check">Spell Check</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Highlight spelling errors while writing
-                          </p>
-                        </div>
-                        <Switch id="spell-check" defaultChecked />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="default-editor">Default Editor Mode</Label>
-                        <Select defaultValue="rich">
-                          <SelectTrigger id="default-editor">
-                            <SelectValue placeholder="Select an editor mode" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="rich">Rich Text</SelectItem>
-                            <SelectItem value="markdown">Markdown</SelectItem>
-                            <SelectItem value="plain">Plain Text</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                    <Switch 
+                      checked={weeklyDigest} 
+                      onCheckedChange={setWeeklyDigest}
+                      disabled={!emailNotifications}
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="notifications" className="mt-0">
+              
               <Card>
                 <CardHeader>
-                  <CardTitle>Notification Settings</CardTitle>
+                  <CardTitle>Push Notifications</CardTitle>
                   <CardDescription>
-                    Manage how and when you receive notifications
+                    Configure push notifications for the app and browser.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Email Notifications</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="email-comments">Comments on your stories</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Receive emails when someone comments on your stories
-                          </p>
-                        </div>
-                        <Switch id="email-comments" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="email-likes">Likes on your stories</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Receive emails when someone likes your stories
-                          </p>
-                        </div>
-                        <Switch id="email-likes" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="email-followers">New followers</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Receive emails when someone follows you
-                          </p>
-                        </div>
-                        <Switch id="email-followers" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="email-newsletter">Weekly newsletter</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Receive our weekly newsletter with top stories
-                          </p>
-                        </div>
-                        <Switch id="email-newsletter" defaultChecked />
-                      </div>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Push Notifications</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive notifications in your browser
+                      </p>
                     </div>
+                    <Switch 
+                      checked={pushNotifications} 
+                      onCheckedChange={setPushNotifications} 
+                    />
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">In-App Notifications</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="app-comments">Comments</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show notifications for comments on your stories
-                          </p>
-                        </div>
-                        <Switch id="app-comments" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="app-likes">Likes</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show notifications when your stories receive likes
-                          </p>
-                        </div>
-                        <Switch id="app-likes" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="app-followers">Followers</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show notifications when someone follows you
-                          </p>
-                        </div>
-                        <Switch id="app-followers" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="app-mentions">Mentions</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show notifications when you're mentioned in comments
-                          </p>
-                        </div>
-                        <Switch id="app-mentions" defaultChecked />
-                      </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Comments</Label>
+                      <p className="text-sm text-muted-foreground">
+                        When someone comments on your stories
+                      </p>
                     </div>
+                    <Switch 
+                      checked={commentNotifications} 
+                      onCheckedChange={setCommentNotifications}
+                      disabled={!pushNotifications}
+                    />
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Mobile Push Notifications</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="push-enabled">Enable Push Notifications</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Allow push notifications on your mobile device
-                          </p>
-                        </div>
-                        <Switch id="push-enabled" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="push-comments">Comments</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Send push notifications for comments
-                          </p>
-                        </div>
-                        <Switch id="push-comments" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="push-likes">Likes</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Send push notifications for likes
-                          </p>
-                        </div>
-                        <Switch id="push-likes" />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="push-followers">Followers</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Send push notifications for new followers
-                          </p>
-                        </div>
-                        <Switch id="push-followers" defaultChecked />
-                      </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>New Followers</Label>
+                      <p className="text-sm text-muted-foreground">
+                        When someone follows you
+                      </p>
                     </div>
+                    <Switch 
+                      checked={followNotifications} 
+                      onCheckedChange={setFollowNotifications}
+                      disabled={!pushNotifications}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Story Updates</Label>
+                      <p className="text-sm text-muted-foreground">
+                        When stories you follow are updated
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={storyUpdates} 
+                      onCheckedChange={setStoryUpdates}
+                      disabled={!pushNotifications}
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
               </Card>
             </TabsContent>
-
-            <TabsContent value="privacy" className="mt-0">
+            
+            <TabsContent value="appearance" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Privacy & Security</CardTitle>
+                  <CardTitle>Theme</CardTitle>
                   <CardDescription>
-                    Manage your privacy settings and account security
+                    Customize how FanVerse looks for you.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Privacy Settings</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="profile-visibility">Profile Visibility</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Who can see your profile
-                          </p>
-                        </div>
-                        <Select defaultValue="public">
-                          <SelectTrigger id="profile-visibility" className="w-32">
-                            <SelectValue placeholder="Select visibility" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="public">Public</SelectItem>
-                            <SelectItem value="followers">Followers</SelectItem>
-                            <SelectItem value="private">Private</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="reading-history">Reading History</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Who can see what you've read
-                          </p>
-                        </div>
-                        <Select defaultValue="private">
-                          <SelectTrigger id="reading-history" className="w-32">
-                            <SelectValue placeholder="Select visibility" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="public">Public</SelectItem>
-                            <SelectItem value="followers">Followers</SelectItem>
-                            <SelectItem value="private">Private</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="discovery">Discovery</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Allow others to find you through search
-                          </p>
-                        </div>
-                        <Switch id="discovery" defaultChecked />
-                      </div>
-                    </div>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Theme Mode</Label>
+                    <Select value={theme} onValueChange={setTheme}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select theme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="light">Light</SelectItem>
+                        <SelectItem value="dark">Dark</SelectItem>
+                        <SelectItem value="system">System</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Security</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="two-factor">Two-Factor Authentication</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Secure your account with 2FA
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline" className="text-yellow-500 border-yellow-500">
-                            Not Enabled
-                          </Badge>
-                          <Button size="sm" variant="outline">
-                            Set Up
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="login-alerts">Login Alerts</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Get notified of new logins to your account
-                          </p>
-                        </div>
-                        <Switch id="login-alerts" defaultChecked />
-                      </div>
-                      
-                      <div className="pt-2">
-                        <Button variant="outline" className="w-full md:w-auto">
-                          View Login History
-                        </Button>
-                      </div>
-                      
-                      <div className="pt-2">
-                        <Button variant="outline" className="w-full md:w-auto">
-                          Manage Connected Devices
-                        </Button>
-                      </div>
-                    </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Font Size</Label>
+                    <Select value={fontSize} onValueChange={setFontSize}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select font size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">Small</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="large">Large</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Data Privacy</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="data-collection">Data Collection</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Allow us to collect usage data to improve your experience
-                          </p>
-                        </div>
-                        <Switch id="data-collection" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="personalized-ads">Personalized Ads</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Show personalized ads based on your activity
-                          </p>
-                        </div>
-                        <Switch id="personalized-ads" />
-                      </div>
-                      
-                      <div className="pt-2">
-                        <Button variant="outline">
-                          <Download className="mr-2 h-4 w-4" />
-                          Download Your Data
-                        </Button>
-                      </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Reduced Motion</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Minimize animations and transitions
+                      </p>
                     </div>
+                    <Switch 
+                      checked={reducedMotion} 
+                      onCheckedChange={setReducedMotion} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>High Contrast</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Increase contrast for better readability
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={highContrast} 
+                      onCheckedChange={setHighContrast} 
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="billing" className="mt-0">
+              
               <Card>
                 <CardHeader>
-                  <CardTitle>Billing & Subscription</CardTitle>
+                  <CardTitle>Reading Experience</CardTitle>
                   <CardDescription>
-                    Manage your subscription plan and payment methods
+                    Customize your reading experience on FanVerse.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Current Plan</h3>
-                    <div className="rounded-lg border p-4">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h4 className="font-medium">Basic (Free)</h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Limited features and story publishing
-                          </p>
-                        </div>
-                        <Badge variant="outline" className="px-2.5 py-0.5">
-                          Current Plan
-                        </Badge>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-500" />
-                          <span className="text-sm">3 stories per month</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-500" />
-                          <span className="text-sm">Basic writing tools</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-500" />
-                          <span className="text-sm">Standard support</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-500" />
-                          <span className="text-sm">Reader stats</span>
-                        </div>
-                      </div>
-                      <div className="mt-4 pt-4 border-t">
-                        <Button variant="outline" className="w-full md:w-auto">
-                          Upgrade Plan
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Premium Plans</h3>
-                    <ScrollArea className="h-[320px] rounded-md border">
-                      <div className="p-4 space-y-4">
-                        <div className="rounded-lg border p-4">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="font-medium">Premium</h4>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                Advanced features for serious writers
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-medium">$9.99</p>
-                              <p className="text-sm text-muted-foreground">per month</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Unlimited stories</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Advanced AI writing tools</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Priority support</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Detailed analytics</span>
-                            </div>
-                          </div>
-                          <div className="mt-4">
-                            <Button className="w-full md:w-auto">
-                              Subscribe
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        <div className="rounded-lg border p-4">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h4 className="font-medium">Pro</h4>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                For professional authors and publishers
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-medium">$24.99</p>
-                              <p className="text-sm text-muted-foreground">per month</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Everything in Premium</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Advanced publishing tools</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Monetization options</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Check className="h-4 w-4 text-green-500" />
-                              <span className="text-sm">Marketing assistance</span>
-                            </div>
-                          </div>
-                          <div className="mt-4">
-                            <Button className="w-full md:w-auto">
-                              Subscribe
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </ScrollArea>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="language" className="mt-0">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Language Settings</CardTitle>
-                  <CardDescription>
-                    Manage your language preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="interface-language">Interface Language</Label>
-                      <Select defaultValue="en">
-                        <SelectTrigger id="interface-language">
-                          <SelectValue placeholder="Select language" />
+                      <Label>Reading Font</Label>
+                      <Select defaultValue="system">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select font" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="es">Español</SelectItem>
-                          <SelectItem value="fr">Français</SelectItem>
-                          <SelectItem value="de">Deutsch</SelectItem>
-                          <SelectItem value="ja">日本語</SelectItem>
-                          <SelectItem value="zh">中文</SelectItem>
+                          <SelectItem value="system">System Default</SelectItem>
+                          <SelectItem value="serif">Serif</SelectItem>
+                          <SelectItem value="sans">Sans-serif</SelectItem>
+                          <SelectItem value="mono">Monospace</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="content-languages">Content Languages</Label>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Select languages for content you'd like to see
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-en" defaultChecked />
-                          <Label htmlFor="lang-en">English</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-es" />
-                          <Label htmlFor="lang-es">Español</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-fr" />
-                          <Label htmlFor="lang-fr">Français</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-de" />
-                          <Label htmlFor="lang-de">Deutsch</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-ja" />
-                          <Label htmlFor="lang-ja">日本語</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-zh" />
-                          <Label htmlFor="lang-zh">中文</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-ko" />
-                          <Label htmlFor="lang-ko">한국어</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-ru" />
-                          <Label htmlFor="lang-ru">Русский</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="lang-pt" />
-                          <Label htmlFor="lang-pt">Português</Label>
-                        </div>
-                      </div>
+                      <Label>Line Spacing</Label>
+                      <Select defaultValue="normal">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select line spacing" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="compact">Compact</SelectItem>
+                          <SelectItem value="normal">Normal</SelectItem>
+                          <SelectItem value="relaxed">Relaxed</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
               </Card>
             </TabsContent>
-
-            <TabsContent value="appearance" className="mt-0">
+            
+            <TabsContent value="privacy" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Appearance Settings</CardTitle>
+                  <CardTitle>Privacy Settings</CardTitle>
                   <CardDescription>
-                    Customize how the application looks
+                    Control your privacy and visibility on FanVerse.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Theme</h3>
-                    <RadioGroup defaultValue="system">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="light" id="theme-light" className="sr-only" />
-                          <div className="rounded-md bg-[#FFFFFF] border w-full h-16 mb-2"></div>
-                          <Label htmlFor="theme-light">Light</Label>
-                        </div>
-                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="dark" id="theme-dark" className="sr-only" />
-                          <div className="rounded-md bg-[#1A1F2C] border border-gray-600 w-full h-16 mb-2"></div>
-                          <Label htmlFor="theme-dark">Dark</Label>
-                        </div>
-                        <div className="flex flex-col items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="system" id="theme-system" className="sr-only" />
-                          <div className="rounded-md w-full h-16 mb-2 bg-gradient-to-r from-[#FFFFFF] to-[#1A1F2C] border"></div>
-                          <Label htmlFor="theme-system">System</Label>
-                        </div>
-                      </div>
-                    </RadioGroup>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Profile Visibility</Label>
+                    <Select value={profileVisibility} onValueChange={setProfileVisibility}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select visibility" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="public">Public (Everyone can see)</SelectItem>
+                        <SelectItem value="followers">Followers Only</SelectItem>
+                        <SelectItem value="private">Private (Only you)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Font Size</h3>
-                    <RadioGroup defaultValue="medium">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="small" id="font-small" />
-                          <Label htmlFor="font-small" className="text-sm">Small</Label>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="medium" id="font-medium" />
-                          <Label htmlFor="font-medium" className="text-base">Medium</Label>
-                        </div>
-                        <div className="flex items-center gap-2 rounded-lg border p-4 cursor-pointer hover:bg-accent">
-                          <RadioGroupItem value="large" id="font-large" />
-                          <Label htmlFor="font-large" className="text-lg">Large</Label>
-                        </div>
-                      </div>
-                    </RadioGroup>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Reading Activity</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show others what you're reading
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={showReadingActivity} 
+                      onCheckedChange={setShowReadingActivity} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Allow Tagging</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Allow others to tag you in comments and stories
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={allowTagging} 
+                      onCheckedChange={setAllowTagging} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Online Status</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show when you're active on FanVerse
+                      </p>
+                    </div>
+                    <Switch 
+                      checked={showOnlineStatus} 
+                      onCheckedChange={setShowOnlineStatus} 
+                    />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="reading" className="mt-0">
+              
               <Card>
                 <CardHeader>
-                  <CardTitle>Reading Settings</CardTitle>
+                  <CardTitle>Security</CardTitle>
                   <CardDescription>
-                    Customize your reading experience
+                    Manage account security settings.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Reading Preferences</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="reading-mode">Reading Mode</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Enable distraction-free reading mode
-                          </p>
-                        </div>
-                        <Switch id="reading-mode" defaultChecked />
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="progress-tracking">Progress Tracking</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Track your reading progress across stories
-                          </p>
-                        </div>
-                        <Switch id="progress-tracking" defaultChecked />
-                      </div>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between py-2">
+                    <div>
+                      <h3 className="font-medium">Change Password</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Update your account password
+                      </p>
                     </div>
+                    <Button variant="outline">
+                      <Lock className="mr-2 h-4 w-4" /> Change
+                    </Button>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Font & Formatting</h3>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="font-family">Font Family</Label>
-                        <Select defaultValue="serif">
-                          <SelectTrigger id="font-family">
-                            <SelectValue placeholder="Select font" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="serif">Serif</SelectItem>
-                            <SelectItem value="sans-serif">Sans-serif</SelectItem>
-                            <SelectItem value="monospace">Monospace</SelectItem>
-                            <SelectItem value="dyslexic">Dyslexic Friendly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="line-spacing">Line Spacing</Label>
-                        <Select defaultValue="1.5">
-                          <SelectTrigger id="line-spacing">
-                            <SelectValue placeholder="Select spacing" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1">Compact (1.0)</SelectItem>
-                            <SelectItem value="1.5">Normal (1.5)</SelectItem>
-                            <SelectItem value="2">Relaxed (2.0)</SelectItem>
-                            <SelectItem value="2.5">Spacious (2.5)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  
+                  <div className="flex items-center justify-between py-2">
+                    <div>
+                      <h3 className="font-medium">Two-Factor Authentication</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Add an extra layer of security
+                      </p>
                     </div>
+                    <Button variant="outline">Enable</Button>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Auto-Scrolling</h3>
-                    <div className="grid gap-4">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label htmlFor="auto-scroll">Auto-Scroll</Label>
-                          <p className="text-sm text-muted-foreground">
-                            Automatically scroll while reading
-                          </p>
-                        </div>
-                        <Switch id="auto-scroll" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="scroll-speed">Scroll Speed</Label>
-                        <Select defaultValue="medium" disabled={true}>
-                          <SelectTrigger id="scroll-speed">
-                            <SelectValue placeholder="Select speed" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="slow">Slow</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="fast">Fast</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                  
+                  <div className="flex items-center justify-between py-2">
+                    <div>
+                      <h3 className="font-medium">Active Sessions</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Manage devices where you're logged in
+                      </p>
                     </div>
+                    <Button variant="outline">View</Button>
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={handleSaveSettings}>Save Changes</Button>
-                </CardFooter>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Data & Privacy</CardTitle>
+                  <CardDescription>
+                    Manage your data and download your information.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between py-2">
+                    <div>
+                      <h3 className="font-medium">Download Your Data</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Get a copy of all your FanVerse data
+                      </p>
+                    </div>
+                    <Button variant="outline">
+                      <FileText className="mr-2 h-4 w-4" /> Download
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             </TabsContent>
-          </div>
-        </div>
-      </main>
-      <Footer />
+          </Tabs>
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };
