@@ -15,10 +15,10 @@ const PageLayout = ({ children, currentPath = '/', hideFooter = false }: PageLay
     <div className="flex h-screen w-full overflow-hidden">
       <MainSidebar currentPath={currentPath} />
       
-      <div className="flex-1 flex flex-col overflow-hidden w-full">
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         
-        <main className="flex-1 overflow-auto w-full h-full">
+        <main className="flex-1 overflow-auto w-full">
           <div className="w-full h-full">
             {children}
           </div>
