@@ -19,6 +19,7 @@ import ActivityFeed from "./ActivityFeed";
 import WritingPrompt from "./WritingPrompt";
 import ReadingChallenge from "./ReadingChallenge";
 import SidebarWeather from "./SidebarWeather";
+import { useTheme } from "next-themes";
 
 interface MainSidebarProps {
   currentPath?: string;
@@ -29,6 +30,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { theme, setTheme } = useTheme();
   
   // Navigation categories and items with corrected paths
   const navigationItems = [
@@ -75,7 +77,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
   return (
     <div 
       className={cn(
-        "h-full border-r bg-gradient-to-b from-background to-background/95 transition-all duration-300 flex flex-col relative flex-shrink-0 shadow-md",
+        "h-full border-r bg-gradient-to-b from-background to-background/95 transition-all duration-300 flex flex-col relative flex-shrink-0 shadow-md dark:border-r-gray-800",
         collapsed ? "w-0 md:w-16 opacity-0 md:opacity-100" : "w-72",
         isMobile && !collapsed ? "fixed z-50 shadow-xl" : ""
       )}
@@ -167,6 +169,26 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
               </div>
             </div>
           ))}
+          
+          {/* Theme toggle */}
+          {!collapsed && (
+            <div className="mb-4 px-3">
+              <div className="rounded-lg border border-border p-2 flex items-center justify-between">
+                <span className="text-sm font-medium">Dark Mode</span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 w-14 rounded-md relative"
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                >
+                  <div className={cn(
+                    "absolute h-5 w-5 rounded-full transition-all",
+                    theme === "dark" ? "bg-indigo-500 right-1.5" : "bg-slate-400 left-1.5"
+                  )}></div>
+                </Button>
+              </div>
+            </div>
+          )}
           
           {/* Weather widget with enhanced styling */}
           {!collapsed && <SidebarWeather />}

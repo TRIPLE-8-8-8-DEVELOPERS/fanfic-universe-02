@@ -75,12 +75,15 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground dark:bg-background dark:text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
   html, body, #root {
     height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
   }
 }

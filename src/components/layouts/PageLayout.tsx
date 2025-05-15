@@ -12,14 +12,16 @@ interface PageLayoutProps {
 
 const PageLayout = ({ children, currentPath = '/', hideFooter = false }: PageLayoutProps) => {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen w-full overflow-hidden">
       <MainSidebar currentPath={currentPath} />
       
-      <div className="flex-1 flex flex-col overflow-y-auto">
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
         <Header />
         
-        <main className="flex-1 overflow-auto">
-          {children}
+        <main className="flex-1 overflow-auto w-full h-full">
+          <div className="w-full h-full">
+            {children}
+          </div>
         </main>
         
         {!hideFooter && <Footer />}

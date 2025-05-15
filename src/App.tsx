@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; 
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
@@ -54,54 +55,56 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SidebarProvider>
-          <Router>
-            <div className="app-container w-full min-h-screen h-screen flex bg-background">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/browse" element={<Browse />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/write" element={<Write />} />
-                <Route path="/story/:storyId" element={<Story />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/profile/:username" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/trending" element={<Trending />} />
-                <Route path="/popular" element={<Popular />} />
-                <Route path="/communities" element={<Communities />} />
-                <Route path="/community/:communityId" element={<Community />} />
-                <Route path="/challenges" element={<Challenges />} />
-                <Route path="/contests" element={<Contests />} />
-                <Route path="/support" element={<Support />} />
-                <Route path="/reading-lists" element={<ReadingLists />} />
-                <Route path="/reading-clubs" element={<ReadingClubs />} />
-                <Route path="/friends" element={<Friends />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/messages/:conversationId" element={<Messages />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/jobs/:jobId" element={<Story />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/terms" element={<TermsOfService />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/authors" element={<Authors />} />
-                <Route path="/fandoms" element={<Fandoms />} />
-                <Route path="/updates" element={<Updates />} />
-                <Route path="/forums" element={<Forums />} />
-                <Route path="/watch-streams" element={<WatchStreams />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <SonnerToaster richColors position="bottom-right" />
-              <Toaster />
-            </div>
-          </Router>
-        </SidebarProvider>
-      </AuthProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <AuthProvider>
+          <SidebarProvider>
+            <Router>
+              <div className="app-container w-full min-h-screen h-screen flex bg-background">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/browse" element={<Browse />} />
+                  <Route path="/explore" element={<Explore />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/write" element={<Write />} />
+                  <Route path="/story/:storyId" element={<Story />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/profile/:username" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/trending" element={<Trending />} />
+                  <Route path="/popular" element={<Popular />} />
+                  <Route path="/communities" element={<Communities />} />
+                  <Route path="/community/:communityId" element={<Community />} />
+                  <Route path="/challenges" element={<Challenges />} />
+                  <Route path="/contests" element={<Contests />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/reading-lists" element={<ReadingLists />} />
+                  <Route path="/reading-clubs" element={<ReadingClubs />} />
+                  <Route path="/friends" element={<Friends />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/messages/:conversationId" element={<Messages />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/jobs/:jobId" element={<Story />} />
+                  <Route path="/about" element={<AboutUs />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/authors" element={<Authors />} />
+                  <Route path="/fandoms" element={<Fandoms />} />
+                  <Route path="/updates" element={<Updates />} />
+                  <Route path="/forums" element={<Forums />} />
+                  <Route path="/watch-streams" element={<WatchStreams />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <SonnerToaster richColors position="bottom-right" />
+                <Toaster />
+              </div>
+            </Router>
+          </SidebarProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
