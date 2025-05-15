@@ -303,13 +303,13 @@ const Index = () => {
   };
 
   return (
-    <div className="dark:bg-gray-900 min-h-screen flex">
+    <div className="flex h-screen overflow-hidden">
       <MainSidebar currentPath="/" />
       
-      <div className="flex-grow overflow-auto">
+      <div className="flex-1 flex flex-col overflow-y-auto">
         <Header />
         
-        <main className="flex-grow">
+        <main className="flex-1 overflow-auto">
           <section className="relative py-20 md:py-32 overflow-hidden hero-pattern">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-100 dark:from-gray-900 dark:via-purple-950/30 dark:to-indigo-950/20 z-0"></div>
             <div className="absolute inset-0 opacity-20 dark:opacity-10">

@@ -1,300 +1,106 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 210 20% 98%;
-
-    --card: 240 10% 7%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 240 10% 7%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 262 80% 60%;
-    --primary-foreground: 210 20% 98%;
-
-    --secondary: 240 10% 12%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 240 10% 15%;
-    --muted-foreground: 217 10% 75%;
-
-    --accent: 262 80% 60%;
-    --accent-foreground: 210 20% 98%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
-    --ring: 262 80% 60%;
-
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.75rem;
+    
+    /* Sidebar specific colors */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 221.2 83.2% 53.3%;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    
+    /* Sidebar specific colors */
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 224.3 76.3% 48%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
   }
-  
-  html, body {
-    width: 100%;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    width: 100%;
   }
   
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-serif tracking-tight;
-  }
-
-  /* Adjustments for main content */
-  main {
-    @apply pt-16 md:pt-14;
-  }
-
-  /* Improve mobile link interaction */
-  a, button {
-    @apply outline-none focus-visible:ring-2 focus-visible:ring-primary/50;
-    touch-action: manipulation;
-  }
-  
-  /* Better mobile form controls */
-  input, select, textarea {
-    @apply appearance-none;
-    font-size: 16px; /* Prevents iOS zoom on focus */
-  }
-  
-  /* Fix iOS tap highlight */
-  button, a {
-    -webkit-tap-highlight-color: transparent;
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600;
-  }
-  
-  .glass {
-    @apply bg-white/10 backdrop-blur-lg border border-white/10 shadow-lg;
-  }
-  
-  .glass-dark {
-    @apply bg-black/20 backdrop-blur-lg border border-white/10 shadow-lg;
-  }
-  
-  .section-padding {
-    @apply py-10 md:py-16 lg:py-24;
-  }
-  
-  .fade-in {
-    @apply opacity-0 animate-fade-in;
-  }
-  
-  .slide-in {
-    @apply opacity-0 animate-slide-in;
-  }
-  
-  .slide-up {
-    @apply opacity-0 animate-slide-up;
-  }
-  
-  .card-gradient {
-    @apply bg-gradient-to-br from-purple-900/50 to-purple-800/30 backdrop-blur-md;
-  }
-  
-  .hero-gradient {
-    @apply bg-gradient-to-r from-purple-900/80 to-blue-900/60;
-  }
-  
-  .purple-glow {
-    text-shadow: 0 0 15px rgba(155, 135, 245, 0.6);
-  }
-  
-  .purple-button-glow {
-    box-shadow: 0 0 15px rgba(155, 135, 245, 0.4);
-  }
+/* Custom text gradients */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600;
+}
 
-  .dropdown-menu {
-    @apply bg-card text-card-foreground border border-border shadow-lg rounded-lg;
-  }
-  
-  .dropdown-item {
-    @apply text-card-foreground hover:bg-muted;
-  }
-  
-  .full-width {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-  }
-  
-  .content-width {
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  
-  /* Font size utilities for story reading with mobile optimization */
-  .text-size-sm {
-    font-size: 0.95rem;
-    line-height: 1.65;
-  }
-  
-  .text-size-base {
-    font-size: 1.05rem;
-    line-height: 1.75;
-  }
-  
-  .text-size-lg {
-    font-size: 1.15rem;
-    line-height: 1.85;
-  }
-  
-  @media (min-width: 768px) {
-    .text-size-sm {
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-    
-    .text-size-base {
-      font-size: 1.125rem;
-      line-height: 1.7;
-    }
-    
-    .text-size-lg {
-      font-size: 1.25rem;
-      line-height: 1.8;
-    }
-  }
-  
-  /* Reading container styles with better mobile support */
-  .reading-container {
-    max-width: 100%;
-    padding: 0 1rem;
-    margin: 0 auto;
-  }
-  
-  @media (min-width: 640px) {
-    .reading-container {
-      max-width: 70ch;
-      padding: 0;
-    }
-  }
-  
-  /* Story card hover effect */
-  .story-card-hover {
-    @apply transition-all duration-300;
-  }
-  
-  .story-card-hover:hover {
-    @apply transform -translate-y-1 shadow-lg border-primary/50;
-  }
-  
-  /* Author profile hover effect */
-  .author-avatar {
-    @apply transition-all duration-300 border-2 border-primary/20;
-  }
-  
-  .author-avatar:hover {
-    @apply border-primary;
-  }
-  
-  /* Enhanced reading progress bar */
-  .reading-progress {
-    @apply h-1.5 bg-muted;
-  }
-  
-  .reading-progress-value {
-    @apply h-full bg-gradient-to-r from-primary to-purple-400;
-  }
-  
-  /* Audio player styling with mobile improvements */
-  .audio-player {
-    @apply p-3 bg-primary/10 border border-primary/20 rounded-lg flex flex-col sm:flex-row items-center gap-2 sm:gap-0 sm:justify-between;
-  }
-  
-  /* Responsive padding utilities */
-  .px-responsive {
-    @apply px-4 sm:px-6 md:px-8 lg:px-12;
-  }
-  
-  .py-responsive {
-    @apply py-6 sm:py-8 md:py-12 lg:py-16;
-  }
-  
-  /* Container with sidebar awareness - improved for mobile */
-  .container-with-sidebar {
-    @apply w-full transition-all duration-300 px-4 sm:px-6;
-    padding-left: calc(var(--sidebar-width, 0) + 1rem);
-    
-    @media (max-width: 768px) {
-      padding-left: 1rem;
-    }
-  }
-  
-  /* Mobile-friendly containers */
-  .mobile-container {
-    @apply px-4 md:px-6 w-full mx-auto;
-  }
-  
-  /* Hide scrollbar but keep functionality */
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Responsive grid layouts with improved mobile support */
-  .responsive-grid-2 {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
-  }
-  
-  .responsive-grid-3 {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
-  }
-  
-  .responsive-grid-4 {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
-  }
-  
-  /* Floating animation */
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  /* Safe area insets for mobile devices */
-  .safe-area-inset-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0);
-  }
-  
-  .safe-area-inset-top {
-    padding-top: env(safe-area-inset-top, 0);
-  }
+/* Custom hover effects */
+.hover-lift {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1;
+}
+
+/* Custom border glow effects */
+.border-glow {
+  @apply hover:border-indigo-300 hover:shadow-lg hover:shadow-indigo-50 dark:hover:shadow-indigo-900/30 transition-all duration-300;
+}
+
+/* Additional custom styles */
+.hero-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
 }

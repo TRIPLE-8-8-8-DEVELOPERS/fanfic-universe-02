@@ -21,6 +21,12 @@ export default {
 			screens: {
 				'xs': '480px',
 			},
+			height: {
+				'screen-dynamic': '100dvh',
+			},
+			minHeight: {
+				'screen-dynamic': '100dvh',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

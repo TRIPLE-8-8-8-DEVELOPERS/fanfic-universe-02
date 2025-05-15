@@ -1,228 +1,247 @@
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import MainSidebar from "../components/MainSidebar";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Bell,
-  User,
-  Shield,
-  Palette,
-  Eye,
-  MessageSquare,
-  Mail,
-  FileText,
-  Trash2,
-  Globe,
-  Mail as MailIcon,
-  Bell as BellIcon,
-  Lock,
-  BookOpen
-} from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { Bell, Lock, PaintBucket, User } from "lucide-react";
+import PageLayout from "@/components/layouts/PageLayout";
+
+// Mock user data
+const user = {
+  id: "user_1",
+  email: "user@example.com",
+  createdAt: "2023-01-15",
+  verifiedEmail: true,
+  profile: {
+    username: "storyteller",
+    fullName: "Alex Johnson",
+    bio: "Writer of fantasy and sci-fi. Coffee enthusiast.",
+    avatar: "https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?&w=128&h=128&dpr=2&q=80",
+  }
+};
 
 const Settings = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user, profile } = useAuth();
-  const [activeTab, setActiveTab] = useState("account");
-  const [isLoading, setIsLoading] = useState(false);
+  const [accountSettings, setAccountSettings] = useState({
+    username: user.profile.username,
+    fullName: user.profile.fullName,
+    email: user.email,
+    bio: user.profile.bio,
+  });
   
-  // Account settings - now using profile object instead of user
-  const [username, setUsername] = useState(profile?.username || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [bio, setBio] = useState(profile?.bio || "");
+  const [notificationSettings, setNotificationSettings] = useState({
+    emailNotifications: true,
+    commentNotifications: true,
+    followNotifications: true,
+    messageNotifications: true,
+    storyUpdates: true,
+    marketingEmails: false,
+  });
   
-  // Notification settings
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [pushNotifications, setPushNotifications] = useState(true);
-  const [commentNotifications, setCommentNotifications] = useState(true);
-  const [followNotifications, setFollowNotifications] = useState(true);
-  const [storyUpdates, setStoryUpdates] = useState(true);
-  const [weeklyDigest, setWeeklyDigest] = useState(true);
+  const [appearanceSettings, setAppearanceSettings] = useState({
+    theme: "system",
+    fontSize: "medium",
+    reducedMotion: false,
+    highContrast: false,
+  });
   
-  // Appearance settings
-  const [theme, setTheme] = useState("system");
-  const [fontSize, setFontSize] = useState("medium");
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
+  const [privacySettings, setPrivacySettings] = useState({
+    profileVisibility: "public",
+    activityVisibility: "followers",
+    allowComments: true,
+    allowMessages: true,
+    showReadingHistory: true,
+  });
   
-  // Privacy settings
-  const [profileVisibility, setProfileVisibility] = useState("public");
-  const [showReadingActivity, setShowReadingActivity] = useState(true);
-  const [allowTagging, setAllowTagging] = useState(true);
-  const [showOnlineStatus, setShowOnlineStatus] = useState(true);
-  
-  const handleSaveAccount = () => {
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Account settings updated",
-        description: "Your account settings have been saved successfully.",
-      });
-    }, 1000);
+  const handleAccountUpdate = () => {
+    toast.success("Account settings updated successfully");
   };
   
-  const handleDeleteAccount = () => {
-    // Show confirmation dialog
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      toast({
-        title: "Account deletion requested",
-        description: "We've sent an email to confirm your account deletion request.",
-        variant: "destructive",
-      });
-    }
+  const handleNotificationUpdate = () => {
+    toast.success("Notification preferences updated");
   };
-
+  
+  const handleAppearanceUpdate = () => {
+    toast.success("Appearance settings updated");
+  };
+  
+  const handlePrivacyUpdate = () => {
+    toast.success("Privacy settings updated");
+  };
+  
   return (
-    <div className="flex min-h-screen bg-background">
-      <MainSidebar currentPath="/settings" />
-      <div className="flex-1 flex flex-col">
-        <Header />
-        <main className="flex-1 container max-w-6xl py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your account settings and preferences
-            </p>
-          </div>
-
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="bg-card text-card-foreground border">
-              <TabsTrigger value="account" className="data-[state=active]:bg-primary/10 gap-2">
-                <User size={16} />
-                <span className="hidden sm:inline">Account</span>
+    <PageLayout currentPath="/settings">
+      <div className="container py-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">Settings</h1>
+          
+          <Tabs defaultValue="account" className="space-y-6">
+            <TabsList className="grid grid-cols-4">
+              <TabsTrigger value="account" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span>Account</span>
               </TabsTrigger>
-              <TabsTrigger value="notifications" className="data-[state=active]:bg-primary/10 gap-2">
-                <Bell size={16} />
-                <span className="hidden sm:inline">Notifications</span>
+              <TabsTrigger value="notifications" className="flex items-center gap-2">
+                <Bell className="h-4 w-4" />
+                <span>Notifications</span>
               </TabsTrigger>
-              <TabsTrigger value="appearance" className="data-[state=active]:bg-primary/10 gap-2">
-                <Palette size={16} />
-                <span className="hidden sm:inline">Appearance</span>
+              <TabsTrigger value="appearance" className="flex items-center gap-2">
+                <PaintBucket className="h-4 w-4" />
+                <span>Appearance</span>
               </TabsTrigger>
-              <TabsTrigger value="privacy" className="data-[state=active]:bg-primary/10 gap-2">
-                <Shield size={16} />
-                <span className="hidden sm:inline">Privacy & Security</span>
+              <TabsTrigger value="privacy" className="flex items-center gap-2">
+                <Lock className="h-4 w-4" />
+                <span>Privacy</span>
               </TabsTrigger>
             </TabsList>
             
+            {/* Account Settings */}
             <TabsContent value="account" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Account Information</CardTitle>
+                  <CardTitle>Your Profile</CardTitle>
                   <CardDescription>
-                    Update your personal information and manage your account.
+                    Update your personal information and how others see you on the platform.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="username">Username</Label>
                       <Input 
                         id="username" 
-                        value={username} 
-                        onChange={(e) => setUsername(e.target.value)} 
+                        value={accountSettings.username} 
+                        onChange={(e) => setAccountSettings({...accountSettings, username: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="fullName">Full Name</Label>
                       <Input 
-                        id="email" 
-                        type="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
+                        id="fullName" 
+                        value={accountSettings.fullName} 
+                        onChange={(e) => setAccountSettings({...accountSettings, fullName: e.target.value})}
                       />
                     </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      type="email" 
+                      value={accountSettings.email} 
+                      onChange={(e) => setAccountSettings({...accountSettings, email: e.target.value})}
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
                     <Textarea 
                       id="bio" 
-                      placeholder="Tell us about yourself..." 
-                      className="h-24"
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
+                      value={accountSettings.bio} 
+                      onChange={(e) => setAccountSettings({...accountSettings, bio: e.target.value})}
+                      rows={4}
                     />
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <div></div>
-                  <Button onClick={handleSaveAccount} disabled={isLoading}>
-                    {isLoading ? "Saving..." : "Save Changes"}
-                  </Button>
+                  <Button variant="outline">Cancel</Button>
+                  <Button onClick={handleAccountUpdate}>Save Changes</Button>
                 </CardFooter>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                  <CardTitle>Account Security</CardTitle>
                   <CardDescription>
-                    Permanent actions that cannot be undone.
+                    Manage your account security settings and connected services.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Deleting your account will remove all your data, including your profile, stories, and comments.
-                    This action cannot be undone.
-                  </p>
-                  <Button 
-                    variant="destructive"
-                    onClick={handleDeleteAccount}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Account
-                  </Button>
+                <CardContent className="space-y-4">
+                  <Button variant="outline">Change Password</Button>
+                  <Separator />
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Two-Factor Authentication</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Add an extra layer of security to your account.
+                    </p>
+                    <Button variant="secondary">Set Up Two-Factor Authentication</Button>
+                  </div>
+                  <Separator />
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Connected Accounts</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Connect your account to other services.
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      <Button variant="outline">Connect Google</Button>
+                      <Button variant="outline">Connect Facebook</Button>
+                      <Button variant="outline">Connect Twitter</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-red-600 dark:text-red-400">Danger Zone</CardTitle>
+                  <CardDescription>
+                    Actions here can't be undone. Please proceed with caution.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="font-medium">Delete Account</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Permanently delete your account and all your data.
+                    </p>
+                    <Button variant="destructive">Delete Account</Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
             
+            {/* Notification Settings */}
             <TabsContent value="notifications" className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle>Email Notifications</CardTitle>
                   <CardDescription>
-                    Configure how and when you receive email notifications.
+                    Choose what types of updates you receive via email.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Email Notifications</Label>
+                      <Label htmlFor="emailNotifications">Email Notifications</Label>
                       <p className="text-sm text-muted-foreground">
-                        Receive notifications via email
+                        Receive email notifications for important updates.
                       </p>
                     </div>
                     <Switch 
-                      checked={emailNotifications} 
-                      onCheckedChange={setEmailNotifications} 
+                      id="emailNotifications"
+                      checked={notificationSettings.emailNotifications}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, emailNotifications: checked})}
                     />
                   </div>
-                  
+                  <Separator />
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Weekly Digest</Label>
+                      <Label htmlFor="marketingEmails">Marketing Emails</Label>
                       <p className="text-sm text-muted-foreground">
-                        Receive a weekly summary of activity
+                        Receive occasional emails about new features and promotions.
                       </p>
                     </div>
                     <Switch 
-                      checked={weeklyDigest} 
-                      onCheckedChange={setWeeklyDigest}
-                      disabled={!emailNotifications}
+                      id="marketingEmails"
+                      checked={notificationSettings.marketingEmails}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, marketingEmails: checked})}
                     />
                   </div>
                 </CardContent>
@@ -230,132 +249,78 @@ const Settings = () => {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Push Notifications</CardTitle>
+                  <CardTitle>Platform Notifications</CardTitle>
                   <CardDescription>
-                    Configure push notifications for the app and browser.
+                    Configure what activities trigger notifications within the platform.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Push Notifications</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receive notifications in your browser
-                      </p>
-                    </div>
+                    <Label htmlFor="commentNotifications">Comments on your stories</Label>
                     <Switch 
-                      checked={pushNotifications} 
-                      onCheckedChange={setPushNotifications} 
+                      id="commentNotifications"
+                      checked={notificationSettings.commentNotifications}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, commentNotifications: checked})}
                     />
                   </div>
-                  
                   <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Comments</Label>
-                      <p className="text-sm text-muted-foreground">
-                        When someone comments on your stories
-                      </p>
-                    </div>
+                    <Label htmlFor="followNotifications">New followers</Label>
                     <Switch 
-                      checked={commentNotifications} 
-                      onCheckedChange={setCommentNotifications}
-                      disabled={!pushNotifications}
+                      id="followNotifications"
+                      checked={notificationSettings.followNotifications}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, followNotifications: checked})}
                     />
                   </div>
-                  
                   <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>New Followers</Label>
-                      <p className="text-sm text-muted-foreground">
-                        When someone follows you
-                      </p>
-                    </div>
+                    <Label htmlFor="messageNotifications">Direct messages</Label>
                     <Switch 
-                      checked={followNotifications} 
-                      onCheckedChange={setFollowNotifications}
-                      disabled={!pushNotifications}
+                      id="messageNotifications"
+                      checked={notificationSettings.messageNotifications}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, messageNotifications: checked})}
                     />
                   </div>
-                  
                   <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Story Updates</Label>
-                      <p className="text-sm text-muted-foreground">
-                        When stories you follow are updated
-                      </p>
-                    </div>
+                    <Label htmlFor="storyUpdates">Story updates from authors you follow</Label>
                     <Switch 
-                      checked={storyUpdates} 
-                      onCheckedChange={setStoryUpdates}
-                      disabled={!pushNotifications}
+                      id="storyUpdates"
+                      checked={notificationSettings.storyUpdates}
+                      onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, storyUpdates: checked})}
                     />
                   </div>
                 </CardContent>
+                <CardFooter>
+                  <Button onClick={handleNotificationUpdate} className="ml-auto">Save Preferences</Button>
+                </CardFooter>
               </Card>
             </TabsContent>
             
+            {/* Appearance Settings */}
             <TabsContent value="appearance" className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle>Theme</CardTitle>
                   <CardDescription>
-                    Customize how FanVerse looks for you.
+                    Choose how the application looks to you.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Theme Mode</Label>
-                    <Select value={theme} onValueChange={setTheme}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Font Size</Label>
-                    <Select value={fontSize} onValueChange={setFontSize}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select font size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="small">Small</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="large">Large</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Reduced Motion</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Minimize animations and transitions
-                      </p>
+                  <RadioGroup 
+                    value={appearanceSettings.theme}
+                    onValueChange={(value) => setAppearanceSettings({...appearanceSettings, theme: value})}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="light" id="light" />
+                      <Label htmlFor="light">Light</Label>
                     </div>
-                    <Switch 
-                      checked={reducedMotion} 
-                      onCheckedChange={setReducedMotion} 
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>High Contrast</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Increase contrast for better readability
-                      </p>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="dark" id="dark" />
+                      <Label htmlFor="dark">Dark</Label>
                     </div>
-                    <Switch 
-                      checked={highContrast} 
-                      onCheckedChange={setHighContrast} 
-                    />
-                  </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="system" id="system" />
+                      <Label htmlFor="system">System</Label>
+                    </div>
+                  </RadioGroup>
                 </CardContent>
               </Card>
               
@@ -363,177 +328,186 @@ const Settings = () => {
                 <CardHeader>
                   <CardTitle>Reading Experience</CardTitle>
                   <CardDescription>
-                    Customize your reading experience on FanVerse.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Reading Font</Label>
-                      <Select defaultValue="system">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select font" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="system">System Default</SelectItem>
-                          <SelectItem value="serif">Serif</SelectItem>
-                          <SelectItem value="sans">Sans-serif</SelectItem>
-                          <SelectItem value="mono">Monospace</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Line Spacing</Label>
-                      <Select defaultValue="normal">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select line spacing" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="compact">Compact</SelectItem>
-                          <SelectItem value="normal">Normal</SelectItem>
-                          <SelectItem value="relaxed">Relaxed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="privacy" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Privacy Settings</CardTitle>
-                  <CardDescription>
-                    Control your privacy and visibility on FanVerse.
+                    Customize how you read content on the platform.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Profile Visibility</Label>
-                    <Select value={profileVisibility} onValueChange={setProfileVisibility}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select visibility" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="public">Public (Everyone can see)</SelectItem>
-                        <SelectItem value="followers">Followers Only</SelectItem>
-                        <SelectItem value="private">Private (Only you)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <h3 className="font-medium">Font Size</h3>
+                    <RadioGroup 
+                      value={appearanceSettings.fontSize}
+                      onValueChange={(value) => setAppearanceSettings({...appearanceSettings, fontSize: value})}
+                      className="flex flex-wrap gap-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="small" id="small" />
+                        <Label htmlFor="small" className="text-sm">Small</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="medium" id="medium" />
+                        <Label htmlFor="medium" className="text-base">Medium</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="large" id="large" />
+                        <Label htmlFor="large" className="text-lg">Large</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Reading Activity</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Show others what you're reading
-                      </p>
+                  <Separator />
+                  <div className="space-y-4">
+                    <h3 className="font-medium">Accessibility</h3>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="reducedMotion">Reduced Motion</Label>
+                      <Switch 
+                        id="reducedMotion"
+                        checked={appearanceSettings.reducedMotion}
+                        onCheckedChange={(checked) => setAppearanceSettings({...appearanceSettings, reducedMotion: checked})}
+                      />
                     </div>
-                    <Switch 
-                      checked={showReadingActivity} 
-                      onCheckedChange={setShowReadingActivity} 
-                    />
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="highContrast">High Contrast</Label>
+                      <Switch 
+                        id="highContrast"
+                        checked={appearanceSettings.highContrast}
+                        onCheckedChange={(checked) => setAppearanceSettings({...appearanceSettings, highContrast: checked})}
+                      />
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Allow Tagging</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Allow others to tag you in comments and stories
-                      </p>
-                    </div>
-                    <Switch 
-                      checked={allowTagging} 
-                      onCheckedChange={setAllowTagging} 
-                    />
+                </CardContent>
+                <CardFooter>
+                  <Button onClick={handleAppearanceUpdate} className="ml-auto">Save Preferences</Button>
+                </CardFooter>
+              </Card>
+            </TabsContent>
+            
+            {/* Privacy Settings */}
+            <TabsContent value="privacy" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Visibility</CardTitle>
+                  <CardDescription>
+                    Control who can see your profile and activity.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="profileVisibility">Who can see your profile</Label>
+                    <RadioGroup 
+                      value={privacySettings.profileVisibility}
+                      onValueChange={(value) => setPrivacySettings({...privacySettings, profileVisibility: value})}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="public" id="public" />
+                        <Label htmlFor="public">Everyone</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="followers" id="followers" />
+                        <Label htmlFor="followers">Followers Only</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="private" id="private" />
+                        <Label htmlFor="private">Only Me</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Online Status</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Show when you're active on FanVerse
-                      </p>
-                    </div>
-                    <Switch 
-                      checked={showOnlineStatus} 
-                      onCheckedChange={setShowOnlineStatus} 
-                    />
+                  <Separator />
+                  <div className="space-y-2">
+                    <Label htmlFor="activityVisibility">Who can see your activity</Label>
+                    <RadioGroup 
+                      value={privacySettings.activityVisibility}
+                      onValueChange={(value) => setPrivacySettings({...privacySettings, activityVisibility: value})}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="public" id="activity-public" />
+                        <Label htmlFor="activity-public">Everyone</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="followers" id="activity-followers" />
+                        <Label htmlFor="activity-followers">Followers Only</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="private" id="activity-private" />
+                        <Label htmlFor="activity-private">Only Me</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
                 </CardContent>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Security</CardTitle>
+                  <CardTitle>Content Interactions</CardTitle>
                   <CardDescription>
-                    Manage account security settings.
+                    Control how others can interact with your content.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between py-2">
-                    <div>
-                      <h3 className="font-medium">Change Password</h3>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="allowComments">Allow Comments</Label>
                       <p className="text-sm text-muted-foreground">
-                        Update your account password
+                        Let others comment on your stories and posts.
                       </p>
                     </div>
-                    <Button variant="outline">
-                      <Lock className="mr-2 h-4 w-4" /> Change
-                    </Button>
+                    <Switch 
+                      id="allowComments"
+                      checked={privacySettings.allowComments}
+                      onCheckedChange={(checked) => setPrivacySettings({...privacySettings, allowComments: checked})}
+                    />
                   </div>
-                  
-                  <div className="flex items-center justify-between py-2">
-                    <div>
-                      <h3 className="font-medium">Two-Factor Authentication</h3>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="allowMessages">Allow Direct Messages</Label>
                       <p className="text-sm text-muted-foreground">
-                        Add an extra layer of security
+                        Let others send you private messages.
                       </p>
                     </div>
-                    <Button variant="outline">Enable</Button>
+                    <Switch 
+                      id="allowMessages"
+                      checked={privacySettings.allowMessages}
+                      onCheckedChange={(checked) => setPrivacySettings({...privacySettings, allowMessages: checked})}
+                    />
                   </div>
-                  
-                  <div className="flex items-center justify-between py-2">
-                    <div>
-                      <h3 className="font-medium">Active Sessions</h3>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="showReadingHistory">Show Reading History</Label>
                       <p className="text-sm text-muted-foreground">
-                        Manage devices where you're logged in
+                        Show what you're reading in your public activity.
                       </p>
                     </div>
-                    <Button variant="outline">View</Button>
+                    <Switch 
+                      id="showReadingHistory"
+                      checked={privacySettings.showReadingHistory}
+                      onCheckedChange={(checked) => setPrivacySettings({...privacySettings, showReadingHistory: checked})}
+                    />
                   </div>
                 </CardContent>
+                <CardFooter>
+                  <Button onClick={handlePrivacyUpdate} className="ml-auto">Save Preferences</Button>
+                </CardFooter>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Data & Privacy</CardTitle>
+                  <CardTitle>Your Data</CardTitle>
                   <CardDescription>
-                    Manage your data and download your information.
+                    Manage your personal data and download a copy of your information.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between py-2">
-                    <div>
-                      <h3 className="font-medium">Download Your Data</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Get a copy of all your FanVerse data
-                      </p>
-                    </div>
-                    <Button variant="outline">
-                      <FileText className="mr-2 h-4 w-4" /> Download
-                    </Button>
-                  </div>
+                  <Button variant="outline">Download Your Data</Button>
+                  <Button variant="secondary">Manage Cookies</Button>
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
-        </main>
-        <Footer />
+        </div>
       </div>
-    </div>
+    </PageLayout>
   );
 };
 
