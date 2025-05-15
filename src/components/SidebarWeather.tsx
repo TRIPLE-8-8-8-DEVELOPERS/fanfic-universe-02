@@ -41,7 +41,7 @@ const SidebarWeather = () => {
     
     switch (weather.condition) {
       case "sunny":
-        return <Sun className="h-6 w-6 text-amber-500" />;
+        return <Sun className="h-6 w-6 text-amber-500 animate-pulse-slow" />;
       case "partly-cloudy":
         return <CloudSun className="h-6 w-6 text-amber-400" />;
       case "cloudy":
@@ -65,15 +65,41 @@ const SidebarWeather = () => {
     return description.charAt(0).toUpperCase() + description.slice(1);
   };
   
+  const getWeatherGradient = () => {
+    if (!weather) return "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30";
+    
+    switch (weather.condition) {
+      case "sunny":
+        return "from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30";
+      case "partly-cloudy":
+        return "from-blue-50 to-amber-50 dark:from-blue-950/30 dark:to-amber-950/30";
+      case "cloudy":
+        return "from-gray-50 to-blue-50 dark:from-gray-950/30 dark:to-blue-950/30";
+      case "rainy":
+        return "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30";
+      case "snowy":
+        return "from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30";
+      case "stormy":
+        return "from-purple-50 to-gray-50 dark:from-purple-950/30 dark:to-gray-950/30";
+      case "windy":
+        return "from-gray-50 to-blue-50 dark:from-gray-950/30 dark:to-blue-950/30";
+      default:
+        return "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30";
+    }
+  };
+  
   if (isLoading) {
     return (
-      <div className="p-3 flex items-center justify-center">
-        <div className="animate-pulse flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-muted/50"></div>
-          <div className="space-y-2">
-            <div className="h-3 w-16 bg-muted/50 rounded"></div>
-            <div className="h-2 w-10 bg-muted/50 rounded"></div>
+      <div className="p-3">
+        <div className="animate-pulse flex items-center justify-between px-3 py-4 rounded-xl bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-100/50 dark:border-blue-900/20">
+          <div className="flex items-center gap-3">
+            <div className="h-6 w-6 rounded-full bg-muted/30"></div>
+            <div className="space-y-2">
+              <div className="h-3 w-16 bg-muted/30 rounded"></div>
+              <div className="h-2 w-10 bg-muted/30 rounded"></div>
+            </div>
           </div>
+          <div className="h-5 w-10 bg-muted/30 rounded"></div>
         </div>
       </div>
     );
@@ -81,11 +107,13 @@ const SidebarWeather = () => {
   
   return (
     <div className="p-3">
-      <div className="flex items-center justify-between px-3 py-2 rounded-md bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-100 dark:border-blue-900/50">
+      <div className={`flex items-center justify-between px-4 py-3 rounded-xl bg-gradient-to-br ${getWeatherGradient()} border border-blue-100/50 dark:border-blue-900/20 hover:shadow-md transition-all duration-300 group`}>
         <div className="flex items-center gap-3">
-          {getWeatherIcon()}
+          <div className="group-hover:animate-float">
+            {getWeatherIcon()}
+          </div>
           <div>
-            <div className="font-medium text-sm">
+            <div className="font-medium text-sm text-blue-900 dark:text-blue-300">
               {getWeatherDescription()}
             </div>
             <div className="text-xs text-muted-foreground">
@@ -93,7 +121,7 @@ const SidebarWeather = () => {
             </div>
           </div>
         </div>
-        <div className="text-lg font-semibold">
+        <div className="text-lg font-semibold text-blue-800 dark:text-blue-200">
           {weather?.temperature}°C
         </div>
       </div>
