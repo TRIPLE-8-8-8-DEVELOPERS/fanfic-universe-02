@@ -19,7 +19,7 @@ const PageLayout = ({ children, currentPath = '/', hideFooter = false }: PageLay
         <Header />
         
         <main className="flex-1 overflow-auto w-full">
-          <div className="w-full h-full p-4 md:p-6">
+          <div className="w-full h-full p-0">
             {children}
           </div>
         </main>

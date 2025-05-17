@@ -77,6 +77,11 @@
   body {
     @apply bg-background text-foreground dark:bg-background dark:text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
   
   html, body, #root {

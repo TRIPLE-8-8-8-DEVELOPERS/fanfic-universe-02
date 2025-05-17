@@ -59,7 +59,7 @@ function App() {
         <AuthProvider>
           <SidebarProvider>
             <Router>
-              <div className="flex w-full h-screen overflow-hidden bg-background">
+              <div className="w-full h-screen flex overflow-hidden">
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
