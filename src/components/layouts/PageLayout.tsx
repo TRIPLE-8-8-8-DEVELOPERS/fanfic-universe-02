@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MainSidebar from '@/components/MainSidebar';
 import Header from '@/components/Header';
@@ -10,20 +9,28 @@ interface PageLayoutProps {
   hideFooter?: boolean;
 }
 
-const PageLayout = ({ children, currentPath = '/', hideFooter = false }: PageLayoutProps) => {
+const PageLayout = ({
+  children,
+  currentPath = '/',
+  hideFooter = false,
+}: PageLayoutProps) => {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    <div className="flex h-screen w-full overflow-hidden bg-background" data-testid="layout-root">
       <MainSidebar currentPath={currentPath} />
-      
+
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         <Header />
-        
-        <main className="flex-1 overflow-auto w-full">
-          <div className="w-full h-full p-0">
+
+        <main
+          role="main"
+          className="flex-1 overflow-auto w-full"
+          data-testid="layout-main"
+        >
+          <div className="w-full h-full px-4 py-6 max-w-7xl mx-auto">
             {children}
           </div>
         </main>
-        
+
         {!hideFooter && <Footer />}
       </div>
     </div>

@@ -1,11 +1,14 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"; 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "./contexts/AuthContext";
+import MainSidebar from "@/components/MainSidebar"; // ✅ Re-add this
+
+// Pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
@@ -39,15 +42,14 @@ import Fandoms from "./pages/Fandoms";
 import Updates from "./pages/Updates";
 import Forums from "./pages/Forums";
 import WatchStreams from "./pages/WatchStreams";
-import { AuthProvider } from "./contexts/AuthContext";
 
-// Create a client for React Query
+// React Query Client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000,
     },
   },
 });
@@ -60,44 +62,52 @@ function App() {
           <SidebarProvider>
             <Router>
               <div className="w-full h-screen flex overflow-hidden">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/browse" element={<Browse />} />
-                  <Route path="/explore" element={<Explore />} />
-                  <Route path="/search" element={<Search />} />
-                  <Route path="/write" element={<Write />} />
-                  <Route path="/story/:storyId" element={<Story />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/profile/:username" element={<Profile />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/trending" element={<Trending />} />
-                  <Route path="/popular" element={<Popular />} />
-                  <Route path="/communities" element={<Communities />} />
-                  <Route path="/community/:communityId" element={<Community />} />
-                  <Route path="/challenges" element={<Challenges />} />
-                  <Route path="/contests" element={<Contests />} />
-                  <Route path="/support" element={<Support />} />
-                  <Route path="/reading-lists" element={<ReadingLists />} />
-                  <Route path="/reading-clubs" element={<ReadingClubs />} />
-                  <Route path="/friends" element={<Friends />} />
-                  <Route path="/messages" element={<Messages />} />
-                  <Route path="/messages/:conversationId" element={<Messages />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/jobs" element={<Jobs />} />
-                  <Route path="/jobs/:jobId" element={<Story />} />
-                  <Route path="/about" element={<AboutUs />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/terms" element={<TermsOfService />} />
-                  <Route path="/privacy" element={<PrivacyPolicy />} />
-                  <Route path="/authors" element={<Authors />} />
-                  <Route path="/fandoms" element={<Fandoms />} />
-                  <Route path="/updates" element={<Updates />} />
-                  <Route path="/forums" element={<Forums />} />
-                  <Route path="/watch-streams" element={<WatchStreams />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                {/* ✅ Only one sidebar here */}
+                <MainSidebar />
+                
+                {/* Main content area */}
+                <div className="flex-1 h-full overflow-y-auto">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/browse" element={<Browse />} />
+                    <Route path="/explore" element={<Explore />} />
+                    <Route path="/search" element={<Search />} />
+                    <Route path="/write" element={<Write />} />
+                    <Route path="/story/:storyId" element={<Story />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/profile/:username" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/trending" element={<Trending />} />
+                    <Route path="/popular" element={<Popular />} />
+                    <Route path="/communities" element={<Communities />} />
+                    <Route path="/community/:communityId" element={<Community />} />
+                    <Route path="/challenges" element={<Challenges />} />
+                    <Route path="/contests" element={<Contests />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/reading-lists" element={<ReadingLists />} />
+                    <Route path="/reading-clubs" element={<ReadingClubs />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/messages" element={<Messages />} />
+                    <Route path="/messages/:conversationId" element={<Messages />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/jobs" element={<Jobs />} />
+                    <Route path="/jobs/:jobId" element={<Story />} /> {/* Consider using a separate component for job details */}
+                    <Route path="/about" element={<AboutUs />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/terms" element={<TermsOfService />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/authors" element={<Authors />} />
+                    <Route path="/fandoms" element={<Fandoms />} />
+                    <Route path="/updates" element={<Updates />} />
+                    <Route path="/forums" element={<Forums />} />
+                    <Route path="/watch-streams" element={<WatchStreams />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+
+                {/* Toasts */}
                 <SonnerToaster richColors position="bottom-right" />
                 <Toaster />
               </div>

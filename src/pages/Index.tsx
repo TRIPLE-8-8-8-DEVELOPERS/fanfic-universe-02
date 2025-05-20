@@ -8,7 +8,6 @@ import {
   Bookmark, Share2, Users, Star, PenTool, BadgeCheck, Gift
 } from "lucide-react";
 
-import MainSidebar from "../components/MainSidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import FeaturedStory from "../components/FeaturedStory";
@@ -304,8 +303,6 @@ const Index = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <MainSidebar currentPath="/" />
-      
       <div className="flex-1 flex flex-col overflow-y-auto">
         <Header />
         
