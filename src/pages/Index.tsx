@@ -5,8 +5,10 @@ import {
   BookOpen, Sparkles, TrendingUp, ThumbsUp, PlusCircle, Crown,
   Award, BookOpenCheck, Lightbulb, Feather, Eye, MessagesSquare,
   ArrowRight, Rocket, TrendingUp as TrendingUpIcon, Heart, Clock,
-  Bookmark, Share2, Users, Star, PenTool, BadgeCheck, Gift
+  Bookmark, Share2, Users, Star, PenTool, BadgeCheck, Gift,
+  Megaphone, Calendar, ArrowLeft
 } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -15,6 +17,8 @@ import StoryGrid from "../components/StoryGrid";
 import AIWritingAssistant from "../components/AIWritingAssistant";
 import PremiumFeatureShowcase from "../components/PremiumFeatureShowcase";
 import PremiumFeatureAlert from "../components/writing/PremiumFeatureAlert";
+import { Carousel } from "@/components/ui/carousel";
+import WritingPrompt from "../components/WritingPrompt";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,7 +39,8 @@ const featuredStoryData = {
   rating: 4.8,
   likes: 1243,
   comments: 356,
-  reads: 5680
+  reads: 5680,
+  editorCommentary: "A gripping tale that beautifully explores the interplay of light and shadow, both literally and metaphorically. Emma Richards masterfully unveils the mysteries of her enchanting world, keeping readers on the edge of their seats."
 };
 
 const trendingStories = [
@@ -266,11 +271,364 @@ const upcomingEvents = [
   }
 ];
 
+const communityHighlights = [
+  {
+    id: "highlight-1",
+    title: "Top Contributor: Alex Johnson",
+    description: "Alex has written 50+ stories this month!",
+    icon: <BadgeCheck />,
+  },
+  {
+    id: "highlight-2",
+    title: "Most Liked Story: 'Eternal Dawn'",
+    description: "Lucas Wright's story received 1200 likes!",
+    icon: <Star />,
+  },
+  {
+    id: "highlight-3",
+    title: "Community Growth",
+    description: "Over 500 new members joined this week!",
+    icon: <Users />,
+  },
+];
+
+const newBanners = [
+  {
+    id: "banner-1",
+    title: "Summer Writing Contest",
+    description: "Participate in our summer contest and win exciting prizes!",
+    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    link: "/contests",
+  },
+  {
+    id: "banner-2",
+    title: "Exclusive Premium Features",
+    description: "Unlock advanced tools and features with Premium!",
+    image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
+    link: "/premium",
+  },
+];
+
+const newStories = [
+  {
+    id: "new-1",
+    title: "The Forgotten Kingdom",
+    author: "Anna Bell",
+    cover: "https://images.unsplash.com/photo-1528744598421-b7d5b2a2d8e3",
+    genre: "Fantasy",
+    excerpt: "A young prince discovers a hidden kingdom lost to time...",
+    rating: 4.9,
+    likes: 1340,
+    reads: 6200,
+  },
+  {
+    id: "new-2",
+    title: "Echoes of the Past",
+    author: "Brian Carter",
+    cover: "https://images.unsplash.com/photo-1534081333815-ae5019106622",
+    genre: "Historical",
+    excerpt: "A historian unravels the secrets of an ancient artifact...",
+    rating: 4.8,
+    likes: 1280,
+    reads: 5900,
+  },
+];
+
+const specialAnnouncements = [
+  {
+    id: "announcement-1",
+    title: "New Writing Contest!",
+    description: "Participate in our summer writing contest and win exciting prizes!",
+    link: "/contests",
+  },
+  {
+    id: "announcement-2",
+    title: "Platform Update",
+    description: "Check out the new features we've added to enhance your experience!",
+    link: "/updates",
+  },
+];
+
+const editorsPicks = [
+  {
+    id: "editors-1",
+    title: "The Silent Forest",
+    author: "Liam Harper",
+    authorId: "liamharper",
+    cover: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    genre: "Mystery",
+    excerpt: "A detective unravels the secrets of a haunted forest...",
+    rating: 4.9,
+    likes: 1400,
+    reads: 6200,
+  },
+  {
+    id: "editors-2",
+    title: "The Clockmaker's Secret",
+    author: "Isabella Green",
+    authorId: "igreen",
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    genre: "Historical",
+    excerpt: "A clockmaker's invention changes the course of history...",
+    rating: 4.8,
+    likes: 1280,
+    reads: 5900,
+  },
+];
+
+const topRatedStories = [
+  {
+    id: "toprated-1",
+    title: "The Eternal Flame",
+    author: "Sophia Brown",
+    authorId: "sophiabrown",
+    cover: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    genre: "Romance",
+    excerpt: "A love story that defies time...",
+    rating: 5.0,
+    likes: 2000,
+    reads: 8000,
+  },
+  {
+    id: "toprated-2",
+    title: "The Last Voyage",
+    author: "Michael Scott",
+    authorId: "mscott",
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    genre: "Adventure",
+    excerpt: "An epic journey across uncharted waters...",
+    rating: 4.9,
+    likes: 1800,
+    reads: 7500,
+  },
+];
+
+const userTestimonials = [
+  {
+    id: "testimonial-1",
+    name: "Alex Johnson",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    feedback: "Fanverse has completely transformed my writing journey. The community is amazing!",
+  },
+  {
+    id: "testimonial-2",
+    name: "Sophia Lee",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
+    feedback: "I found my favorite stories and made lifelong friends here. Highly recommend!",
+  },
+];
+
+// Ensure `newArrivals` and `fanFavorites` are defined
+const newArrivals = [
+  {
+    id: "arrival-1",
+    title: "The Forgotten Kingdom",
+    author: "Emily Carter",
+    authorId: "author-1",
+    cover: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    genre: "Fantasy",
+    excerpt: "A tale of a lost kingdom rediscovered.",
+    rating: 4.8,
+    likes: 1200,
+    reads: 5000,
+  },
+  {
+    id: "arrival-2",
+    title: "Shadows of the Past",
+    author: "Daniel Moore",
+    authorId: "author-2",
+    cover: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
+    genre: "Thriller",
+    excerpt: "Unraveling secrets buried in the past.",
+    rating: 4.5,
+    likes: 950,
+    reads: 4200,
+  },
+  {
+    id: "arrival-3",
+    title: "Echoes of Eternity",
+    author: "Liam Harper",
+    authorId: "author-5",
+    cover: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+    genre: "Sci-Fi",
+    excerpt: "A journey through the fabric of time and space.",
+    rating: 4.7,
+    likes: 980,
+    reads: 4500,
+  },
+  {
+    id: "arrival-4",
+    title: "Beneath the Waves",
+    author: "Sophia Green",
+    authorId: "author-6",
+    cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    genre: "Adventure",
+    excerpt: "Exploring the mysteries of the deep ocean.",
+    rating: 4.6,
+    likes: 870,
+    reads: 3900,
+  },
+];
+
+const fanFavorites = [
+  {
+    id: "favorite-1",
+    title: "The Eternal Flame",
+    author: "Sophia Brown",
+    authorId: "author-3",
+    cover: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    genre: "Romance",
+    excerpt: "A love story that defies time.",
+    rating: 4.9,
+    likes: 1500,
+    reads: 6000,
+  },
+  {
+    id: "favorite-2",
+    title: "The Last Voyage",
+    author: "Michael Scott",
+    authorId: "author-4",
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    genre: "Adventure",
+    excerpt: "An epic journey across uncharted waters.",
+    rating: 4.7,
+    likes: 1100,
+    reads: 4800,
+  },
+  {
+    id: "favorite-3",
+    title: "Winds of Change",
+    author: "Emma White",
+    authorId: "author-7",
+    cover: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
+    genre: "Drama",
+    excerpt: "A tale of resilience and transformation.",
+    rating: 4.8,
+    likes: 1400,
+    reads: 5200,
+  },
+  {
+    id: "favorite-4",
+    title: "Starlight Serenade",
+    author: "James Black",
+    authorId: "author-8",
+    cover: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    genre: "Romance",
+    excerpt: "A love story written in the stars.",
+    rating: 4.9,
+    likes: 1600,
+    reads: 6100,
+  },
+];
+
+const featuredStories = [
+  featuredStoryData,
+  {
+    id: "featured-2",
+    title: "Whispers of the Forest",
+    author: "Lila Summers",
+    authorId: "lila123",
+    cover: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    genre: "Mystery",
+    excerpt: "A haunting melody leads a young girl into the heart of an ancient forest...",
+    rating: 4.7,
+    likes: 980,
+    comments: 200,
+    reads: 4500,
+    editorCommentary: "A beautifully written mystery that keeps you guessing until the very end. Lila Summers crafts a world that is as enchanting as it is eerie."
+  },
+  {
+    id: "featured-3",
+    title: "The Clockmaker's Secret",
+    author: "Ethan Clarke",
+    authorId: "ethan456",
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    genre: "Steampunk",
+    excerpt: "In a city powered by clockwork, one man holds the key to its survival...",
+    rating: 4.8,
+    likes: 1200,
+    comments: 300,
+    reads: 5000,
+    editorCommentary: "Ethan Clarke's steampunk adventure is a masterclass in world-building and storytelling. A must-read for fans of the genre."
+  },
+  {
+    id: "featured-4",
+    title: "Echoes of Eternity",
+    author: "Sophia Bennett",
+    authorId: "sophia789",
+    cover: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+    genre: "Fantasy",
+    excerpt: "A young mage discovers a hidden power that could change the fate of her world...",
+    rating: 4.9,
+    likes: 1500,
+    comments: 250,
+    reads: 5200,
+    editorCommentary: "Sophia Bennett weaves a tale of magic and destiny that captivates from the first page."
+  },
+  {
+    id: "featured-5",
+    title: "Beneath the Waves",
+    author: "Liam Harper",
+    authorId: "liam123",
+    cover: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    genre: "Adventure",
+    excerpt: "An underwater expedition uncovers secrets long buried...",
+    rating: 4.7,
+    likes: 1100,
+    comments: 180,
+    reads: 4800,
+    editorCommentary: "Liam Harper's adventure story is a thrilling dive into the unknown."
+  },
+  {
+    id: "featured-6",
+    title: "Shadows of the Past",
+    author: "Isabella Cruz",
+    authorId: "isabella456",
+    cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
+    genre: "Thriller",
+    excerpt: "A detective must confront her own past to solve a chilling case...",
+    rating: 4.8,
+    likes: 1300,
+    comments: 220,
+    reads: 4900,
+    editorCommentary: "Isabella Cruz delivers a gripping thriller that keeps you on the edge of your seat."
+  },
+  {
+    id: "featured-7",
+    title: "The Forgotten Kingdom",
+    author: "Oliver Stone",
+    authorId: "oliver789",
+    cover: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
+    genre: "Historical Fiction",
+    excerpt: "A historian uncovers the truth about a lost civilization...",
+    rating: 4.6,
+    likes: 1000,
+    comments: 150,
+    reads: 4600,
+    editorCommentary: "Oliver Stone's historical fiction is both enlightening and entertaining."
+  },
+  {
+    id: "featured-8",
+    title: "Celestial Dreams",
+    author: "Emily Rose",
+    authorId: "emily123",
+    cover: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    genre: "Sci-Fi",
+    excerpt: "A journey through the stars reveals the true meaning of home...",
+    rating: 4.9,
+    likes: 1600,
+    comments: 300,
+    reads: 5500,
+    editorCommentary: "Emily Rose's sci-fi epic is a beautifully written exploration of humanity and the cosmos."
+  }
+];
+
 const Index = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [activePrompt, setActivePrompt] = useState(0);
   const controls = useAnimation();
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -286,6 +644,14 @@ const Index = () => {
       transition: { duration: 0.5 }
     });
   }, [activePrompt, controls]);
+
+  useEffect(() => {
+    const autoSlideInterval = setInterval(() => {
+      emblaApi?.scrollNext();
+    }, 5000); // Auto-slide every 5 seconds
+
+    return () => clearInterval(autoSlideInterval);
+  }, [emblaApi]);
 
   const handleSubscribe = () => {
     setIsPremium(true);
@@ -327,13 +693,23 @@ const Index = () => {
                     Creativity Unleashed
                   </Badge>
                   
-                  <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 text-gradient">
-                    Where Stories<br />Come to Life
-                  </h1>
+                  <motion.h1
+                    className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight mb-6 text-gradient"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8 }}
+                  >
+                    FANVERSE
+                  </motion.h1>
                   
-                  <p className="text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl">
+                  <motion.p
+                    className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
                     Join our community of passionate writers and readers. Create immersive worlds, share captivating tales, and discover your next favorite story.
-                  </p>
+                  </motion.p>
                   
                   <div className="flex flex-wrap gap-4">
                     <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 shadow-md hover-lift" asChild onClick={handleStartWriting}>
@@ -439,12 +815,29 @@ const Index = () => {
               >
                 <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
                   <Award className="mr-3 text-amber-500" />
-                  Featured Story
+                  Featured Stories
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Our editors' pick for the best story of the week</p>
+                <p className="text-gray-600 dark:text-gray-400">Our editors' picks for the best stories of the week</p>
               </motion.div>
               
-              <FeaturedStory {...featuredStoryData} />
+              <div className="embla" ref={emblaRef}>
+                <div className="embla__container flex">
+                  {featuredStories.map((story) => (
+                    <div className="embla__slide flex-shrink-0 w-full" key={story.id}>
+                      <FeaturedStory {...story} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="embla__buttons">
+                <button onClick={() => emblaApi?.scrollPrev()} className="embla__button embla__button--prev">
+                  <ArrowLeft />
+                </button>
+                <button onClick={() => emblaApi?.scrollNext()} className="embla__button embla__button--next">
+                  <ArrowRight />
+                </button>
+              </div>
             </div>
           </section>
           
@@ -539,13 +932,13 @@ const Index = () => {
                     <CardContent className="p-6">
                       <ul className="space-y-2">
                         <li className="flex items-start">
-                          <CheckItem text="Rich formatting options" />
+                          Rich formatting options
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="AI writing suggestions" />
+                          AI writing suggestions
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="Auto-save functionality" />
+                          Auto-save functionality
                         </li>
                       </ul>
                     </CardContent>
@@ -568,13 +961,13 @@ const Index = () => {
                     <CardContent className="p-6">
                       <ul className="space-y-2">
                         <li className="flex items-start">
-                          <CheckItem text="Distraction-free reading mode" />
+                          Distraction-free reading mode
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="Font and theme customization" />
+                          Font and theme customization
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="Progress tracking across devices" />
+                          Progress tracking across devices
                         </li>
                       </ul>
                     </CardContent>
@@ -597,13 +990,13 @@ const Index = () => {
                     <CardContent className="p-6">
                       <ul className="space-y-2">
                         <li className="flex items-start">
-                          <CheckItem text="Thoughtful comments and feedback" />
+                          Thoughtful comments and feedback
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="Reading clubs and challenges" />
+                          Reading clubs and challenges
                         </li>
                         <li className="flex items-start">
-                          <CheckItem text="Writing contests with prizes" />
+                          Writing contests with prizes
                         </li>
                       </ul>
                     </CardContent>
@@ -660,73 +1053,73 @@ const Index = () => {
             </div>
           </section>
           
-          <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
+          <section className="py-16 bg-white dark:bg-gray-900">
             <div className="container mx-auto px-4">
-              <Tabs defaultValue="trending" className="mb-12">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-                  <div>
-                    <h2 className="text-3xl font-bold tracking-tight mb-2">
-                      Discover Stories
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl">
-                      Explore our vast library of stories from talented writers around the world
-                    </p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="mb-8"
+              >
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                  <Megaphone className="mr-3 text-purple-500" />
+                  Special Announcements
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">Stay updated with the latest news and events</p>
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {specialAnnouncements.map((announcement) => (
+                  <div key={announcement.id} className="p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+                    <h3 className="text-xl font-bold mb-2">{announcement.title}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">{announcement.description}</p>
+                    <Button variant="link" asChild>
+                      <Link to={announcement.link}>Learn More</Link>
+                    </Button>
                   </div>
-                  <TabsList className="bg-white dark:bg-gray-800">
-                    <TabsTrigger value="trending" className="gap-1.5">
-                      <TrendingUp className="h-4 w-4" />
-                      Trending
-                    </TabsTrigger>
-                    <TabsTrigger value="popular" className="gap-1.5">
-                      <ThumbsUp className="h-4 w-4" />
-                      Popular
-                    </TabsTrigger>
-                    <TabsTrigger value="recommended" className="gap-1.5">
-                      <Sparkles className="h-4 w-4" />
-                      For You
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-                
-                <TabsContent value="trending">
-                  <StoryGrid 
-                    title="Trending Stories" 
-                    description="Stories gaining popularity right now" 
-                    stories={trendingStories} 
-                  />
-                </TabsContent>
-                
-                <TabsContent value="popular">
-                  <StoryGrid 
-                    title="Popular Stories" 
-                    description="Readers' all-time favorites" 
-                    stories={popularStories} 
-                  />
-                </TabsContent>
-                
-                <TabsContent value="recommended">
-                  <StoryGrid 
-                    title="Recommended For You" 
-                    description="Personalized recommendations based on your reading history" 
-                    stories={recommendedStories} 
-                  />
-                </TabsContent>
-              </Tabs>
-              
-              <div className="text-center mt-10">
-                <Button size="lg" variant="outline" className="rounded-full px-8" asChild>
-                  <Link to="/browse">
-                    <Eye className="mr-2 h-5 w-5" />
-                    Browse All Stories
-                  </Link>
-                </Button>
+                ))}
               </div>
             </div>
           </section>
           
-          <section className="py-16">
+          <section className="py-16 bg-white dark:bg-gray-900">
             <div className="container mx-auto px-4">
-              <PremiumFeatureShowcase onSubscribe={openSubscriptionModal} />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="mb-8"
+              >
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                  <BookOpen className="mr-3 text-blue-500" />
+                  New Arrivals
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">Discover the latest stories added to our platform</p>
+              </motion.div>
+
+              <StoryGrid title="New Arrivals" stories={newArrivals} />
+            </div>
+          </section>
+          
+          <section className="py-16 bg-gray-50 dark:bg-gray-800/30">
+            <div className="container mx-auto px-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="mb-8"
+              >
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                  <Heart className="mr-3 text-pink-500" />
+                  Fan Favorites
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">Check out the stories our community loves the most</p>
+              </motion.div>
+
+              <StoryGrid title="Fan Favorites" stories={fanFavorites} />
             </div>
           </section>
           
@@ -762,39 +1155,6 @@ const Index = () => {
         />
       </div>
     </div>
-  );
-};
-
-const CheckItem = ({ text }: { text: string }) => (
-  <>
-    <span className="rounded-full bg-green-100 p-1 mr-2 mt-0.5 dark:bg-green-900/30">
-      <svg className="h-3 w-3 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-      </svg>
-    </span>
-    <span className="text-gray-700 dark:text-gray-300">{text}</span>
-  </>
-);
-
-const Calendar = ({ className }: { className?: string }) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-      <line x1="16" x2="16" y1="2" y2="6" />
-      <line x1="8" x2="8" y1="2" y2="6" />
-      <line x1="3" x2="21" y1="10" y2="10" />
-    </svg>
   );
 };
 
