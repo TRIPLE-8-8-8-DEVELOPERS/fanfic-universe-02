@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
@@ -22,11 +21,11 @@ const AboutUs = () => {
         <div className="container py-8">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 font-serif">
-              About FanFic Universe
+            <h1 className="text-4xl font-bold mb-4 text-center">
+              About Us
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Connecting fans and storytellers through the power of shared imagination.
+            <p className="text-lg text-gray-700 dark:text-gray-300 text-center">
+              We are a platform dedicated to connecting writers and readers through the power of shared imagination.
             </p>
           </div>
 
@@ -34,18 +33,20 @@ const AboutUs = () => {
           <section className="mb-20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">Our Mission</h2>
-                <p className="text-muted-foreground mb-4">
+                <h2 className="text-3xl font-bold mb-4 text-center">
+                  Our Mission
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                   FanFic Universe was created with a simple but powerful mission: to provide a home for fan fiction writers and readers to connect, create, and celebrate the stories they love.
                 </p>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                   We believe that fan fiction is a unique art form that extends and enriches the worlds we love, giving characters new adventures and perspectives that official media might never explore.
                 </p>
-                <p className="text-muted-foreground">
+                <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
                   Our platform is designed to nurture creativity, build community, and elevate fan fiction as a legitimate and valuable form of storytelling and literary expression.
                 </p>
               </div>
-              <div className="relative h-80 rounded-xl overflow-hidden shadow-xl">
+              <div className="relative h-80 rounded-xl overflow-hidden shadow-lg">
                 <img 
                   src="https://images.unsplash.com/photo-1519682577862-22b62b24e493?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80" 
                   alt="Community of writers" 
@@ -57,47 +58,47 @@ const AboutUs = () => {
 
           {/* Stats Section */}
           <section className="mb-20">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-primary text-primary-foreground rounded-xl p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-medium text-lg">Active Members</h3>
-                  <Users className="h-6 w-6" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="bg-gradient-to-br from-purple-500 to-indigo-500 text-white rounded-xl p-8 shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold">Active Members</h3>
+                  <Users className="h-8 w-8" />
                 </div>
-                <p className="text-3xl font-bold mb-1">32,541</p>
-                <p className="text-sm text-primary-foreground/70">
+                <p className="text-4xl font-bold">32,541</p>
+                <p className="text-sm opacity-80">
                   From 142 countries worldwide
                 </p>
               </div>
 
-              <div className="bg-secondary rounded-xl p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-medium text-lg">Stories Written</h3>
-                  <PenTool className="h-6 w-6" />
+              <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-xl p-8 shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold">Stories Written</h3>
+                  <PenTool className="h-8 w-8" />
                 </div>
-                <p className="text-3xl font-bold mb-1">183,752</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-4xl font-bold">183,752</p>
+                <p className="text-sm opacity-80">
                   Across 1,245 different fandoms
                 </p>
               </div>
 
-              <div className="bg-secondary rounded-xl p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-medium text-lg">Words Written</h3>
-                  <BookOpen className="h-6 w-6" />
+              <div className="bg-gradient-to-br from-green-500 to-teal-500 text-white rounded-xl p-8 shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold">Words Written</h3>
+                  <BookOpen className="h-8 w-8" />
                 </div>
-                <p className="text-3xl font-bold mb-1">1.2B+</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-4xl font-bold">1.2B+</p>
+                <p className="text-sm opacity-80">
                   Equivalent to 15,000+ novels
                 </p>
               </div>
 
-              <div className="bg-secondary rounded-xl p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-medium text-lg">Reader Favorites</h3>
-                  <Heart className="h-6 w-6" />
+              <div className="bg-gradient-to-br from-pink-500 to-red-500 text-white rounded-xl p-8 shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-semibold">Reader Favorites</h3>
+                  <Heart className="h-8 w-8" />
                 </div>
-                <p className="text-3xl font-bold mb-1">42.7M</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-4xl font-bold">42.7M</p>
+                <p className="text-sm opacity-80">
                   Stories marked as favorites
                 </p>
               </div>
@@ -106,7 +107,7 @@ const AboutUs = () => {
 
           {/* Our Story Section */}
           <section className="mb-20">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Our Story</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">Our Story</h2>
             <div className="max-w-3xl mx-auto">
               <p className="text-muted-foreground mb-4">
                 FanFic Universe began in 2019 when a group of passionate fan fiction writers and readers came together with a shared vision: to create a platform that truly understood and celebrated fan fiction as an art form.
@@ -125,7 +126,10 @@ const AboutUs = () => {
 
           {/* Team Section */}
           <section className="mb-20">
-            <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">Meet Our Team</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">Our Team</h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 text-center mb-8">
+              Meet the passionate individuals behind our platform, dedicated to empowering creators and connecting communities.
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 {
@@ -171,7 +175,7 @@ const AboutUs = () => {
 
           {/* Values Section */}
           <section className="mb-20">
-            <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">Our Values</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">Our Values</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {

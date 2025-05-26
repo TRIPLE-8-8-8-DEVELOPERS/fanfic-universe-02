@@ -694,7 +694,7 @@ const Index = () => {
                   </Badge>
                   
                   <motion.h1
-                    className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight mb-6 text-gradient"
+                    className="text-6xl md:text-8xl lg:text-9xl font-extrabold tracking-tight mb-6 text-gradient text-center"
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.8 }}
@@ -705,7 +705,7 @@ const Index = () => {
                   <motion.p
                     className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl"
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 1, y: 5 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                   >
                     Join our community of passionate writers and readers. Create immersive worlds, share captivating tales, and discover your next favorite story.
@@ -813,11 +813,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <Award className="mr-3 text-amber-500" />
                   Featured Stories
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Our editors' picks for the best stories of the week</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Our editors' picks for the best stories of the week</p>
               </motion.div>
               
               <div className="embla" ref={emblaRef}>
@@ -850,11 +850,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <Star className="mr-3 text-amber-500" />
                   Top Authors
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Discover talented writers making waves in our community</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Discover talented writers making waves in our community</p>
               </motion.div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -1015,11 +1015,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <Calendar className="mr-3 text-purple-500" />
                   Upcoming Events
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Join these exciting events to improve your skills and connect with other writers</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Join these exciting events to improve your skills and connect with other writers</p>
               </motion.div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1062,11 +1062,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <Megaphone className="mr-3 text-purple-500" />
                   Special Announcements
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Stay updated with the latest news and events</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Stay updated with the latest news and events</p>
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1092,11 +1092,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <BookOpen className="mr-3 text-blue-500" />
                   New Arrivals
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Discover the latest stories added to our platform</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Discover the latest stories added to our platform</p>
               </motion.div>
 
               <StoryGrid title="New Arrivals" stories={newArrivals} />
@@ -1112,11 +1112,11 @@ const Index = () => {
                 viewport={{ once: true }}
                 className="mb-8"
               >
-                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center">
+                <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center justify-center">
                   <Heart className="mr-3 text-pink-500" />
                   Fan Favorites
                 </h2>
-                <p className="text-gray-600 dark:text-gray-400">Check out the stories our community loves the most</p>
+                <p className="text-gray-600 dark:text-gray-400 text-center">Check out the stories our community loves the most</p>
               </motion.div>
 
               <StoryGrid title="Fan Favorites" stories={fanFavorites} />

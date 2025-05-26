@@ -10,6 +10,7 @@ import { mockJobs } from "@/data/mockJobsData";
 import { JobType } from "@/types/job";
 import { Link } from "react-router-dom";
 import { SeedDataButton } from "@/scripts/seedData";
+const backgroundImage = '/jobs-background.jpg';
 
 const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,14 +31,17 @@ const Jobs = () => {
   const featuredJobs = mockJobs.filter(job => job.featured);
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-6">
+    <div
+      className="container mx-auto py-8 px-4 md:px-6 bg-cover bg-center"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
       <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Creative Opportunities</h1>
-          <p className="text-muted-foreground">Discover exciting job opportunities in the FanVerse community</p>
+          <h1 className="text-4xl font-extrabold mb-2 text-white drop-shadow-lg">Creative Opportunities</h1>
+          <p className="text-lg text-gray-200 drop-shadow-md">Discover exciting job opportunities in the FanVerse community</p>
         </div>
         <div className="flex items-center">
-          <Button>
+          <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-lg hover:from-purple-600 hover:to-indigo-600">
             <Briefcase className="mr-2 h-4 w-4" />
             Post a Job
           </Button>
@@ -47,7 +51,7 @@ const Jobs = () => {
       </div>
       
       {/* Search and filter section */}
-      <Card className="mb-8">
+      <Card className="mb-8 bg-opacity-80 backdrop-blur-md">
         <CardContent className="p-6">
           <div className="grid gap-4 md:grid-cols-4">
             <div className="md:col-span-2">
@@ -101,7 +105,7 @@ const Jobs = () => {
       {/* Featured Jobs section */}
       {featuredJobs.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-3xl font-bold mb-4 flex items-center text-white drop-shadow-lg">
             <Star className="mr-2 h-5 w-5 text-amber-500" />
             Featured Opportunities
           </h2>
@@ -114,16 +118,16 @@ const Jobs = () => {
       )}
       
       {/* All Jobs section */}
-      <h2 className="text-2xl font-bold mb-4">All Opportunities ({filteredJobs.length})</h2>
+      <h2 className="text-3xl font-bold mb-4 text-white drop-shadow-lg">All Opportunities ({filteredJobs.length})</h2>
       <div className="grid gap-6">
         {filteredJobs.length > 0 ? (
           filteredJobs.map((job) => <JobCard key={job.id} job={job} />)
         ) : (
-          <Card>
+          <Card className="bg-opacity-80 backdrop-blur-md">
             <CardContent className="flex flex-col items-center justify-center p-8 text-center">
               <Briefcase className="h-12 w-12 text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No jobs found</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">No jobs found</h3>
+              <p className="text-gray-300">
                 No opportunities match your current filters. Try adjusting your search criteria.
               </p>
             </CardContent>
@@ -137,96 +141,51 @@ const Jobs = () => {
 // Featured Job Card Component
 const FeaturedJobCard = ({ job }: { job: JobType }) => (
   <Card className="overflow-hidden border-2 border-amber-200 dark:border-amber-900/40 hover:shadow-md transition-all duration-200">
-    <div className="bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20 p-4 flex items-center">
-      <div className="w-12 h-12 rounded-md bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden mr-3 shadow-sm">
-        <img src={job.logo} alt={job.company} className="w-10 h-10 object-contain" />
+    <Link to={`/jobs/${job.id}`} className="block">
+      <div className="bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20 p-4 flex items-center">
+        <div className="w-12 h-12 rounded-md bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden mr-3 shadow-sm">
+          <img src={job.logo} alt={`${job.company} logo`} className="w-full h-full object-cover" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">{job.title}</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{job.company}</p>
+        </div>
       </div>
-      <div>
-        <h3 className="font-semibold line-clamp-1">{job.title}</h3>
-        <p className="text-sm text-muted-foreground">{job.company}</p>
-      </div>
-    </div>
+    </Link>
     <CardContent className="p-4">
-      <div className="space-y-2 mb-3">
-        <div className="flex items-center text-sm">
-          <MapPin className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
-          <span>{job.location}</span>
-        </div>
-        <div className="flex items-center text-sm">
-          <Clock className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
-          <span>Posted {job.posted}</span>
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-1.5 mt-3">
-        <Badge variant="secondary">{job.type}</Badge>
-        <Badge variant="outline">{job.category}</Badge>
-        {job.salary && (
-          <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400">
-            {job.salary}
-          </Badge>
-        )}
-      </div>
+      <p className="text-sm text-gray-700 dark:text-gray-300">{job.description}</p>
     </CardContent>
-    <CardFooter className="p-4 pt-0 flex justify-end">
-      <Button size="sm" variant="secondary" asChild>
-        <Link to={`/jobs/${job.id}`}>View Details</Link>
-      </Button>
+    <CardFooter className="p-4 flex justify-between items-center">
+      <span className="text-sm text-gray-500 dark:text-gray-400">{job.location}</span>
+      <Link to={`/jobs/${job.id}`} className="text-primary hover:underline">
+        View Details
+      </Link>
     </CardFooter>
   </Card>
 );
 
 // Job Card Component
 const JobCard = ({ job }: { job: JobType }) => (
-  <Card className="hover:shadow-md transition-all duration-200">
-    <CardContent className="p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start md:items-center gap-4">
-          <div className="w-12 h-12 rounded-md bg-white dark:bg-gray-800 flex items-center justify-center overflow-hidden shadow-sm">
-            <img src={job.logo} alt={job.company} className="w-10 h-10 object-contain" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">{job.title}</h3>
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center">
-                <Briefcase className="h-3.5 w-3.5 mr-1" />
-                {job.company}
-              </span>
-              <span className="hidden md:inline-block">•</span>
-              <span className="flex items-center">
-                <MapPin className="h-3.5 w-3.5 mr-1" />
-                {job.location}
-              </span>
-              <span className="hidden md:inline-block">•</span>
-              <span className="flex items-center">
-                <Calendar className="h-3.5 w-3.5 mr-1" />
-                Deadline: {job.deadline}
-              </span>
-            </div>
-          </div>
+  <Card className="overflow-hidden border hover:shadow-md transition-all duration-200">
+    <Link to={`/jobs/${job.id}`} className="block">
+      <div className="p-4 flex items-center">
+        <div className="w-12 h-12 rounded-md bg-white flex items-center justify-center overflow-hidden mr-3 shadow-sm">
+          <img src={job.logo} alt={`${job.company} logo`} className="w-full h-full object-cover" />
         </div>
-        <div className="flex flex-wrap gap-2 md:justify-end">
-          <Badge variant="secondary">{job.type}</Badge>
-          <Badge variant="outline">{job.category}</Badge>
-          {job.salary && (
-            <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400">
-              {job.salary}
-            </Badge>
-          )}
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">{job.title}</h3>
+          <p className="text-sm text-gray-600">{job.company}</p>
         </div>
       </div>
-      <Separator className="my-4" />
-      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{job.description}</p>
-      <div className="flex flex-wrap gap-1.5 mt-2">
-        {job.tags?.map((tag, index) => (
-          <Badge key={index} variant="outline" className="text-xs bg-background">{tag}</Badge>
-        ))}
-      </div>
+    </Link>
+    <CardContent className="p-4">
+      <p className="text-sm text-gray-700">{job.description}</p>
     </CardContent>
-    <CardFooter className="p-6 pt-0 flex justify-between items-center">
-      <span className="text-sm text-muted-foreground">Posted {job.posted}</span>
-      <Button asChild>
-        <Link to={`/jobs/${job.id}`}>View Details</Link>
-      </Button>
+    <CardFooter className="p-4 flex justify-between items-center">
+      <span className="text-sm text-gray-500">{job.location}</span>
+      <Link to={`/jobs/${job.id}`} className="text-primary hover:underline">
+        View Details
+      </Link>
     </CardFooter>
   </Card>
 );

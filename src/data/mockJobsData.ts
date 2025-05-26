@@ -1,4 +1,3 @@
-
 import { JobType } from "@/types/job";
 
 export const mockJobs: JobType[] = [
@@ -59,9 +58,10 @@ export const mockJobs: JobType[] = [
     ],
     salary: "$55,000 - $65,000/year",
     posted: "1 week ago",
-    deadline: "May 30, 2023",
-    logo: "/placeholder.svg",
-    tags: ["Editing", "Fandoms", "Content Curation", "Writer Development"]
+    deadline: "Jun 20, 2023",
+    logo: "/og-image.png",
+    featured: false,
+    tags: ["Editing", "Fan Fiction", "Fandoms", "Storytelling"]
   },
   {
     id: "job-3",
