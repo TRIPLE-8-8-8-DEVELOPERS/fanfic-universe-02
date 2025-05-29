@@ -160,7 +160,7 @@ const Browse = () => {
       <main className="flex-grow pt-24">
         <div className="container py-8">
           <div className="mb-12">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4 font-serif">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 font-serif text-center">
               Browse Stories
             </h1>
             <p className="text-muted-foreground max-w-2xl">
@@ -182,7 +182,7 @@ const Browse = () => {
             </div>
 
             <div>
-              <h3 className="mb-3 font-medium">Popular Genres</h3>
+              <h3 className="mb-3 font-medium font-bold">Popular Genres</h3>
               <div className="flex flex-wrap gap-2">
                 {genres.map((genre) => (
                   <Badge
@@ -198,7 +198,7 @@ const Browse = () => {
             </div>
 
             <div>
-              <h3 className="mb-3 font-medium">Popular Fandoms</h3>
+              <h3 className="mb-3 font-medium font-bold">Popular Fandoms</h3>
               <div className="flex flex-wrap gap-2">
                 {fandoms.map((fandom) => (
                   <Badge
@@ -246,7 +246,7 @@ const Browse = () => {
             <TabsContent value="newest" className="m-0">
               {filteredStories.length === 0 ? (
                 <div className="py-20 text-center bg-muted rounded-xl">
-                  <h3 className="text-xl font-bold mb-2">No stories found</h3>
+                  <h3 className="text-xl font-bold mb-2 text-center">No stories found</h3>
                   <p className="text-muted-foreground max-w-md mx-auto mb-6">
                     Try adjusting your search or filter criteria to find more stories.
                   </p>

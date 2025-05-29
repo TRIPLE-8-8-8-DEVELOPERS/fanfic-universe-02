@@ -78,7 +78,7 @@ const MainSidebar = ({ currentPath = '/' }: MainSidebarProps) => {
     <div 
       className={cn(
         "h-full border-r bg-gradient-to-b from-background to-background/95 transition-all duration-300 flex flex-col relative flex-shrink-0 shadow-md dark:border-r-gray-800",
-        collapsed ? "w-0 md:w-16 opacity-0 md:opacity-100" : "w-72",
+        collapsed ? "w-0 md:w-16 opacity-0 md:opacity-100" : "w-72 sm:w-56",
         isMobile && !collapsed ? "fixed z-50 shadow-xl" : ""
       )}
     >

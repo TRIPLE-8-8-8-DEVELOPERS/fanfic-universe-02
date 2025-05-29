@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 
-const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const Footer: React.FC<FooterProps> = ({ className }) => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
@@ -39,7 +43,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-secondary py-4 w-full text-xs">
+    <footer className={`bg-secondary py-4 w-full text-xs ${className || ""}`}>
       <div className="container content-container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Logo and Newsletter */}

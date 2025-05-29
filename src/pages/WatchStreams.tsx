@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { useLocation } from "react-router-dom";
 
 const WatchStreams = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,6 +14,7 @@ const WatchStreams = () => {
     { user: "StoryWeaver", message: "Excited to learn about character development!" },
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const location = useLocation();
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -104,16 +104,6 @@ const WatchStreams = () => {
   ];
 
   return (
-    <div
-      className="min-h-screen flex flex-col animate-fade-in"
-      style={{
-        backgroundImage: "url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
-    >
-      <Header />
       <main className="flex-1 container py-8 bg-black bg-opacity-90 rounded-lg shadow-lg text-white animate-slide-up">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div className="animate-fade-in">
@@ -414,8 +404,6 @@ const WatchStreams = () => {
         </div>
 
       </main>
-      <Footer />
-    </div>
   );
 };
 

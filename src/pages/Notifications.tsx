@@ -366,7 +366,7 @@ const Notifications = () => {
           </TabsContent>
         </Tabs>
       </main>
-      <Footer />
+      <Footer className="fixed bottom-0 w-full" />
     </>
   );
 };

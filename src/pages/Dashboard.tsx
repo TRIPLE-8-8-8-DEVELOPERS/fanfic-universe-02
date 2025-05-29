@@ -133,7 +133,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <MainSidebar currentPath="/dashboard" />
       <div className="flex-1 flex flex-col">
         {/* Dashboard Header */}
         <div className="relative overflow-hidden border-b">

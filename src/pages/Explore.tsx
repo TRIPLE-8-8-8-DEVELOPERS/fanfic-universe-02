@@ -123,10 +123,10 @@ const Explore = () => {
 				<div className="container py-8">
 					{/* Hero Section */}
 					<div className="mb-12">
-						<h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gradient text-center">
+						<h1 className="text-5xl md:text-6xl font-extrabold mb-6 text-gradient text-center font-bold">
 							Explore Stories
 						</h1>
-						<p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl text-center">
+						<p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl text-center font-bold">
 							Discover new worlds, characters, and adventures. Find your next
 							favorite story from our curated collections.
 						</p>

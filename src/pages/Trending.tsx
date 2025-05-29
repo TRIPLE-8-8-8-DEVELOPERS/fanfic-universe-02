@@ -84,6 +84,150 @@ const trendingStories = [
     likes: 9865,
     reads: 68421,
   },
+  {
+    id: "7",
+    title: "The Alchemist's Apprentice",
+    author: "Isabelle Rossi",
+    authorId: "isabelle",
+    cover: "https://images.unsplash.com/photo-1567095761054-7a02e69e5c4c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1773&q=80",
+    genre: "Fantasy",
+    excerpt: "In a world where alchemy is both science and magic, young Elias becomes the apprentice of a legendary alchemist, only to uncover a secret that could shatter the foundations of their society.",
+    rating: 4.6,
+    likes: 8901,
+    reads: 63289,
+  },
+  {
+    id: "8",
+    title: "Cyberpunk Dreams",
+    author: "Kenji Tanaka",
+    authorId: "kenji",
+    cover: "https://images.unsplash.com/photo-1603481588278-c360dda996ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    genre: "Sci-Fi",
+    excerpt: "In the neon-lit streets of Neo-Tokyo, a hacker known as 'Zero' discovers a conspiracy that reaches the highest levels of corporate power, forcing him to fight for his survival and the future of the city.",
+    rating: 4.8,
+    likes: 11234,
+    reads: 78901,
+  },
+  {
+    id: "9",
+    title: "Love in the Time of Algorithms",
+    author: "Aisha Patel",
+    authorId: "aisha",
+    cover: "https://images.unsplash.com/photo-1543123820-c5238a576449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+    genre: "Romance",
+    excerpt: "When Maya signs up for a new dating app that uses advanced algorithms to find the perfect match, she never expects to fall for the app's mysterious creator.",
+    rating: 4.5,
+    likes: 7654,
+    reads: 54321,
+  },
+  {
+    id: "10",
+    title: "The Last Starfarer",
+    author: "Javier Rodriguez",
+    authorId: "javier",
+    cover: "https://images.unsplash.com/photo-1560762429-c96d4b89e1fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Sci-Fi",
+    excerpt: "Centuries after humanity abandoned Earth, a lone starfarer discovers a signal from the lost planet, leading him on a perilous journey to uncover the truth behind our origins.",
+    rating: 4.7,
+    likes: 9210,
+    reads: 67890,
+  },
+  {
+    id: "11",
+    title: "The Haunting of Blackwood Manor",
+    author: "Emily Carter",
+    authorId: "emily",
+    cover: "https://images.unsplash.com/photo-1571175443883-4156534f69ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Horror",
+    excerpt: "When Sarah inherits her grandmother's estate, Blackwood Manor, she soon discovers that the house is haunted by a dark presence that seeks to claim her soul.",
+    rating: 4.4,
+    likes: 6543,
+    reads: 43210,
+  },
+  {
+    id: "12",
+    title: "The Secret Life of Garden Gnomes",
+    author: "Thomas Green",
+    authorId: "thomas",
+    cover: "https://images.unsplash.com/photo-1542779283-744953f17a05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Fantasy",
+    excerpt: "Discover the hidden world of garden gnomes, where they wage a secret war against squirrels, slugs, and other garden pests, all while trying to maintain their cheerful facade.",
+    rating: 4.6,
+    likes: 8765,
+    reads: 56789,
+  },
+  {
+    id: "13",
+    title: "The City of Shifting Sands",
+    author: "Layla Hassan",
+    authorId: "layla",
+    cover: "https://images.unsplash.com/photo-1547754343-996904c99266?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Adventure",
+    excerpt: "Join young archaeologist Zara on a thrilling expedition to uncover the secrets of a lost city buried beneath the shifting sands of the Sahara Desert.",
+    rating: 4.5,
+    likes: 7890,
+    reads: 65432,
+  },
+  {
+    id: "14",
+    title: "The Witch's Familiar",
+    author: "Oliver Blackwood",
+    authorId: "oliver",
+    cover: "https://images.unsplash.com/photo-1507524884996-ff0a59049778?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Fantasy",
+    excerpt: "In a world where witches are feared and hunted, a young boy named Toby discovers he is the chosen familiar of a powerful witch, destined to protect her from the forces of darkness.",
+    rating: 4.7,
+    likes: 9012,
+    reads: 76543,
+  },
+  {
+    id: "15",
+    title: "The Quantum Paradox",
+    author: "Dr. Aris Thorne",
+    authorId: "aris",
+    cover: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+    genre: "Sci-Fi",
+    excerpt: "When a team of scientists creates a machine that can travel through time, they accidentally unleash a quantum paradox that threatens to unravel the fabric of reality.",
+    rating: 4.8,
+    likes: 10123,
+    reads: 87654,
+  },
+  {
+   id: "16",
+    title: "The Shadow Thief",
+    author: "Seraphina Moon",
+    authorId: "seraphina",
+    cover: "https://images.unsplash.com/photo-1533622059548-b6617e3915b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1935&q=80",
+    genre: "Mystery",
+    excerpt: "In the dark alleys of Victorian London, a mysterious thief known as 'The Shadow' is stealing priceless artifacts, leaving Inspector Davies to solve the case before it's too late.",
+    rating: 4.6,
+    likes: 8234,
+    reads: 61234,
+  },
+  {
+    id: "17",
+    title: "The Dragon Rider's Daughter",
+    author: "Anya Petrova",
+    authorId: "anya",
+    cover: "https://images.unsplash.com/photo-1677495494971-253f7b467899?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+    genre: "Fantasy",
+    excerpt: "Elara, the daughter of a legendary dragon rider, must embark on a perilous quest to save her father and protect the last dragon eggs from falling into the wrong hands.",
+    rating: 4.9,
+    likes: 11456,
+    reads: 92345,
+  },
+  {
+    id: "18",
+    title: "Echoes from the Void",
+    author: "Ethan Cole",
+    authorId: "ethan",
+    cover: "https://images.unsplash.com/photo-1616133284399-d40149907145?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
+    genre: "Horror",
+    excerpt: "When a group of deep-space explorers stumbles upon a derelict spaceship, they soon realize that they are not alone, and something sinister is lurking in the shadows.",
+    rating: 4.4,
+    likes: 6789,
+    reads: 54321,
+  },
 ];
 
 // Filter categories
@@ -149,8 +293,8 @@ const Trending = () => {
         <div className="container content-container py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-serif flex items-center gap-2">
-                <TrendingUp className="h-8 w-8 text-primary" /> 
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-serif flex items-center gap-2 text-center">
+                <TrendingUp className="h-8 w-8 text-primary" />
                 Trending Stories
               </h1>
               <p className="text-muted-foreground">
@@ -176,7 +320,7 @@ const Trending = () => {
 
         {/* Time period selection */}
         <div className="mb-8">
-          <h3 className="mb-3 font-medium">Trending in:</h3>
+          <h3 className="mb-3 font-medium font-bold">Trending in:</h3>
           <div className="flex flex-wrap gap-2">
             {timePeriods.map((period) => (
               <Badge
@@ -193,7 +337,7 @@ const Trending = () => {
 
         {/* Categories */}
         <div className="mb-8">
-          <h3 className="mb-3 font-medium">Categories</h3>
+          <h3 className="mb-3 font-medium font-bold">Categories</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <Badge
@@ -225,7 +369,7 @@ const Trending = () => {
           <TabsContent value="rising" className="m-0">
             {filteredStories.length === 0 ? (
               <div className="py-20 text-center bg-muted rounded-xl">
-                <h3 className="text-xl font-bold mb-2">No stories found</h3>
+                <h3 className="text-xl font-bold mb-2 text-center">No stories found</h3>
                 <p className="text-muted-foreground max-w-md mx-auto mb-6">
                   Try adjusting your search or filter criteria to find more stories.
                 </p>
@@ -336,7 +480,7 @@ const Trending = () => {
             <Card className="dashboard-card">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">Total Reads</h3>
+                  <h3 className="font-medium font-bold">Total Reads</h3>
                   <Badge variant="outline" className="rounded-full">This Week</Badge>
                 </div>
                 <p className="dashboard-stat">457,892</p>
@@ -347,7 +491,7 @@ const Trending = () => {
             <Card className="dashboard-card">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">New Stories</h3>
+                  <h3 className="font-medium font-bold">New Stories</h3>
                   <Badge variant="outline" className="rounded-full">This Week</Badge>
                 </div>
                 <p className="dashboard-stat">1,245</p>
@@ -358,7 +502,7 @@ const Trending = () => {
             <Card className="dashboard-card">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium">Active Users</h3>
+                  <h3 className="font-medium font-bold">Active Users</h3>
                   <Badge variant="outline" className="rounded-full">Now</Badge>
                 </div>
                 <p className="dashboard-stat">12,678</p>

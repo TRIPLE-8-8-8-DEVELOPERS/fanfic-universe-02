@@ -177,9 +177,10 @@ const Friends = () => {
   return (
     <>
       <Header />
-      <main className="container py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Friends</h1>
+      <div className="container flex flex-col min-h-screen">
+        <main className="py-12">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">Friends</h1>
           <p className="text-muted-foreground">
             Connect with other users and manage your friend requests
           </p>
@@ -322,10 +323,11 @@ const Friends = () => {
                 </div>
               )
             )}
-          </TabsContent>
-        </Tabs>
-      </main>
-      <Footer />
+            </TabsContent>
+          </Tabs>
+        </main>
+        <Footer className="mt-auto"/>
+      </div>
     </>
   );
 };
