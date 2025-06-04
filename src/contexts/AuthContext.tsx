@@ -61,11 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       const { data: { session: currentSession } } = await getSession();
+      console.log('refreshSession: currentSession', currentSession);
       setSession(currentSession);
       setUser(currentSession?.user || null);
       
       if (currentSession?.user) {
-        await refreshProfile();
+        if (user) {
+          await refreshProfile();
+        }
       } else {
         setProfile(null);
       }
@@ -73,6 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.error('Error refreshing session:', error);
       toast.error('Failed to refresh authentication session');
     } finally {
+      console.log("refreshSession: setIsLoading(false)");
       setIsLoading(false);
     }
   };
@@ -136,16 +140,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
-        console.log('Auth state changed:', event, currentSession?.user?.id);
+        console.log('Auth state changed:', event, currentSession?.user?.id, currentSession);
+        console.log('Auth state changed: currentSession', currentSession);
         setSession(currentSession);
         setUser(currentSession?.user || null);
         
         // Use setTimeout to prevent Supabase auth system callback deadlock
         if (currentSession?.user) {
-          setTimeout(async () => {
-            await refreshProfile();
-            setIsLoading(false);
-          }, 0);
+          await refreshProfile();
+          setIsLoading(false);
         } else {
           setProfile(null);
           setIsLoading(false);

@@ -1,10 +1,11 @@
-
 import { supabase } from '../client';
+import type { Database } from '../types';
+import { Tables } from '../types';
 
 // Message helper functions
 export async function getConversations(userId: string) {
   // Get the latest message from each conversation
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from('messages')
     .select(`
       id,
@@ -26,19 +27,20 @@ export async function getConversations(userId: string) {
   
   // Group messages by conversation (unique sender-receiver pairs)
   const conversations = {};
+  if (!data) return { data: null, error };
   data.forEach(message => {
     const isOutgoing = message.sender_id === userId;
     const otherUserId = isOutgoing ? message.receiver_id : message.sender_id;
-    const otherUser = isOutgoing ? message.receiver : message.sender;
+    const otherUser = isOutgoing ? message.receiver as unknown as Tables<'profiles'> : message.sender as unknown as Tables<'profiles'>;
     
     if (!conversations[otherUserId]) {
       conversations[otherUserId] = {
         id: otherUserId,
         user: {
-          id: otherUser.id,
-          name: otherUser.display_name || otherUser.username,
-          username: otherUser.username,
-          avatar: otherUser.avatar_url,
+          id: otherUser?.id,
+          name: otherUser?.display_name || otherUser?.username,
+          username: otherUser?.username,
+          avatar: otherUser?.avatar_url,
         },
         messages: [],
         lastMessage: message.content,
@@ -61,7 +63,7 @@ export async function getConversations(userId: string) {
 }
 
 export async function getMessages(userId: string, otherUserId: string) {
-  return (supabase as any)
+  return supabase
     .from('messages')
     .select(`
       id,
@@ -76,7 +78,7 @@ export async function getMessages(userId: string, otherUserId: string) {
 }
 
 export async function sendMessage(senderId: string, receiverId: string, content: string) {
-  return (supabase as any)
+  return supabase
     .from('messages')
     .insert({
       sender_id: senderId,
@@ -87,7 +89,7 @@ export async function sendMessage(senderId: string, receiverId: string, content:
 }
 
 export async function markMessagesAsRead(userId: string, otherUserId: string) {
-  return (supabase as any)
+  return supabase
     .from('messages')
     .update({ read: true })
     .eq('sender_id', otherUserId)
@@ -96,7 +98,7 @@ export async function markMessagesAsRead(userId: string, otherUserId: string) {
 }
 
 export async function getUnreadMessageCount(userId: string) {
-  const { count, error } = await (supabase as any)
+  const { count, error } = await supabase
     .from('messages')
     .select('id', { count: 'exact', head: true })
     .eq('receiver_id', userId)

@@ -20,17 +20,22 @@ export async function getStoryById(storyId: string) {
 }
 
 export async function getUserStories(userId: string) {
-  return supabase
+  console.log("getUserStories: userId:", userId);
+  const result = supabase
     .from('stories')
     .select('*')
     .eq('author_id', userId)
     .order('created_at', { ascending: false });
+  console.log("getUserStories: result:", result);
+  return result;
 }
 
 export async function createStory(storyData: any) {
-  return supabase
+  const result = supabase
     .from('stories')
     .insert(storyData);
+  console.log("createStory result:", result);
+  return result;
 }
 
 export async function updateStory(storyId: string, updates: any) {

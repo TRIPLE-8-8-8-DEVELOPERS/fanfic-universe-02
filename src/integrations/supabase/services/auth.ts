@@ -3,7 +3,7 @@ import { supabase } from '../client';
 
 // Auth helper functions
 export async function signUp(email: string, password: string, userData: { username: string, name?: string }) {
-  return supabase.auth.signUp({
+  const response = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -13,6 +13,8 @@ export async function signUp(email: string, password: string, userData: { userna
       }
     }
   });
+  console.log('Sign up response:', response);
+  return response;
 }
 
 export async function signIn(email: string, password: string) {
@@ -39,9 +41,13 @@ export async function updatePassword(password: string) {
 }
 
 export async function getCurrentUser() {
-  return supabase.auth.getUser();
+  const user = await supabase.auth.getUser();
+  console.log("getCurrentUser: user:", user);
+  return user;
 }
 
 export async function getSession() {
-  return supabase.auth.getSession();
+  const session = await supabase.auth.getSession();
+  console.log("getSession: session:", session);
+  return session;
 }

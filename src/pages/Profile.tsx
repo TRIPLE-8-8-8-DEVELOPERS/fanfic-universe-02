@@ -69,9 +69,23 @@ const Profile = () => {
   const isOwnProfile = !usernameParam;
   
   // Fetch profile data of the user whose profile we're viewing
+  console.log("Before profile query:");
+  console.log("authLoading:", authLoading);
+  console.log("isOwnProfile:", isOwnProfile);
+  console.log("currentUserProfile?.username:", currentUserProfile?.username);
+  console.log("usernameParam:", usernameParam);
   const { data: profileData, isLoading: profileLoading, error: profileError } = useQuery({
     queryKey: ['profile', usernameParam || currentUserProfile?.username],
     queryFn: async () => {
+      console.log("Fetching profile data...");
+      console.log("isOwnProfile:", isOwnProfile);
+      console.log("usernameParam:", usernameParam);
+      console.log("currentUserProfile:", currentUserProfile);
+      console.log("currentUserProfile?.id:", currentUserProfile?.id);
+      
+      // Log the current user ID
+      console.log("Profile: user?.id:", user?.id);
+
       if (isOwnProfile) {
         return currentUserProfile;
       }
@@ -89,13 +103,16 @@ const Profile = () => {
       
       return data;
     },
-    enabled: !authLoading && (isOwnProfile ? !!currentUserProfile : !!usernameParam),
+    enabled: !authLoading && (isOwnProfile ? !!(currentUserProfile?.username) : !!usernameParam),
   });
-  
+  console.log("profile query enabled:", !authLoading && (isOwnProfile ? !!(currentUserProfile?.username) : !!usernameParam));
   // Fetch user's stories
   const { data: userStories, isLoading: storiesLoading } = useQuery({
     queryKey: ['userStories', profileData?.id],
     queryFn: async () => {
+      console.log("Fetching user stories...");
+      // Log the profile data ID
+      console.log("Profile: profileData?.id:", profileData?.id);
       if (!profileData?.id) return [];
       
       const { data, error } = await supabase
@@ -113,11 +130,13 @@ const Profile = () => {
     },
     enabled: !!profileData?.id,
   });
+  console.log("userStories query enabled:", !!profileData?.id);
   
   // Fetch user's reading list
   const { data: readingList, isLoading: readingListLoading } = useQuery({
     queryKey: ['readingList', profileData?.id],
     queryFn: async () => {
+      console.log("Fetching reading list...");
       if (!profileData?.id) return [];
       
       // Get the user's reading lists
@@ -173,6 +192,7 @@ const Profile = () => {
     },
     enabled: !!profileData?.id,
   });
+  console.log("readingList query enabled:", !!profileData?.id);
   
   // Calculate user stats
   const userStats = {

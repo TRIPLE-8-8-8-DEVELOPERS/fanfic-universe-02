@@ -1,9 +1,8 @@
-
 import { supabase } from '../client';
+import type { Database } from '../types';
 
 export async function getNotifications(userId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .select(`
       id,
@@ -21,16 +20,14 @@ export async function getNotifications(userId: string) {
 }
 
 export async function markNotificationAsRead(notificationId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .update({ read: true })
     .eq('id', notificationId);
 }
 
 export async function markAllNotificationsAsRead(userId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .update({ read: true })
     .eq('user_id', userId)
@@ -38,16 +35,14 @@ export async function markAllNotificationsAsRead(userId: string) {
 }
 
 export async function deleteNotification(notificationId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .delete()
     .eq('id', notificationId);
 }
 
 export async function getUnreadNotificationCount(userId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  const { count, error } = await (supabase as any)
+  const { count, error } = await supabase
     .from('notifications')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', userId)
@@ -57,8 +52,7 @@ export async function getUnreadNotificationCount(userId: string) {
 }
 
 export async function createFriendRequestNotification(userId: string, actorId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .insert({
       user_id: userId,
@@ -70,8 +64,7 @@ export async function createFriendRequestNotification(userId: string, actorId: s
 }
 
 export async function createFriendAcceptedNotification(userId: string, actorId: string) {
-  // Using explicit type cast to any to bypass TypeScript restrictions
-  return (supabase as any)
+  return supabase
     .from('notifications')
     .insert({
       user_id: userId,
