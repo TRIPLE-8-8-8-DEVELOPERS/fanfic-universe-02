@@ -75,35 +75,26 @@ const Profile = () => {
   console.log("currentUserProfile?.username:", currentUserProfile?.username);
   console.log("usernameParam:", usernameParam);
   const { data: profileData, isLoading: profileLoading, error: profileError } = useQuery({
-    queryKey: ['profile', usernameParam || currentUserProfile?.username],
+    queryKey: ['profile', usernameParam || currentUserProfile?.username || user?.id],
     queryFn: async () => {
-      console.log("Fetching profile data...");
-      console.log("isOwnProfile:", isOwnProfile);
-      console.log("usernameParam:", usernameParam);
-      console.log("currentUserProfile:", currentUserProfile);
-      console.log("currentUserProfile?.id:", currentUserProfile?.id);
-      
-      // Log the current user ID
-      console.log("Profile: user?.id:", user?.id);
-
       if (isOwnProfile) {
         return currentUserProfile;
       }
-      
-      // Fetch profile by username
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('username', usernameParam)
+        .eq('username', usernameParam || user?.id)
         .single();
-        
+
       if (error) {
+        console.error('Error fetching profile:', error);
         throw error;
       }
-      
+
       return data;
     },
-    enabled: !authLoading && (isOwnProfile ? !!(currentUserProfile?.username) : !!usernameParam),
+    enabled: !authLoading && !!(usernameParam || currentUserProfile?.username || user?.id),
   });
   console.log("profile query enabled:", !authLoading && (isOwnProfile ? !!(currentUserProfile?.username) : !!usernameParam));
   // Fetch user's stories

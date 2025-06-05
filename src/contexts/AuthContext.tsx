@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { 
@@ -97,26 +96,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getProfile = async (): Promise<Profile | null> => {
     try {
       if (!user) return null;
-      
+
       const { data, error } = await fetchProfile(user.id);
-      
       if (error) {
         console.error('Error fetching profile:', error);
+        toast.error('Failed to fetch profile');
         return null;
       }
-      
-      return data as Profile;
+
+      setProfile(data);
+      return data;
     } catch (error) {
-      console.error('Error in getProfile:', error);
+      console.error('Unexpected error fetching profile:', error);
+      toast.error('Unexpected error fetching profile');
       return null;
     }
   };
 
-  const refreshProfile = async (): Promise<void> => {
-    if (!user) return;
-    
-    const profileData = await getProfile();
-    setProfile(profileData);
+  const refreshProfile = async () => {
+    try {
+      if (!user) return;
+
+      const { data, error } = await fetchProfile(user.id);
+      if (error) {
+        console.error('Error fetching profile:', error);
+        toast.error('Failed to fetch profile');
+        return;
+      }
+
+      setProfile(data);
+    } catch (error) {
+      console.error('Unexpected error refreshing profile:', error);
+      toast.error('Unexpected error refreshing profile');
+    }
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
@@ -141,19 +153,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         console.log('Auth state changed:', event, currentSession?.user?.id, currentSession);
-        console.log('Auth state changed: currentSession', currentSession);
         setSession(currentSession);
         setUser(currentSession?.user || null);
-        
-        // Use setTimeout to prevent Supabase auth system callback deadlock
+
         if (currentSession?.user) {
           await refreshProfile();
-          setIsLoading(false);
         } else {
           setProfile(null);
-          setIsLoading(false);
         }
-        
+
+        setIsLoading(false);
+
         if (event === 'SIGNED_IN') {
           toast.success('Signed in successfully');
         } else if (event === 'SIGNED_OUT') {
@@ -163,7 +173,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     // THEN check for existing session
-    refreshSession();
+    (async () => {
+      const { data: { session: existingSession } } = await getSession();
+      if (existingSession) {
+        setSession(existingSession);
+        setUser(existingSession.user || null);
+        await refreshProfile();
+      } else {
+        setProfile(null);
+      }
+      setIsLoading(false);
+    })();
 
     return () => {
       subscription.unsubscribe();
