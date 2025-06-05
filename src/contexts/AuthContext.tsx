@@ -113,17 +113,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const isProfile = (data: any): data is Profile => {
+    return data && typeof data.id === 'string' && typeof data.username === 'string';
+  };
+
   const refreshProfile = async () => {
     try {
-      if (!user) return;
+      if (!user) {
+        console.log('refreshProfile: No user found');
+        return;
+      }
 
+      console.log('refreshProfile: Fetching profile for user ID:', user.id);
       const { data, error } = await fetchProfile(user.id);
-      if (error) {
-        console.error('Error fetching profile:', error);
+      if (error || !isProfile(data)) {
+        console.error('Error fetching profile or invalid data:', error);
         toast.error('Failed to fetch profile');
         return;
       }
 
+      console.log('refreshProfile: Profile data fetched:', data);
       setProfile(data);
     } catch (error) {
       console.error('Unexpected error refreshing profile:', error);
@@ -176,10 +185,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     (async () => {
       const { data: { session: existingSession } } = await getSession();
       if (existingSession) {
+        console.log('Existing session found:', existingSession);
         setSession(existingSession);
         setUser(existingSession.user || null);
         await refreshProfile();
       } else {
+        console.log('No existing session found');
         setProfile(null);
       }
       setIsLoading(false);
